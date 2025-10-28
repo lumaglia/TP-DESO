@@ -1,14 +1,17 @@
 package service;
 
 import dao.UsuarioCSV;
+import dao.UsuarioDAO;
 import dto.UsuarioDTO;
 import domain.Usuario;
 import java.io.IOException;
 
 public class GestorUsuario {
-    private UsuarioCSV dao;
+
+    UsuarioDAO dao;
 
     public GestorUsuario() throws IOException {
+        super();
         dao = new UsuarioCSV();
     }
 

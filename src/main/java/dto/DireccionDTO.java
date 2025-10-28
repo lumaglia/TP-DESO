@@ -8,6 +8,15 @@ public class DireccionDTO {
     private String provincia;
     private String pais;
 
+    public DireccionDTO(String domicilio, String depto, String codigoPostal, String localidad, String provincia, String pais) {
+        this.domicilio = domicilio;
+        this.depto = depto;
+        this.codigoPostal = codigoPostal;
+        this.localidad = localidad;
+        this.provincia = provincia;
+        this.pais = pais;
+    }
+
     public String getDomicilio() {
         return domicilio;
     }

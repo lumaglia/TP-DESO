@@ -1,5 +1,7 @@
 package domain;
 
+import dto.DireccionDTO;
+
 public class Direccion {
     private String domicilio;
     private String depto;
@@ -8,6 +10,9 @@ public class Direccion {
     private String provincia;
     private String pais;
 
+    public Direccion(){
+
+    }
     public Direccion(String domicilio, String depto, String codigoPostal, String localidad, String provincia, String pais) {
         this.domicilio = domicilio;
         this.depto = depto;
@@ -21,23 +26,58 @@ public class Direccion {
         return domicilio;
     }
 
+    public void setDomicilio(String domicilio) {
+        this.domicilio = domicilio;
+    }
+
     public String getDepto() {
         return depto;
+    }
+
+    public void setDepto(String depto) {
+        this.depto = depto;
     }
 
     public String getCodigoPostal() {
         return codigoPostal;
     }
 
+    public void setCodigoPostal(String codigoPostal) {
+        this.codigoPostal = codigoPostal;
+    }
+
     public String getLocalidad() {
         return localidad;
+    }
+
+    public void setLocalidad(String localidad) {
+        this.localidad = localidad;
     }
 
     public String getProvincia() {
         return provincia;
     }
 
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+
     public String getPais() {
         return pais;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
+    }
+
+    @Override
+    public String toString() {
+        return
+                pais +
+                        ";" + codigoPostal +
+                        ";" + domicilio +
+                        ";" + depto +
+                        ";" + localidad +
+                        ";" + provincia;
     }
 }

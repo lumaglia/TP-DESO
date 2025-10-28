@@ -31,6 +31,11 @@ public class HuespedDTO {
         this.direccion = direccion;
     }
 
+    public HuespedDTO(String tipoDoc, String nroDoc) {
+        this.tipoDoc = tipoDoc;
+        this.nroDoc = nroDoc;
+    }
+
     public String getNombre() {
         return nombre;
     }

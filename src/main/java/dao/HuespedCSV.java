@@ -1,6 +1,8 @@
 package dao;
 
+import domain.Direccion;
 import domain.Huesped;
+import dto.DireccionDTO;
 import dto.HuespedDTO;
 
 import java.io.*;
@@ -9,20 +11,25 @@ import java.util.ArrayList;
 
 public class HuespedCSV implements HuespedDAO {
 
-    File file = new File("huesped.csv");
-    BufferedReader fr;
-    FileWriter fw;
+    File fileHuesped = new File("huesped.csv");
+    File fileDireccion = new File("direccion.csv");
+    BufferedReader frHuesped;
+    FileWriter fwHuesped;
+    BufferedReader frDireccion;
+    FileWriter fwDireccion;
 
     public HuespedCSV() throws IOException {
         super();
-        file.createNewFile();
+        fileHuesped.createNewFile();
+        fileDireccion.createNewFile();
     }
 
     public void crearHuesped(Huesped huesped) {
         try {
-            fw = new FileWriter(file, true);
-            fw.write(huesped.toString()+"\n");
-            fw.close();
+            fwHuesped = new FileWriter(fileHuesped, true);
+            fwHuesped.write(huesped.toString()+"\n");
+            fwHuesped.close();
+            crearDireccion(huesped.getDireccion());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -30,12 +37,12 @@ public class HuespedCSV implements HuespedDAO {
 
     public ArrayList<HuespedDTO> obtenerHuesped(HuespedDTO huespedDTO) throws IOException {
         try {
-            fr = new BufferedReader(new FileReader(file));
+            frHuesped = new BufferedReader(new FileReader(fileHuesped));
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
 
-        String line = fr.readLine();
+        String line = frHuesped.readLine();
         boolean valid = true;
         ArrayList<HuespedDTO> huespedDTOs = new ArrayList<>();
         while (line != null) {
@@ -63,6 +70,7 @@ public class HuespedCSV implements HuespedDAO {
             }
 
             if(valid){
+                DireccionDTO direccionDTO = obtenerDireccion(lineSplit[11], lineSplit[12], lineSplit[13], lineSplit[14]);
                 huespedDTOs.add(new HuespedDTO(
                         lineSplit[0],  // tipoDoc
                         lineSplit[1],  // nroDoc
@@ -75,35 +83,35 @@ public class HuespedCSV implements HuespedDAO {
                         lineSplit[8],  // email
                         lineSplit[9],  // ocupacion
                         lineSplit[10], // nacionalidad
-                        null           // direccion
+                        direccionDTO   // direccion
                 ));
             }
 
             valid = true;
-            line = fr.readLine();
+            line = frHuesped.readLine();
         }
-        fr.close();
+        frHuesped.close();
         return huespedDTOs;
     }
 
     public void modificarHuesped(String tipoDoc, String numeroDoc, Huesped huesped) {
         try {
-            fr = new BufferedReader(new FileReader(file));
+            frHuesped = new BufferedReader(new FileReader(fileHuesped));
             StringBuilder f = new StringBuilder();
-            String line = fr.readLine();
+            String line = frHuesped.readLine();
             while (line != null) {
-                if(!line.contains(tipoDoc+";"+numeroDoc+";")){
+                if(!line.startsWith(tipoDoc+";"+numeroDoc+";")){
                     f.append(line+"\n");
                 }else {
                     f.append(huesped.toString()+"\n");
                 }
 
-                line = fr.readLine();
+                line = frHuesped.readLine();
             }
-            fr.close();
-            fw = new FileWriter(file);
-            fw.write(f.toString());
-            fw.close();
+            frHuesped.close();
+            fwHuesped = new FileWriter(fileHuesped);
+            fwHuesped.write(f.toString());
+            fwHuesped.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -114,25 +122,72 @@ public class HuespedCSV implements HuespedDAO {
 
     public void eliminarHuesped(String tipoDoc, String numeroDoc){
         try {
-            fr = new BufferedReader(new FileReader(file));
+            frHuesped = new BufferedReader(new FileReader(fileHuesped));
             StringBuilder f = new StringBuilder();
-            String line = fr.readLine();
+            String line = frHuesped.readLine();
             while (line != null) {
-                if(!line.contains(tipoDoc+";"+numeroDoc+";")){
+                if(!line.startsWith(tipoDoc+";"+numeroDoc+";")){
                     f.append(line+"\n");
                 }
 
-                line = fr.readLine();
+                line = frHuesped.readLine();
             }
-            fr.close();
-            fw = new FileWriter(file);
-            fw.write(f.toString());
-            fw.close();
+            frHuesped.close();
+            fwHuesped = new FileWriter(fileHuesped);
+            fwHuesped.write(f.toString());
+            fwHuesped.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void crearDireccion(Direccion direccion) {
+        try {
+            if(obtenerDireccion(
+                    direccion.getPais(),
+                    direccion.getCodigoPostal(),
+                    direccion.getDomicilio(),
+                    direccion.getDepto()
+            ) == null){
+                fwDireccion = new FileWriter(fileDireccion, true);
+                fwDireccion.write(direccion.toString()+"\n");
+                fwDireccion.close();
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public DireccionDTO obtenerDireccion(String pais, String codigoPostal, String domicilio, String depto) throws IOException {
+        try {
+            frDireccion = new BufferedReader(new FileReader(fileDireccion));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        String line = frDireccion.readLine();
+        while (line != null) {
+            String[] lineSplit = line.split(";");
+            if(line.startsWith(pais+";"+codigoPostal+";"+domicilio+";"+depto+";")) {
+                frDireccion.close();
+
+                return new DireccionDTO(
+                        lineSplit[2],
+                        lineSplit[3],
+                        lineSplit[1],
+                        lineSplit[4],
+                        lineSplit[5],
+                        lineSplit[0]
+                );
+            }
+
+            line = frDireccion.readLine();
+        }
+        frDireccion.close();
+        return null;
     }
 
     private boolean comparar(String campo, String csv){

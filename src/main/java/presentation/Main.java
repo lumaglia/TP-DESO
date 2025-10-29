@@ -1,9 +1,13 @@
 package presentation;
 
-import domain.Huesped;
+import java.io.IOException;
 
 public class Main {
-    public static void main(String[] args) {
-
+    public static void main(String[] args){
+        try{
+            CU1.ejecucion();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

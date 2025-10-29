@@ -12,16 +12,18 @@ import java.util.ArrayList;
 public class HuespedCSV implements HuespedDAO {
 
     File fileHuesped = new File("huesped.csv");
-    File fileDireccion = new File("direccion.csv");
+    //File fileDireccion = new File("direccion.csv");
     BufferedReader frHuesped;
     FileWriter fwHuesped;
-    BufferedReader frDireccion;
-    FileWriter fwDireccion;
+    //BufferedReader frDireccion;
+    //FileWriter fwDireccion;
+    private DireccionCSV direccionCSV;
 
     public HuespedCSV() throws IOException {
         super();
         fileHuesped.createNewFile();
-        fileDireccion.createNewFile();
+        this.direccionCSV = new DireccionCSV();
+        //fileDireccion.createNewFile();
     }
 
     public void crearHuesped(Huesped huesped) {
@@ -29,7 +31,7 @@ public class HuespedCSV implements HuespedDAO {
             fwHuesped = new FileWriter(fileHuesped, true);
             fwHuesped.write(huesped.toString()+"\n");
             fwHuesped.close();
-            crearDireccion(huesped.getDireccion());
+            direccionCSV.crearDireccion(huesped.getDireccion());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -94,8 +96,9 @@ public class HuespedCSV implements HuespedDAO {
         return huespedDTOs;
     }
 
-    public void modificarHuesped(String tipoDoc, String numeroDoc, Huesped huesped) {
+    public void modificarHuesped(String tipoDoc, String numeroDoc, Huesped huesped) throws IOException {
         try {
+            direccionCSV.crearDireccion(huesped.getDireccion());
             frHuesped = new BufferedReader(new FileReader(fileHuesped));
             StringBuilder f = new StringBuilder();
             String line = frHuesped.readLine();
@@ -143,51 +146,8 @@ public class HuespedCSV implements HuespedDAO {
         }
     }
 
-    public void crearDireccion(Direccion direccion) {
-        try {
-            if(obtenerDireccion(
-                    direccion.getPais(),
-                    direccion.getCodigoPostal(),
-                    direccion.getDomicilio(),
-                    direccion.getDepto()
-            ) == null){
-                fwDireccion = new FileWriter(fileDireccion, true);
-                fwDireccion.write(direccion.toString()+"\n");
-                fwDireccion.close();
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public DireccionDTO obtenerDireccion(String pais, String codigoPostal, String domicilio, String depto) throws IOException {
-        try {
-            frDireccion = new BufferedReader(new FileReader(fileDireccion));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        String line = frDireccion.readLine();
-        while (line != null) {
-            String[] lineSplit = line.split(";");
-            if(line.startsWith(pais+";"+codigoPostal+";"+domicilio+";"+depto+";")) {
-                frDireccion.close();
-
-                return new DireccionDTO(
-                        lineSplit[2],
-                        lineSplit[3],
-                        lineSplit[1],
-                        lineSplit[4],
-                        lineSplit[5],
-                        lineSplit[0]
-                );
-            }
-
-            line = frDireccion.readLine();
-        }
-        frDireccion.close();
-        return null;
+        return direccionCSV.obtenerDireccion(pais, codigoPostal, domicilio, depto);
     }
 
     private boolean comparar(String campo, String csv){

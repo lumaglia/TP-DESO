@@ -36,7 +36,7 @@ public class GestorHuesped {
         direccion.setPais(direccionDTO.getPais());
 
         //Esto esta demas porque crearHuesped() ya lo hace, lo puse porque estaba en el diagrama de secuencia
-        huespedDAO.crearDireccion(direccion);
+        //huespedDAO.crearDireccion(direccion);
 
         Huesped huesped = new Huesped();
         huesped.setNombre(huespedDTO.getNombre());

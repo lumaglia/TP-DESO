@@ -15,7 +15,7 @@ public interface HuespedDAO {
     void modificarHuesped(String tipoDoc, String numeroDoc, Huesped huesped) throws IOException;
     void eliminarHuesped(String tipoDoc, String numeroDoc);
 
-    void crearDireccion(Direccion direccion);
-    DireccionDTO obtenerDireccion(String pais, String codigoPostal, String domicilio, String depto) throws IOException;
+    //void crearDireccion(Direccion direccion);
+    //DireccionDTO obtenerDireccion(String pais, String codigoPostal, String domicilio, String depto) throws IOException;
 
 }

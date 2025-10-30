@@ -9,6 +9,7 @@ import dto.DireccionDTOBuilder;
 import dto.HuespedDTO;
 import dto.HuespedDTOBuilder;
 import exceptions.DocumentoYaExistente;
+import exceptions.FracasoOperacion;
 import service.GestorHuesped;
 import service.GestorUsuario;
 
@@ -27,7 +28,7 @@ public class Main {
         try {
             gestorHuesped = new GestorHuesped();
             gestorUsuario = new GestorUsuario();
-        } catch (IOException e) {
+        } catch (FracasoOperacion e) {
             throw new RuntimeException(e);
         }
 
@@ -75,7 +76,11 @@ public class Main {
                         usuario = s.nextLine();
                         System.out.print("Ingrese la contraseña: ");
                         password = s.nextLine();
-                        valido = gestorUsuario.autenticar(usuario, password);
+                        try {
+                            valido = gestorUsuario.autenticar(usuario, password);
+                        } catch (FracasoOperacion e) {
+                            throw new RuntimeException(e);
+                        }
                         first = false;
                     }
 
@@ -109,7 +114,7 @@ public class Main {
                                     valido = false;
                                     while (!valido) {
                                         try {
-                                            gestorHuesped.AltaHuesped(huespedDTO);
+                                            gestorHuesped.altaHuesped(huespedDTO);
                                             valido = true;
                                         } catch (DocumentoYaExistente e) {
                                             System.out.println(e.getMessage());
@@ -147,11 +152,11 @@ public class Main {
                                                         builderHuesped = builderHuesped.setNroDoc(linea);
                                                         huespedDTO = builderHuesped.createHuespedDTO();
                                                         try {
-                                                            gestorHuesped.AltaHuesped(huespedDTO);
+                                                            gestorHuesped.altaHuesped(huespedDTO);
                                                         } catch (DocumentoYaExistente ex) {
                                                             System.out.println(ex.getMessage());
                                                             valido = false;
-                                                        } catch (IOException ex) {
+                                                        } catch (FracasoOperacion ex) {
                                                             throw new RuntimeException(ex);
                                                         }
                                                         break;
@@ -162,7 +167,7 @@ public class Main {
                                                 }
                                             }
 
-                                        } catch (IOException e) {
+                                        } catch (FracasoOperacion e) {
                                             throw new RuntimeException(e);
                                         }
                                     }
@@ -204,7 +209,7 @@ public class Main {
                                 ArrayList<HuespedDTO> huespedesDTO;
                                 try {
                                     huespedesDTO = gestorHuesped.buscarHuesped(huespedDTO);
-                                } catch (IOException e) {
+                                } catch (FracasoOperacion e) {
                                     throw new RuntimeException(e);
                                 }
                                 int i = 0;
@@ -300,8 +305,12 @@ public class Main {
                         valido = password != null && usuario != null && password.equals(s.nextLine());
                         first = false;
                     }
-                    gestorUsuario.altaUsuario(usuario, password);
-                    System.out.println("Uusario registrado correctamente");
+                    try {
+                        gestorUsuario.altaUsuario(usuario, password);
+                    } catch (FracasoOperacion e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("Usuario registrado correctamente");
                     break;
                 }
                 case 3: {
@@ -331,7 +340,11 @@ public class Main {
                     if(huespedBuilder != null) {
                         //NUNCA SE CHEQUEA QUE EL DOCUMENTO NO ESTE REPETIDO, FALTA MANEJAR LA EXCEPCION
                         HuespedDTO huespedDTONew = huespedBuilder.createHuespedDTO();
-                        gestorHuesped.modificarHuesped(huespedDTO.getTipoDoc(), huespedDTO.getNroDoc(), huespedDTONew);
+                        try {
+                            gestorHuesped.modificarHuesped(huespedDTO.getTipoDoc(), huespedDTO.getNroDoc(), huespedDTONew);
+                        } catch (FracasoOperacion e) {
+                            throw new RuntimeException(e);
+                        }
                         return huespedDTONew;
                     }
 
@@ -340,7 +353,7 @@ public class Main {
                 case "E":{
                     try {
                         gestorHuesped.bajaHuesped(huespedDTO);
-                    } catch (IOException e) {
+                    } catch (FracasoOperacion e) {
                         throw new RuntimeException(e);
                     }
                     deleted[0] = true;

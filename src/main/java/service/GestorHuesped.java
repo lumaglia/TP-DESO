@@ -8,6 +8,7 @@ import dto.DireccionDTO;
 import dto.HuespedDTO;
 import dto.HuespedDTOBuilder;
 import exceptions.DocumentoYaExistente;
+import exceptions.FracasoOperacion;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,12 +17,13 @@ public class GestorHuesped {
 
     HuespedDAO huespedDAO;
 
-    public GestorHuesped() throws IOException {
+    public GestorHuesped() throws FracasoOperacion {
         super();
         huespedDAO = new HuespedCSV();
     }
 
-    public void AltaHuesped(HuespedDTO huespedDTO) throws DocumentoYaExistente, IOException {
+    public void altaHuesped(HuespedDTO huespedDTO) throws DocumentoYaExistente, FracasoOperacion {
+
 
         if(!huespedDAO.obtenerHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTO.getTipoDoc()).setNroDoc(huespedDTO.getNroDoc()).createHuespedDTO()).isEmpty()) {
             throw new DocumentoYaExistente("El tipo y numero de documento ya existen en el sistema");
@@ -57,16 +59,16 @@ public class GestorHuesped {
 
     }
 
-    public void bajaHuesped(HuespedDTO huespedDTO) throws IOException {
+    public void bajaHuesped(HuespedDTO huespedDTO) throws FracasoOperacion {
         huespedDAO.eliminarHuesped(huespedDTO.getTipoDoc(), huespedDTO.getNroDoc());
     }
 
-    public ArrayList<HuespedDTO> buscarHuesped(HuespedDTO huespedDTO) throws IOException {
+    public ArrayList<HuespedDTO> buscarHuesped(HuespedDTO huespedDTO) throws FracasoOperacion {
         return huespedDAO.obtenerHuesped(huespedDTO);
     }
 
     //NUNCA CHEQUEA QUE NO REPITA TIPODOC Y NUMDOC CUANDO MODIFICAS, DEBERIA LANZAR DOCUMENTO REPETIDO EXCEPTION
-    public void modificarHuesped(String tipoDoc, String numeroDoc, HuespedDTO huespedDTO) {
+    public void modificarHuesped(String tipoDoc, String numeroDoc, HuespedDTO huespedDTO) throws FracasoOperacion{
         DireccionDTO direccionDTO = huespedDTO.getDireccion();
         Direccion direccion = new Direccion();
         direccion.setDomicilio(direccionDTO.getDomicilio());
@@ -93,11 +95,8 @@ public class GestorHuesped {
         huesped.setNacionalidad(huespedDTO.getNacionalidad());
         huesped.setDireccion(direccion);
 
-        try {
-            huespedDAO.modificarHuesped(tipoDoc, numeroDoc, huesped);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        huespedDAO.modificarHuesped(tipoDoc, numeroDoc, huesped);
+
     }
 
 }

@@ -2,6 +2,7 @@ package dao;
 
 import domain.Direccion;
 import dto.DireccionDTO;
+import exceptions.FracasoOperacion;
 
 import java.io.*;
 
@@ -10,12 +11,17 @@ public class DireccionCSV implements DireccionDAO {
     BufferedReader frDireccion;
     FileWriter fwDireccion;
 
-    public DireccionCSV() throws IOException {
+    public DireccionCSV() throws FracasoOperacion {
         super();
-        fileDireccion.createNewFile();
+        try{
+            fileDireccion.createNewFile();
+        }
+        catch(IOException e){
+            throw new FracasoOperacion(e.getMessage());
+        }
     }
 
-    public void crearDireccion(Direccion direccion) {
+    public void crearDireccion(Direccion direccion) throws FracasoOperacion {
         try {
             if(obtenerDireccion(
                     direccion.getPais(),
@@ -29,36 +35,37 @@ public class DireccionCSV implements DireccionDAO {
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FracasoOperacion(e.getMessage());
         }
     }
 
-    public DireccionDTO obtenerDireccion(String pais, String codigoPostal, String domicilio, String depto) throws IOException {
+    public DireccionDTO obtenerDireccion(String pais, String codigoPostal, String domicilio, String depto) throws FracasoOperacion {
         try {
             frDireccion = new BufferedReader(new FileReader(fileDireccion));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
 
-        String line = frDireccion.readLine();
-        while (line != null) {
-            String[] lineSplit = line.split(";");
-            if(line.startsWith(pais+";"+codigoPostal+";"+domicilio+";"+depto+";")) {
-                frDireccion.close();
+            String line = frDireccion.readLine();
+            while (line != null) {
+                String[] lineSplit = line.split(";");
+                if(line.startsWith(pais+";"+codigoPostal+";"+domicilio+";"+depto+";")) {
+                    frDireccion.close();
 
-                return new DireccionDTO(
-                        lineSplit[2],
-                        lineSplit[3],
-                        lineSplit[1],
-                        lineSplit[4],
-                        lineSplit[5],
-                        lineSplit[0]
-                );
+                    return new DireccionDTO(
+                            lineSplit[2],
+                            lineSplit[3],
+                            lineSplit[1],
+                            lineSplit[4],
+                            lineSplit[5],
+                            lineSplit[0]
+                    );
+                }
+
+                line = frDireccion.readLine();
             }
-
-            line = frDireccion.readLine();
+            frDireccion.close();
+        } catch (IOException e) {
+            throw new FracasoOperacion(e.getMessage());
         }
-        frDireccion.close();
+
         return null;
     }
 

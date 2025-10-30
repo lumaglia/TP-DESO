@@ -2,6 +2,7 @@ package dao;
 
 import domain.Usuario;
 import dto.UsuarioDTO;
+import exceptions.FracasoOperacion;
 import service.GestorUsuario;
 
 import java.io.*;
@@ -11,49 +12,53 @@ public class UsuarioCSV implements UsuarioDAO {
     BufferedReader fr;
     FileWriter fw;
 
-    public UsuarioCSV() throws IOException {
+    public UsuarioCSV() throws FracasoOperacion {
        super();
-       file.createNewFile();
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            throw new FracasoOperacion(e.getMessage());
+        }
     }
 
-    public void CrearUsuario(Usuario usuario){
+    public void CrearUsuario(Usuario usuario) throws FracasoOperacion {
         try {
             fw = new FileWriter(file, true);
             fw.write(usuario.toString() + "\n");
             fw.close();
         }  catch (IOException e) {
-        throw new RuntimeException(e);
+        throw new FracasoOperacion(e.getMessage());
     }
 }
 
-    public UsuarioDTO ObtenerUsuario(UsuarioDTO usuario) throws IOException {
+    public UsuarioDTO ObtenerUsuario(UsuarioDTO usuario) throws FracasoOperacion {
         try {
             fr = new BufferedReader(new FileReader(file));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
 
-        String line = fr.readLine();
-        boolean valid = true;
-        while (line != null) {
-            String[] lineSplit = line.split(";");
+            String line = fr.readLine();
+            boolean valid = true;
+            while (line != null) {
+                String[] lineSplit = line.split(";");
 
-            valid = usuario.getUsuario().equals(lineSplit[0]);
-            valid = valid && usuario.getContrasenna().equals(lineSplit[1]);
-            if(valid){
-                line = null;
-                return usuario;
-            } else {
-                line = fr.readLine();
-                valid = true;
+                valid = usuario.getUsuario().equals(lineSplit[0]);
+                valid = valid && usuario.getContrasenna().equals(lineSplit[1]);
+                if(valid){
+                    line = null;
+                    return usuario;
+                } else {
+                    line = fr.readLine();
+                    valid = true;
+                }
             }
+            fr.close();
+        } catch (IOException e) {
+            throw new FracasoOperacion(e.getMessage());
         }
-        fr.close();
         return null;
     }
 
 
-    public void ModificarUsuario(String nombreUsuario, Usuario usuario){
+    public void ModificarUsuario(String nombreUsuario, Usuario usuario) throws  FracasoOperacion {
         try {
             fr = new BufferedReader(new FileReader(file));
             StringBuilder f = new StringBuilder();
@@ -70,14 +75,12 @@ public class UsuarioCSV implements UsuarioDAO {
             fw = new FileWriter(file);
             fw.write(f.toString());
             fw.close();
-        }catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FracasoOperacion(e.getMessage());
         }
     }
 
-    public void EliminarUsuario(String usuario){
+    public void EliminarUsuario(String usuario) throws FracasoOperacion {
         try {
             fr = new BufferedReader(new FileReader(file));
             StringBuilder f = new StringBuilder();
@@ -92,10 +95,8 @@ public class UsuarioCSV implements UsuarioDAO {
             fw = new FileWriter(file);
             fw.write(f.toString());
             fw.close();
-        }catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FracasoOperacion(e.getMessage());
         }
     }
 

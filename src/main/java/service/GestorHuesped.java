@@ -15,11 +15,17 @@ import java.util.ArrayList;
 
 public class GestorHuesped {
 
+    private static GestorHuesped singleton_instance;
     HuespedDAO huespedDAO;
 
-    public GestorHuesped() throws FracasoOperacion {
+    private GestorHuesped() throws FracasoOperacion {
         super();
         huespedDAO = new HuespedCSV();
+    }
+
+    public static GestorHuesped getInstance() throws FracasoOperacion {
+        if(singleton_instance == null) singleton_instance = new GestorHuesped();
+        return singleton_instance;
     }
 
     public void altaHuesped(HuespedDTO huespedDTO) throws DocumentoYaExistente, FracasoOperacion {

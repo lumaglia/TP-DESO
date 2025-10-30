@@ -10,11 +10,17 @@ import java.io.IOException;
 
 public class GestorUsuario {
 
+    private static GestorUsuario singleton_instance;
     UsuarioDAO dao;
 
     public GestorUsuario() throws FracasoOperacion {
         super();
         dao = new UsuarioCSV();
+    }
+
+    private static synchronized GestorUsuario getInstance() throws FracasoOperacion {
+        if(singleton_instance == null) singleton_instance = new GestorUsuario();
+        return singleton_instance;
     }
 
     public void altaUsuario(String usuario, String contrasenna) throws FracasoOperacion {

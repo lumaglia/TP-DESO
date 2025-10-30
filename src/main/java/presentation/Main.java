@@ -26,7 +26,7 @@ public class Main {
         GestorUsuario gestorUsuario;
 
         try {
-            gestorHuesped = new GestorHuesped();
+            gestorHuesped = GestorHuesped.getInstance();
             gestorUsuario = new GestorUsuario();
         } catch (FracasoOperacion e) {
             throw new RuntimeException(e);

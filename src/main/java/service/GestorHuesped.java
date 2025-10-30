@@ -60,6 +60,8 @@ public class GestorHuesped {
 
     }
 
-    public void buscarHuesped()
+    public void buscarHuesped(){
+
+    }
 
 }

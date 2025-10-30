@@ -86,6 +86,10 @@ public class HuespedDTO {
 
     @Override
     public String toString() {
+        String d = "";
+        if (direccion != null) {
+            d = direccion.toString();
+        }
         return
                 "nombre='" + nombre + "'\n" +
                 "apellido='" + apellido + "'\n" +
@@ -93,11 +97,11 @@ public class HuespedDTO {
                 "nroDoc='" + nroDoc + "'\n" +
                 "cuil='" + cuil + "'\n" +
                 "posicionIva='" + posicionIva + "'\n" +
-                "fechaNac=" + fechaNac +
+                "fechaNac=" + fechaNac + "'\n" +
                 "telefono='" + telefono + "'\n" +
                 "email='" + email + "'\n" +
                 "ocupacion='" + ocupacion + "'\n" +
                 "nacionalidad='" + nacionalidad + "'\n" +
-                direccion.toString();
+                d;
     }
 }

@@ -146,8 +146,8 @@ public class HuespedCSV implements HuespedDAO {
 
     private boolean comparar(String campo, String csv){
         if(campo == null) return true;
-        else if (campo.equals(csv)) return true;
-        else return false;
+        else if (campo.isEmpty()) return true;
+        else return campo.equals(csv);
     }
 
 }

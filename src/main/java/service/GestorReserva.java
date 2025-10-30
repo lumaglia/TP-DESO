@@ -7,7 +7,7 @@ public class GestorReserva {
 
     }
 
-    public static GestorReserva getInstance() {
+    public static synchronized GestorReserva getInstance() {
         if(singleton_instance == null) singleton_instance = new GestorReserva();
         return singleton_instance;
     }

@@ -7,7 +7,7 @@ public class GestorPago {
 
     }
 
-    public static GestorPago getInstance() {
+    public static synchronized GestorPago getInstance() {
         if(singleton_instance == null) singleton_instance = new GestorPago();
         return singleton_instance;
     }

@@ -6,10 +6,10 @@ import domain.Direccion;
 import domain.Huesped;
 import dto.DireccionDTO;
 import dto.HuespedDTO;
+import dto.HuespedDTOBuilder;
 import exceptions.DocumentoYaExistente;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class GestorHuesped {
 
@@ -22,7 +22,7 @@ public class GestorHuesped {
 
     public void AltaHuesped(HuespedDTO huespedDTO) throws DocumentoYaExistente, IOException {
 
-        if(!huespedDAO.obtenerHuesped(new HuespedDTO(huespedDTO.getTipoDoc(), huespedDTO.getNroDoc())).isEmpty()) {
+        if(!huespedDAO.obtenerHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTO.getTipoDoc()).setNroDoc(huespedDTO.getNroDoc()).createHuespedDTO()).isEmpty()) {
             throw new DocumentoYaExistente("El tipo y numero de documento ya existen en el sistema");
         }
 
@@ -55,5 +55,11 @@ public class GestorHuesped {
         huespedDAO.crearHuesped(huesped);
 
     }
+
+    public void bajaHuesped(HuespedDTO huespedDTO) throws IOException {
+
+    }
+
+    public void buscarHuesped()
 
 }

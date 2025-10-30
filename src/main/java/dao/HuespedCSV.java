@@ -3,7 +3,9 @@ package dao;
 import domain.Direccion;
 import domain.Huesped;
 import dto.DireccionDTO;
+import dto.DireccionDTOBuilder;
 import dto.HuespedDTO;
+import dto.HuespedDTOBuilder;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -73,20 +75,7 @@ public class HuespedCSV implements HuespedDAO {
 
             if(valid){
                 DireccionDTO direccionDTO = obtenerDireccion(lineSplit[11], lineSplit[12], lineSplit[13], lineSplit[14]);
-                huespedDTOs.add(new HuespedDTO(
-                        lineSplit[0],  // tipoDoc
-                        lineSplit[1],  // nroDoc
-                        lineSplit[2],  // apellido
-                        lineSplit[3],  // nombre
-                        lineSplit[4],  // cuil
-                        lineSplit[5],  // posicionIva
-                        LocalDate.parse(lineSplit[6]),  // fechaNac
-                        lineSplit[7],  // telefono
-                        lineSplit[8],  // email
-                        lineSplit[9],  // ocupacion
-                        lineSplit[10], // nacionalidad
-                        direccionDTO   // direccion
-                ));
+                huespedDTOs.add(new HuespedDTOBuilder().setTipoDoc(lineSplit[0]).setNroDoc(lineSplit[1]).setApellido(lineSplit[2]).setNombre(lineSplit[3]).setCuil(lineSplit[4]).setPosicionIva(lineSplit[5]).setFechaNac(LocalDate.parse(lineSplit[6])).setTelefono(lineSplit[7]).setEmail(lineSplit[8]).setOcupacion(lineSplit[9]).setNacionalidad(lineSplit[10]).setDireccion(direccionDTO).createHuespedDTO());
             }
 
             valid = true;

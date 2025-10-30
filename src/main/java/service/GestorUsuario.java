@@ -20,9 +20,13 @@ public class GestorUsuario {
         dao.CrearUsuario(u);
     }
 
-    public boolean autenticar(String usuario, String contrasenna) throws IOException {
+    public boolean autenticar(String usuario, String contrasenna) {
         UsuarioDTO dto = new UsuarioDTO(usuario, contrasenna);
-        return dao.ObtenerUsuario(dto) != null;
+        try {
+            return dao.ObtenerUsuario(dto) != null;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void modificar(String usuario, String contrasenna) {

@@ -1,0 +1,185 @@
+@startuml
+
+
+skinparam style strictuml
+
+hide footBox
+title Diagrama de Secuencia CU 09 - Dar Alta Huesped
+
+actor Conserje as Con
+boundary "UI - Dar Alta Huesped" as UI
+control "Gestor Huesped" as GH
+participant "HuespedDAO" as HDAO
+participant "DireccionDAO" as DDAO
+
+
+Con -> UI: Solicitar cargar nuevo huesped
+activate UI
+group loop [Usuario Desea Cargar Huespedes]
+  Con <- UI: Mostrar formulario para cargar datos
+  deactivate UI
+  group loop [Datos No Correctos]
+    
+    group opt Cancelar
+      Con -> UI: Presionar "CANCELAR"
+      activate UI
+      Con <- UI: Regresar a la pantalla principal
+      deactivate UI
+    end
+    
+    Con -> UI: Ingresar datos de huesped y presionar "SIGUIENTE"
+    activate UI
+    UI -> UI: verificarCamposObligatorios(huespedDTO)
+    activate UI
+    deactivate UI
+    group alt [Campos Obligatorios Invalidos o Erroneos]
+      Con <- UI: mostrarMensaje("Por favor corrija los campos\nobligatorios y vuelva a enviar")
+    else CUIT Nulo y posicion frente al IVA 'ResponsableInscripto'
+      Con <- UI: mostrarMensaje("El CUIT no puede ser vacío para responsables inscriptos")
+    else Campos Obligatorios Validos
+      UI -> GH: altaHuesped(huespedDTO)
+      deactivate UI
+      activate GH
+      GH -> HDAO: buscarHuesped(huespedDTO)
+      activate HDAO
+      GH <-- HDAO: huesped 
+      deactivate HDAO
+      group opt [huesped no nulo]
+        UI <-- GH: lanzarExcepcion("Documento Existente en Sistema")
+        deactivate GH
+        activate UI
+        Con <- UI: mostrarMensaje("¡CUIDADO! El tipo y número de\ndocumento ya existen en el sistema")
+        deactivate UI
+        group alt [ACEPTAR IGUALMENTE]
+          Con -> UI: Presionar "ACEPTAR IGUALMENTE"
+          activate UI
+          UI -> GH: sobrescribirHuesped(huespedDTO)
+          deactivate UI
+          activate GH
+          GH -> HDAO: buscarHuesped(huespedDTO)
+          activate HDAO
+          GH <-- HDAO: unHuesped1
+          deactivate HDAO
+          GH -> DDAO: buscarDireccion(direccionDTO)
+          activate DDAO
+          GH <-- DDAO: unaDireccion1
+          deactivate DDAO
+          
+          
+          
+          create participant "unaDireccion1:Direccion" as D1
+          GH --> D1: new Direccion
+          activate D1
+          GH -> D1: setDomicilio(domicilio)
+          GH -> D1: setDepto(depto)
+          GH -> D1: setCodigoPostal(codigoPostal)
+          GH -> D1: setLocalidad(localidad)
+          GH -> D1: setProvincia(provincia)
+          GH -> D1: setPais(pais)
+          GH -> D1: getInstance()
+          GH <-- D1: unaDireccion
+          deactivate D1
+          
+          GH -> DDAO: sobreescribirDireccion(unaDireccion1)
+          activate DDAO
+          GH <-- DDAO: return("Direccion sobreescrita exitosamente")
+          deactivate DDAO
+          
+          create participant "unHuesped1:Huesped" as H1
+          GH --> H1: new Huesped
+          activate H1
+          GH -> H1: setNombre(nombre)
+          GH -> H1: setApellido(apellido)
+          GH -> H1: setTipoDoc(tipoDoc)
+          GH -> H1: setNumeroDoc(nroDoc)
+          GH -> H1: setCuil(cuil)
+          GH -> H1: setPosicionIva(posicionIva)
+          GH -> H1: setFechaNac(fechaNac)
+          GH -> H1: setTelefono(telefono)
+          GH -> H1: setEmail(email)
+          GH -> H1: setOcupacion(ocupacion)
+          GH -> H1: setNacionalidad(nacionalidad)
+          GH -> H1: setDireccion(unaDireccion1)
+          GH -> H1: getInstance()
+          GH <-- H1: unHuesped
+          deactivate H1
+          GH -> HDAO: sobrescribirHuesped(unHuesped1)
+          activate HDAO
+          GH <-- HDAO: return("Huesped sobreescrito exitosamente")
+          deactivate HDAO
+          
+          UI <-- GH: return("Huesped sobreescrito exitosamente")
+          deactivate GH
+          activate UI
+          
+          Con <- UI: mostrarMensaje("El huésped nombres y apellido ha sido\nsatisfactoriamente sobreescritos en el sistema. ¿Desea cargar otro?")
+          deactivate UI
+          
+        else CORREGIR
+          Con -> UI: Presionar "CORREGIR"
+          activate UI
+          Con <- UI: mostrarMensaje("Cambiar Tipo documento y DNI")
+          deactivate UI
+          activate GH
+        end
+      end
+    end
+  end
+  
+  
+  create participant "unaDireccion2:Direccion" as D
+  GH --> D: new Direccion
+  activate D
+  GH -> D: setDomicilio(domicilio)
+  GH -> D: setDepto(depto)
+  GH -> D: setCodigoPostal(codigoPostal)
+  GH -> D: setLocalidad(localidad)
+  GH -> D: setProvincia(provincia)
+  GH -> D: setPais(pais)
+  GH -> D: getInstance()
+  GH <-- D: unaDireccion
+  deactivate D
+  
+  GH -> DDAO: cargarDireccion(unaDireccion2)
+  activate DDAO
+  GH <-- DDAO: return("Direccion cargada exitosamente")
+  deactivate DDAO
+  
+  create participant "unHuesped2:Huesped" as H
+  GH --> H: new Huesped
+  activate H
+  GH -> H: setNombre(nombre)
+  GH -> H: setApellido(apellido)
+  GH -> H: setTipoDoc(tipoDoc)
+  GH -> H: setNumeroDoc(nroDoc)
+  GH -> H: setCuil(cuil)
+  GH -> H: setPosicionIva(posicionIva)
+  GH -> H: setFechaNac(fechaNac)
+  GH -> H: setTelefono(telefono)
+  GH -> H: setEmail(email)
+  GH -> H: setOcupacion(ocupacion)
+  GH -> H: setNacionalidad(nacionalidad)
+  GH -> H: setDireccion(unaDireccion2)
+  GH -> H: getInstance()
+  GH <-- H: unHuesped
+  deactivate H
+  GH -> HDAO: cargarHuesped(unHuesped2)
+  activate HDAO
+  GH <-- HDAO: return("Huesped cargado exitosamente")
+  deactivate HDAO
+  
+  UI <-- GH: return("Huesped creado exitosamente")
+  deactivate GH
+  activate UI
+  
+  Con <- UI: mostrarMensaje("El huésped nombres y apellido ha sido\nsatisfactoriamente cargado al sistema. ¿Desea cargar otro?")
+  
+  group opt [No]
+    Con -> UI: Presionar "NO"
+    Con <- UI: Regresar a la pantalla principal
+  end
+  Con -> UI: Presionar "SI"
+  
+end
+deactivate UI
+@enduml

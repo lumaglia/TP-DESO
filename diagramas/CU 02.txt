@@ -1,0 +1,84 @@
+@startuml
+
+
+skinparam style strictuml
+
+hide footBox
+title Diagrama de Secuencia CU 02 - Buscar Huesped
+
+actor Conserje as Con
+boundary "UI - Ocupar Habitacion" as UI
+control "Gestor Huesped" as GH
+participant "HuespedDAO" as HDAO
+
+Con -> UI: Solicitar buscar huespedes
+activate UI
+
+UI->Con: Mostrar campos de criterio de busqueda: Nombre, Apellido, Tipo Doc y Nro Doc
+deactivate UI
+Con->UI: completa algunos campos o ninguno y presiona ACEPTAR
+activate UI
+UI->GH: buscarHuespedes(huespedDTO)
+deactivate UI
+activate GH
+alt algun campo de huespedDTO no nulo
+  GH->HDAO: buscarHuespedes(huespedDTO)
+  activate HDAO
+  GH<--HDAO: :listHuespedDTO
+  deactivate HDAO
+else todos los campos de huespedDTO nulos
+  GH->HDAO: getHuespedes()
+  activate HDAO
+  GH<--HDAO: :listHuespedDTO
+  deactivate HDAO
+end
+opt listHuespedDTO está vacia
+  UI<--GH: lanzarExcepcion("No hay coincidencias en el sistema")
+  deactivate GH
+  activate UI
+  Con<--UI: mostrarMensaje("No se han encontrado huespedes para los criterios seleccionados")
+  Con<--UI: Ejecutar CU 09 - Dar Alta Huesped
+  deactivate UI
+  activate GH
+end
+GH->GH: crearGrilla(listHuespedDTO)
+activate GH
+deactivate GH
+UI<--GH: :objetoGrilla
+deactivate GH
+activate UI
+Con<--UI: mostrarGrillaHuespedes(objetoGrilla)
+deactivate UI
+loop Hasta presionar siguiente
+  opt Conserje selecciona huesped
+    Con->UI: Seleccionar huesped 
+    activate UI
+    opt existe huesped marcado
+      UI->UI: desmarcarHuesped()
+      activate UI
+      deactivate UI
+    end
+    UI->UI: marcarHuesped(huespedDTO)
+    activate UI
+    deactivate UI
+    Con<--UI: mostrarCambios()
+    deactivate UI
+  end
+end
+Con->UI: presiona SIGUIENTE
+activate UI
+alt No Hay Huesped Seleccionado
+  Con<--UI: Ejecutar CU 09 - Dar Alta Huesped
+else Huesped Seleccionado
+  Con<--UI: Ejecutar CU 10 - Modificar Huesped (huespedDTO)
+deactivate UI
+end
+
+opt EventCancelar
+  Con->UI: Presionar cancelar
+  activate UI
+  UI-->Con: Vuelve a la pantalla principal
+deactivate UI
+end
+
+@enduml

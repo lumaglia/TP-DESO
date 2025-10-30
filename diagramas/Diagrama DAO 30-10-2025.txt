@@ -1,0 +1,526 @@
+@startuml
+
+skinparam groupInheritance 2
+
+title Diagrama de Clases
+
+enum tipoConsumo{
+  LavadoPlanchado
+  Sauna
+  Bar
+}
+
+interface ReservaDAO{
+  +CrearReserva()
+  +ObtenerReserva()
+  +ModificarReserva()
+  +EliminarReserva()
+}
+interface EstadiaDAO{
+  +CrearEstadia()
+  +ObtenerEstadia()
+  +ModificarEstadia()
+  +EliminarEstadia()
+}
+interface HuespedDAO{
+  +CrearHuesped()
+  +ObtenerHuesped()
+  +ModifcarHuesped()
+  +EliminarHuesped()
+}
+interface DireccionDAO{
+  +CrearDireccion()
+  +ObtenerDireccion()
+  +ModifcarDireccion()
+  +EliminarDireccion()
+}
+interface UsuarioDAO{
+  +CrearUsuario()
+  +ObtenerUsuario()
+  +ModificarUsuario()
+  +EliminarUsuario()
+}
+interface ResponsablePagoDAO{
+  +CrearPersonaFisica()
+  +ObtenerPersonaFisica()
+  +ModificarPersonaFisica()
+  +EliminarPersonaFisica()
+  +CrearPersonaJuridica()
+  +ObtenerPersonaJuridica()
+  +ModificarPersonaJuridica()
+  +EliminarPersonaJuridica()
+}
+interface HabitacionDAO{
+  +CrearIndividualEstandar()
+  +ObtenerIndividualEstandar()
+  +ModificarIndividualEstandar)
+  +EliminarIndividualEstandar()
+  +CrearDobleEstandar()
+  +ObtenerDobleEstandar()
+  +ModificarDobleEstandar()
+  +EliminarDobleEstandar()
+  +CrearDobleSuperior()
+  +ObtenerDobleSuperior()
+  +ModificarDobleSuperior()
+  +EliminarDobleSuperior()
+  +CrearSuperiorFamilyPlan()
+  +ObtenerSuperiorFamilyPlan()
+  +ModificarSuperiorFamilyPlan()
+  +EliminarSuperiorFamilyPlan()
+  +CrearSuiteDoble()
+  +ObtenerSuiteDoble()
+  +ModificarSuiteDoble()
+  +EliminarSuiteDoble()
+}
+interface PagoDAO{
+  +CrearPago()
+  +ObtenerPago()
+  +ModificarPago()
+  +EliminarPago()
+  +CrearPagoParcial()
+  +ObtenerPagoParcial()
+  +ModificarPagoParcial()
+  +EliminarPagoParcial()
+}
+interface MetodoPagoDAO{
+  +CrearMonedaEfectivo()
+  +ObtenerMonedaEfectivo()
+  +ModificarMonedaEfectivo()
+  +EliminarMonedaEfectivo()
+  +CrearTarjetaCredito()
+  +ObtenerTarjetaCredito()
+  +ModificarTarjetaCredito()
+  +EliminarTarjetaCredito()
+  +CrearTarjetaDebito()
+  +ObtenerTarjetaDebito()
+  +ModificarTarjetaDebito()
+  +EliminarTarjetaDebito()
+  +CrearCheque()
+  +ObtenerCheque()
+  +ModificarCheque()
+  +EliminarCheque()
+}
+interface FacturaDAO{
+  +CrearFactura()
+  +ObtenerFactura()
+  +ModificarFactura()
+  +EliminarFacturo()
+}
+interface NotaCreditoDAO{
+  +CrearNotaCredito()
+  +ObtenerNotaCredito()
+  +ModificarNotaCredito()
+  +EliminarNotaCredito()
+}
+
+class GestorReserva {
+  +HacerReserva()
+  +MostrarReservas()
+  +CancelarReserva()
+  +CheckIn()
+  +CheckOut()
+}
+
+class GestorHabitacion {
+  +MostrarHabitaciones()
+  +ObtenerEstadoHabitacion()
+}
+
+class GestorPago{
+  +RegistrarPago()
+  +MostrarCheques()
+  +MostrarIngresos()
+  +CorroborarPago()
+}
+
+class GestorFactura{
+  +BuscarResponsablePago()
+  +AltaResponsablePago()
+  +ModificarResponsablePago()
+  +BajaResponsablePago()
+  +GenerarFactura()
+  +MostrarFacturasResponsablePago()
+  +GenerarNotaCredito()
+}
+
+class GestorHuesped{
+  +BuscarHuesped()
+  +AltaHuesped()
+  +ModificarHuesped()
+  +BajaHuesped()
+}
+
+class GestorUsuario{
+  +autenticarUsuario()
+}
+
+class Usuario{
+  +usuario: string
+  +contraseña: string
+}
+class UsuarioDTO{
+  +usuario: string
+  +contraseña: string
+  constructorUsuarioDto()
+}
+abstract class Habitacion{
+  +nroHabitacion: string
+  +precioNoche: float
+  +capacidad: int
+  +tamanno: string
+}
+class IndividualEstandar{
+  +camasInd: int
+}
+class DobleEstandar{
+  +camasInd: int
+  +camasDob: int
+}
+class DobleSuperior{
+  +camasKingInd: int
+  +camasKingDob: int
+}
+class SuperiorFamilyPlan{
+  +camasInd: int
+  +camasDob: int
+}
+class SuiteDoble{
+  camasKingDob: int
+}
+class Reserva{
+  +fechaReserva: Date
+  +fechaInicio: Date
+  +fechaFin: Date
+  +apellido: string
+  +nombre: string
+  +telefono: string
+  +cancelada: bool
+}
+class Estadia{
+  +fechaInicio: Date
+  +fechaFin: Date
+}
+class Consumo{
+  +monto: float
+  +tipo: tipoConsumo
+  +detalle: string
+}
+class Factura{
+  +nroFactura: string
+}
+abstract class ResponsablePago
+
+class PersonaJuridica{
+  +razonSocial: string
+  +cuit: string
+  +telefono: string
+}
+class PersonaFisica
+class Pago{
+  +fechaCobro: Date
+  +montoTotal: float
+}
+abstract class MetodoPago{
+}
+class PagoParcial{
+  +monto: float
+  +fechaPago: date
+}
+class NotaCredito{
+  +nroNotaCredito: string
+  +importeNeto: float
+  +iva: float
+  +importeTotal: float
+}
+class Efectivo{
+}
+class MonedaExtranjera{
+  +cotizacion: float
+  +divisa: string
+}
+class Cheque{
+  +nroCheque: string
+  +banco: string
+  +plaza: Date
+  +fechaCobro: Date
+}
+class TarjetaCredito{
+  +nroTarjeta: string
+  +codigo: string
+  +fechaVen: Date
+  +titular: string
+  +cuotas: int
+}
+class TarjetaDebito{
+  +nroTarjeta: string
+  +codigo: string
+  +fechaVen: Date
+  +titular: string
+}
+class Huesped{
+  +nombre: string
+  +apellido: string
+  +tipoDoc: string
+  +numeroDoc: string
+  +cuil: string
+  +posicionIva: string
+  +fechaNac: Date
+  +telefono: string
+  +email: string
+  +ocupacion: string
+  +nacionalidad: string
+}
+class Direccion{
+  +domicilio: string
+  +depto: string
+  +codigoPostal: string
+  +localidad: string
+  +provincia: string
+  +pais: string
+}
+class IndividualEstandarDTO{
+  +nroHabitacion: string
+  +precioNoche: float
+  +capacidad: int
+  +tamanno: string
+  +camasInd: int
+  constructorIndividualDto()
+}
+class DobleEstandarDTO{
+  +nroHabitacion: string
+  +precio_noche: float
+  +capacidad: int
+  +tamanno: string
+  +camas_ind: int
+  +camas_dob: int
+  constructorDobleEstDto()
+}
+class DobleSuperiorDTO{
+  +nroHabitacion: string
+  +precioNoche: float
+  +capacidad: int
+  +tamanno: string
+  +camasKingInd: int
+  +camasKingDob: int
+  constructorDobleSupDto()
+}
+class SuperiorFamilyPlanDTO{
+  +nroHabitacion: string
+  +precioNoche: float
+  +capacidad: int
+  +tamanno: string
+  +camasInd: int
+  +camasDob: int
+  constructorFamilyDto()
+}
+class SuiteDobleDTO{
+  +nroHabitacion: string
+  +precioNoche: float
+  +capacidad: int
+  +tamanno: string
+  camasKingDob: int
+  constructorSuiteDto()
+}
+class ReservaDTO{
+  +fechaReserva: Date
+  +fechaInicio: Date
+  +fechaFin: Date
+  +apellido: string
+  +nombre: string
+  +telefono: string
+  +cancelada: bool
+  constructorReservaDto()
+}
+class EstadiaDTO{
+  +fechaInicio: Date
+  +fechaFin: Date
+  constructorEstadiaDto()
+}
+class ConsumoDTO{
+  +monto: float
+  +tipo: tipoConsumo
+  +detalle: string
+  constructorConsumoDto()
+}
+class FacturaDTO{
+  +nroFactura: string
+  constructorFacturaDto()
+}
+class PersonaJuridicaDTO{
+  +razonSocial: string
+  +cuit: string
+  +telefono: string
+  constructorPersonaJuridicaDto()
+}
+class PersonaFisicaDTO{
+  constructorPersonaFisicaDto()
+}
+class PagoDTO{
+  +fechaCobro: Date
+  +montoTotal: float
+  constructorPagoDto()
+}
+class PagoParcialDTO{
+  +fechaCobro: Date
+  +monto: float
+  constructorPagoParcialDto()
+}
+class NotaCreditoDTO{
+  +nroNotaCredito: string
+  +importeNeto: float
+  +iva: float
+  +importeTotal: float
+  constructorNotaCreditoDto()
+}
+class MonedaEfectivoDTO{
+  +cotizacion: float
+  +divisa: string
+  constructorMonedaEfectivoDto()
+}
+class ChequeDTO{
+  +nroCheque: string
+  +banco: string
+  +plaza: Date
+  +fechaCobro: Date
+  constructorChequeDto()
+}
+class TarjetaCreditoDTO{
+  +nroTarjeta: string
+  +codigo: string
+  +fechaVen: Date
+  +titular: string
+  +cuotas: int
+  constructorCreditoDto()
+}
+class TarjetaDebitoDTO{
+  +nroTarjeta: string
+  +codigo: string
+  +fechaVen: Date
+  +titular: string
+  constructorDebitoDto()
+}
+class HuespedDTO{
+  +nombre: string
+  +apellido: string
+  +tipoDoc: string
+  +numeroDoc: string
+  +cuil: string
+  +posicionIva: string
+  +fechaNac: Date
+  +telefono: string
+  +email: string
+  +ocupacion: string
+  +nacionalidad: string
+  constructorHuespedDto()
+}
+class DireccionDTO{
+  +domicilio: string
+  +depto: string
+  +codigoPostal: string
+  +localidad: string
+  +provincia: string
+  +pais: string
+  constructorDireccionDto()
+}
+
+
+
+
+Habitacion <|-- IndividualEstandar
+Habitacion <|-- DobleEstandar
+Habitacion <|-- DobleSuperior
+Habitacion <|-- SuperiorFamilyPlan
+Habitacion <|-- SuiteDoble
+
+MetodoPago <|-- Efectivo
+MetodoPago <|-- MonedaExtranjera
+MetodoPago <|-- Cheque
+MetodoPago <|-- TarjetaCredito
+MetodoPago <|-- TarjetaDebito
+
+ResponsablePago <|-- PersonaJuridica
+ResponsablePago <|-- PersonaFisica
+
+GestorUsuario ..> Usuario
+
+Habitacion "1" <-- "0..n" Reserva
+Habitacion "1" <-- "0..n" Estadia
+Estadia "0..1" -- "0..1" Reserva
+Estadia *-- "0..n" Consumo
+Huesped "1..n" -- "0..n" Estadia
+
+GestorHabitacion ..> Habitacion
+GestorReserva ..> Reserva
+GestorReserva ..> Estadia
+GestorHuesped ..> Huesped
+Pago "1..n" o-- "1..n" MetodoPago
+(Pago, MetodoPago) .. PagoParcial
+Huesped "0..n" --> "1" Direccion
+PersonaJuridica "0..n" --> "1" Direccion
+
+Factura "0..n" -- "1" Estadia
+Factura "0..n" o-- "1" ResponsablePago
+PersonaFisica "0..1" --> "1" Huesped
+Factura "1..n" -- "0..1" NotaCredito
+Factura "1" -- "1" Pago
+GestorPago ..> Pago
+GestorFactura ..> Factura
+GestorPago ..> Estadia
+
+GestorFactura "1" -- "1" GestorHuesped
+GestorReserva "1" -- "1" GestorHabitacion
+GestorPago "1" -- "1" GestorReserva
+GestorPago "1" -- "1" GestorFactura
+
+GestorUsuario ..> UsuarioDAO
+UsuarioDAO ..> UsuarioDTO
+GestorHabitacion ..> HabitacionDAO
+GestorReserva ..> ReservaDAO
+GestorReserva ..> EstadiaDAO
+HabitacionDAO ..> IndividualEstandarDTO
+HabitacionDAO ..> DobleEstandarDTO
+HabitacionDAO ..> DobleSuperiorDTO
+HabitacionDAO ..> SuperiorFamilyPlanDTO
+HabitacionDAO ..> SuiteDobleDTO
+ReservaDAO ..> ReservaDTO
+EstadiaDAO ..> EstadiaDTO
+EstadiaDAO ..> ConsumoDTO
+EstadiaDTO --> ConsumoDTO
+
+GestorHuesped ..> HuespedDAO
+GestorHuesped ..> DireccionDAO
+HuespedDAO ..> HuespedDTO
+HuespedDTO "0..n" --> "1" DireccionDTO
+
+GestorFactura ..> FacturaDAO
+GestorFactura ..> NotaCreditoDAO
+GestorPago ..> PagoDAO
+GestorPago ..> MetodoPagoDAO
+GestorPago ..> ResponsablePagoDAO
+GestorPago ..> DireccionDAO
+FacturaDAO ..> FacturaDTO
+NotaCreditoDAO ..> NotaCreditoDTO
+FacturaDTO "1..n" -- "0..1" NotaCreditoDTO
+ResponsablePagoDAO ..> PersonaJuridicaDTO
+ResponsablePagoDAO ..> PersonaFisicaDTO
+DireccionDAO ..> DireccionDTO
+PersonaJuridicaDTO "0..n" --> "1" DireccionDTO
+PersonaFisicaDTO "0..1" --> "1" HuespedDTO
+PagoDAO ..> PagoDTO
+PagoDAO ..> PagoParcialDTO
+MetodoPagoDAO ..> TarjetaDebitoDTO
+MetodoPagoDAO ..> TarjetaCreditoDTO
+MetodoPagoDAO ..> MonedaEfectivoDTO
+MetodoPagoDAO ..> ChequeDTO
+
+PagoDTO "1" -- "1..n" PagoParcialDTO
+PagoParcialDTO "1..n" -- "1" TarjetaDebitoDTO
+PagoParcialDTO "1..n" -- "1" TarjetaCreditoDTO
+PagoParcialDTO "1..n" -- "1" MonedaEfectivoDTO
+PagoParcialDTO "1..n" -- "1" ChequeDTO
+
+
+
+@enduml
+
+

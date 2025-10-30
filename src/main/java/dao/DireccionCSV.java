@@ -7,7 +7,7 @@ import exceptions.FracasoOperacion;
 import java.io.*;
 
 public class DireccionCSV implements DireccionDAO {
-    File fileDireccion = new File("direccion.csv");
+    File fileDireccion = new File("bdd/direccion.csv");
     BufferedReader frDireccion;
     FileWriter fwDireccion;
 

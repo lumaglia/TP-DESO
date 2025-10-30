@@ -14,12 +14,9 @@ import java.util.ArrayList;
 
 public class HuespedCSV implements HuespedDAO {
 
-    File fileHuesped = new File("huesped.csv");
-    //File fileDireccion = new File("direccion.csv");
+    File fileHuesped = new File("bdd/huesped.csv");
     BufferedReader frHuesped;
     FileWriter fwHuesped;
-    //BufferedReader frDireccion;
-    //FileWriter fwDireccion;
     private DireccionCSV direccionCSV;
 
     public HuespedCSV() throws FracasoOperacion {
@@ -31,7 +28,6 @@ public class HuespedCSV implements HuespedDAO {
         catch(IOException e){
             throw new FracasoOperacion(e.getMessage());
         }
-        //fileDireccion.createNewFile();
     }
 
     public void crearHuesped(Huesped huesped) throws FracasoOperacion{

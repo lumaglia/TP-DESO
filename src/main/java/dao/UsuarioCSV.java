@@ -8,7 +8,7 @@ import service.GestorUsuario;
 import java.io.*;
 
 public class UsuarioCSV implements UsuarioDAO {
-    File file = new File("usuarios.csv");
+    File file = new File("bdd/usuarios.csv");
     BufferedReader fr;
     FileWriter fw;
 

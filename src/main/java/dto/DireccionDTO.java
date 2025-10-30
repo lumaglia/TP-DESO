@@ -40,4 +40,15 @@ public class DireccionDTO {
     public String getPais() {
         return pais;
     }
+
+    @Override
+    public String toString() {
+        return
+                "domicilio='" + domicilio + "'\n" +
+                "depto='" + depto + "'\n" +
+                "codigoPostal='" + codigoPostal + "'\n" +
+                "localidad='" + localidad + "'\n" +
+                "provincia='" + provincia + "'\n" +
+                "pais='" + pais + "'\n";
+    }
 }

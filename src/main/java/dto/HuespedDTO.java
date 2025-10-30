@@ -83,4 +83,21 @@ public class HuespedDTO {
     public DireccionDTO getDireccion() {
         return direccion;
     }
+
+    @Override
+    public String toString() {
+        return
+                "nombre='" + nombre + "'\n" +
+                "apellido='" + apellido + "'\n" +
+                "tipoDoc='" + tipoDoc + "'\n" +
+                "nroDoc='" + nroDoc + "'\n" +
+                "cuil='" + cuil + "'\n" +
+                "posicionIva='" + posicionIva + "'\n" +
+                "fechaNac=" + fechaNac +
+                "telefono='" + telefono + "'\n" +
+                "email='" + email + "'\n" +
+                "ocupacion='" + ocupacion + "'\n" +
+                "nacionalidad='" + nacionalidad + "'\n" +
+                direccion.toString();
+    }
 }

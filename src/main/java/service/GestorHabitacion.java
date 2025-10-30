@@ -7,7 +7,7 @@ public class GestorHabitacion {
 
     }
 
-    public static synchronized GestorHabitacion getInstance() {
+    public synchronized static GestorHabitacion getInstance() {
         if(singleton_instance == null) singleton_instance = new GestorHabitacion();
         return singleton_instance;
     }

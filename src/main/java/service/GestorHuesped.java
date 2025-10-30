@@ -23,7 +23,7 @@ public class GestorHuesped {
         huespedDAO = new HuespedCSV();
     }
 
-    public static synchronized GestorHuesped getInstance() throws FracasoOperacion {
+    public synchronized static GestorHuesped getInstance() throws FracasoOperacion {
         if(singleton_instance == null) singleton_instance = new GestorHuesped();
         return singleton_instance;
     }

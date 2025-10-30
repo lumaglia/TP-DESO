@@ -8,7 +8,7 @@ public class GestorFactura {
 
     }
 
-    public static synchronized GestorFactura getInstance() {
+    public synchronized static GestorFactura getInstance() {
         if(singleton_instance == null) singleton_instance = new GestorFactura();
         return singleton_instance;
     }

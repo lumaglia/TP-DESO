@@ -18,7 +18,7 @@ public class GestorUsuario {
         dao = new UsuarioCSV();
     }
 
-    private static synchronized GestorUsuario getInstance() throws FracasoOperacion {
+    private synchronized static GestorUsuario getInstance() throws FracasoOperacion {
         if(singleton_instance == null) singleton_instance = new GestorUsuario();
         return singleton_instance;
     }

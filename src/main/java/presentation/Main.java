@@ -83,22 +83,26 @@ public class Main {
                         }
                         first = false;
                     }
-
+                    boolean forzarAltaHuesped = false;
                     while (true) {
-                        System.out.println("Bienvenido "+usuario);
-                        System.out.println("1- Dar de alta un huésped");
-                        System.out.println("2- Buscar huéspedes");
-                        System.out.println("3- Cerrar sesion");
-                        System.out.print("\n");
-                        System.out.print("Ingrese la opcion deseada: ");
-                        try {
-                            opcion = s.nextInt();
-                        } catch (InputMismatchException e) {
-                            opcion = -1;
-                        }finally {
-                            s.nextLine();
+                        if(forzarAltaHuesped) {
+                            opcion = 1;
+                            forzarAltaHuesped = false;
+                        }else {
+                            System.out.println("Bienvenido " + usuario);
+                            System.out.println("1- Dar de alta un huésped");
+                            System.out.println("2- Buscar huéspedes");
+                            System.out.println("3- Cerrar sesion");
+                            System.out.print("\n");
+                            System.out.print("Ingrese la opcion deseada: ");
+                            try {
+                                opcion = s.nextInt();
+                            } catch (InputMismatchException e) {
+                                opcion = -1;
+                            } finally {
+                                s.nextLine();
+                            }
                         }
-
                         menuPrincipal:
                         switch (opcion) {
                             case 1: {
@@ -272,7 +276,8 @@ public class Main {
                                             }
                                         }
                                     } else {
-                                        System.out.println("No se encontraron huespedes con los datos dados");
+                                        System.out.println("No se encontraron huespedes con los datos dados, se procede a la alta de un nuevo huesped");
+                                        forzarAltaHuesped = true;
                                         break menuPrincipal;
                                     }
                                 }

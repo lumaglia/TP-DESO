@@ -44,9 +44,6 @@ public class GestorHuesped {
         direccion.setProvincia(direccionDTO.getProvincia());
         direccion.setPais(direccionDTO.getPais());
 
-        //Esto esta demas porque crearHuesped() ya lo hace, lo puse porque estaba en el diagrama de secuencia
-        //huespedDAO.crearDireccion(direccion);
-
         Huesped huesped = new Huesped();
         huesped.setNombre(huespedDTO.getNombre());
         huesped.setApellido(huespedDTO.getApellido());
@@ -73,8 +70,12 @@ public class GestorHuesped {
         return huespedDAO.obtenerHuesped(huespedDTO);
     }
 
-    //NUNCA CHEQUEA QUE NO REPITA TIPODOC Y NUMDOC CUANDO MODIFICAS, DEBERIA LANZAR DOCUMENTO REPETIDO EXCEPTION
-    public void modificarHuesped(String tipoDoc, String numeroDoc, HuespedDTO huespedDTO) throws FracasoOperacion{
+    public void modificarHuesped(String tipoDoc, String numeroDoc, HuespedDTO huespedDTO) throws DocumentoYaExistente, FracasoOperacion{
+
+        if(!huespedDAO.obtenerHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTO.getTipoDoc()).setNroDoc(huespedDTO.getNroDoc()).createHuespedDTO()).isEmpty()) {
+            throw new DocumentoYaExistente("El tipo y numero de documento ya existen en el sistema");
+        }
+
         DireccionDTO direccionDTO = huespedDTO.getDireccion();
         Direccion direccion = new Direccion();
         direccion.setDomicilio(direccionDTO.getDomicilio());
@@ -83,9 +84,6 @@ public class GestorHuesped {
         direccion.setLocalidad(direccionDTO.getLocalidad());
         direccion.setProvincia(direccionDTO.getProvincia());
         direccion.setPais(direccionDTO.getPais());
-
-        //Esto esta demas porque crearHuesped() ya lo hace, lo puse porque estaba en el diagrama de secuencia
-        //huespedDAO.crearDireccion(direccion);
 
         Huesped huesped = new Huesped();
         huesped.setNombre(huespedDTO.getNombre());

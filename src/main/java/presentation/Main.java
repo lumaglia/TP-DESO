@@ -128,8 +128,15 @@ public class Main {
                                                 while (linea.isEmpty());
                                                 switch (linea.toUpperCase()) {
                                                     case "ACEPTAR IGUALMENTE": {
-                                                        //MODIFICAR HUESPED
-                                                        System.out.println("HUESPED SOBREESCRITO(NO IMPLEMENTADO)");
+                                                        try{
+                                                            ArrayList<HuespedDTO> hList = gestorHuesped.buscarHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTO.getTipoDoc()).setNroDoc(huespedDTO.getNroDoc()).createHuespedDTO());
+                                                            HuespedDTO sobrescrito = hList.getFirst();
+                                                            gestorHuesped.bajaHuesped(sobrescrito);
+                                                            gestorHuesped.altaHuesped(huespedDTO);
+                                                        }catch (FracasoOperacion | DocumentoYaExistente ex){
+                                                            throw new RuntimeException(ex);
+                                                        }
+                                                        System.out.println("HUESPED SOBREESCRITO");
                                                         valido = true;
                                                         break;
                                                     }
@@ -343,10 +350,68 @@ public class Main {
                     System.out.println("Por favor ingrese los datos que desea modificar: ");
                     HuespedDTOBuilder huespedBuilder = ingresarDatosHuesped(s, false, huespedDTO);
                     if(huespedBuilder != null) {
-                        //NUNCA SE CHEQUEA QUE EL DOCUMENTO NO ESTE REPETIDO, FALTA MANEJAR LA EXCEPCION
+
                         HuespedDTO huespedDTONew = huespedBuilder.createHuespedDTO();
                         try {
                             gestorHuesped.modificarHuesped(huespedDTO.getTipoDoc(), huespedDTO.getNroDoc(), huespedDTONew);
+                        } catch (DocumentoYaExistente e) {
+                            System.out.println(e.getMessage());
+                            boolean valido = false;
+                            while (!valido) {
+                                System.out.println("Desea ACEPTAR IGUALMENTE o CORREGIR?");
+                                do linea = s.nextLine();
+                                while (linea.isEmpty());
+                                switch (linea.toUpperCase()) {
+                                    case "ACEPTAR IGUALMENTE": {
+                                        try {
+                                            ArrayList<HuespedDTO> hList = gestorHuesped.buscarHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTONew.getTipoDoc()).setNroDoc(huespedDTONew.getNroDoc()).createHuespedDTO());
+                                            HuespedDTO sobrescrito = hList.getFirst();
+                                            gestorHuesped.bajaHuesped(sobrescrito);
+                                            gestorHuesped.modificarHuesped(huespedDTO.getTipoDoc(), huespedDTO.getNroDoc(), huespedDTONew);
+                                        } catch (FracasoOperacion | DocumentoYaExistente ex) {
+                                            throw new RuntimeException(ex);
+                                        }
+                                        System.out.println("HUESPED SOBREESCRITO");
+                                        valido = true;
+                                        break;
+                                    }
+                                    case "CORREGIR": {
+                                        System.out.print("Tipo de documento: ");
+                                        do linea = s.nextLine();
+                                        while (linea.isEmpty());
+                                        if (linea.equals("CANCELAR")) return null;
+                                        huespedBuilder = huespedBuilder.setTipoDoc(linea);
+
+                                        while (!valido) {
+                                            System.out.print("Numero de documento: ");
+                                            do linea = s.nextLine();
+                                            while (linea.isEmpty());
+                                            if (linea.equals("CANCELAR")) return null;
+                                            try {
+                                                if (Integer.parseInt(linea) < 0) {
+                                                    System.out.println("Por favor ingrese un numero valido");
+                                                } else valido = true;
+                                            } catch (NumberFormatException ex) {
+                                                System.out.println("Por favor ingrese un numero valido");
+                                            }
+                                        }
+                                        huespedBuilder = huespedBuilder.setNroDoc(linea);
+                                        huespedDTO = huespedBuilder.createHuespedDTO();
+                                        try {
+                                            gestorHuesped.altaHuesped(huespedDTO);
+                                        } catch (DocumentoYaExistente ex) {
+                                            System.out.println(ex.getMessage());
+                                            valido = false;
+                                        } catch (FracasoOperacion ex) {
+                                            throw new RuntimeException(ex);
+                                        }
+                                        break;
+                                    }
+                                    default: {
+                                        System.out.println("Por favor ingrese un valor valido");
+                                    }
+                                }
+                            }
                         } catch (FracasoOperacion e) {
                             throw new RuntimeException(e);
                         }

@@ -7,7 +7,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "huesped")
+@Table(
+    name = "huesped",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"tipo_doc", "nro_doc"})
+    }
+    )
 
 @Getter
 @Setter

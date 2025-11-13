@@ -5,7 +5,9 @@ import org.example.TP_DESO.dao.UsuarioDAO;
 import org.example.TP_DESO.dto.UsuarioDTO;
 import org.example.TP_DESO.domain.Usuario;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GestorUsuario {
 
     private static GestorUsuario singleton_instance;

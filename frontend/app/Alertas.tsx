@@ -1,4 +1,5 @@
 import { AlertDialog } from '@base-ui-components/react/alert-dialog';
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import warningIcon from '../public/warning.png'
 import './AlertaCancelar.css';
@@ -26,6 +27,7 @@ export function AlertaCancelar({open, setOpen} : {open: boolean, setOpen: (open:
 }
 
 export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen: (open: boolean, e: any) => void, data: any}) {
+    const router = useRouter();
     return (
         <AlertDialog.Root open={open} onOpenChange={setOpen}>
             {/*<AlertDialog.Trigger data-color="red" className={'Button'}>*/}
@@ -53,8 +55,11 @@ export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen:
                                     'Accept': 'application/json',
                                     'Content-Type': 'application/json'
                                 }
-                            }).then(res => res.json())
-                                .then(res => console.log(res))
+                            }).then(res => {
+                                if(res.ok){
+                                    router.push(`/AltaHuesped/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
+                                }
+                            })
                         }}>
                             Cargar Igualmente
                         </AlertDialog.Close>

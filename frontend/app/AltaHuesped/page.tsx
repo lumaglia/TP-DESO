@@ -2,9 +2,11 @@
 
 import { ReactNode, useState, useRef } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
-import Campo from './Campo.tsx'
-import { AlertaCancelar, AlertaDocumento } from './Alertas.tsx'
-import { validation, comboValues, FormValues, fieldTypes } from '../public/constants.ts'
+import { useRouter } from 'next/navigation';
+import Link from 'next/link'
+import Campo from '../Campo.tsx'
+import { AlertaCancelar, AlertaDocumento } from '../Alertas.tsx'
+import { validation, comboValues, FormValues, fieldTypes } from '../../public/constants.ts'
 import './AltaHuesped.css'
 
 function Row({ children }: {children: ReactNode}) {
@@ -23,6 +25,7 @@ function AltaHuesped() {
     const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
     const [ alertaDocumentoOpen, setAlertaDocumentoOpen] = useState(false);
     const formRef = useRef<FieldValues>(null);
+    const router = useRouter();
 
     const posicionIVA = watch('posicionIva');
     if(validation['cuil'].required.value && posicionIVA !== 'Responsable Inscripto'){
@@ -44,8 +47,8 @@ function AltaHuesped() {
         }).then(res => {
             if (res.status === 409) {
                 setAlertaDocumentoOpen(true);
-            }else{
-                res.json().then(res => console.log(res))
+            }else if(res.ok) {
+                router.push(`/AltaHuesped/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
             }
         })
     };
@@ -108,7 +111,9 @@ function AltaHuesped() {
                                    validation={validation['localidad']} register={register} errors={errors}/>
                         </Row>
                         <Row>
-                            <button type='button' className='Button' onClick={() => setAlertaCancelarOpen(true)}>Cancelar</button>
+                            <Link href={'/'} style={{margin:'0', padding:'0', display:'inline-flex', alignItems:'center', textDecoration:'none'}}>
+                                <button type='button' className='Button'>Cancelar</button>
+                            </Link>
                             <Campo field='Provincia' placeholder='Ej. Entre Ríos' isRequired={true}
                                    validation={validation['provincia']} register={register} errors={errors}/>
                             <Campo field='Pais' placeholder='Ej. Argentina' isRequired={true}

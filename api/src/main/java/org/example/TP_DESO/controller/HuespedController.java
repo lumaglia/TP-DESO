@@ -7,10 +7,7 @@ import org.example.TP_DESO.service.GestorHuesped;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class HuespedController {
@@ -24,14 +21,26 @@ public class HuespedController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/Alta/Huesped")
-    public ResponseEntity<HuespedDTO> altaHuesped(@RequestBody HuespedDTO huespedDTO) {
-        try {
-            gestorHuesped.altaHuesped(huespedDTO);
-        } catch (DocumentoYaExistente e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        } catch (FracasoOperacion e) {
-            throw new RuntimeException(e);
+    public ResponseEntity<HuespedDTO> altaHuesped(@RequestBody HuespedDTO huespedDTO, @RequestParam(required = false, defaultValue = "false") boolean modify) {
+        if(!modify) {
+            try {
+                gestorHuesped.altaHuesped(huespedDTO);
+            } catch (DocumentoYaExistente e) {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            } catch (FracasoOperacion e) {
+                throw new RuntimeException(e);
+            }
+        }else{
+            try {
+                gestorHuesped.bajaHuesped(huespedDTO);
+                gestorHuesped.altaHuesped(huespedDTO);
+            } catch (DocumentoYaExistente e) {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            } catch (FracasoOperacion e) {
+                throw new RuntimeException(e);
+            }
         }
+
         return ResponseEntity.ok(huespedDTO);
     }
 

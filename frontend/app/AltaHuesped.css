@@ -20,7 +20,7 @@ body {
     min-height: 100vh;
 }
 
-button {
+.Button {
     border-radius: 8px;
     border: 1px solid transparent;
     padding: 0.6em 1.2em;
@@ -36,11 +36,11 @@ button {
     max-height: 41px;
     align-self: flex-end;
 }
-button:hover {
+.Button:hover {
     border-color: #3DAEE9;
 }
-button:focus,
-button:focus-visible {
+.Button:focus,
+.Button:focus-visible {
     outline: 1px solid #3DAEE9;
 }
 

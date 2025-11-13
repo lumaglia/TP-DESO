@@ -1,9 +1,9 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useRef } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
 import Campo from './Campo.tsx'
-import AlertaCancelar from './AlertaCancelar'
+import { AlertaCancelar, AlertaDocumento } from './Alertas.tsx'
 import { validation, comboValues, FormValues, fieldTypes } from '../public/constants.ts'
 import './AltaHuesped.css'
 
@@ -20,7 +20,9 @@ function AltaHuesped() {
     const form = useForm<FormValues>();
     const { register, control, handleSubmit, formState, watch, clearErrors, trigger } = form;
     const { errors } = formState;
-    const [ cancelarOpen, setCancelarOpen] = useState(false);
+    const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
+    const [ alertaDocumentoOpen, setAlertaDocumentoOpen] = useState(false);
+    const formRef = useRef<FieldValues>(null);
 
     const posicionIVA = watch('posicionIva');
     if(validation['cuil'].required.value && posicionIVA !== 'Responsable Inscripto'){
@@ -31,6 +33,7 @@ function AltaHuesped() {
 
     const onSubmit = (data: FieldValues) => {
         data.fechaNac = data.fechaNac.toLocaleDateString('en-CA');
+        formRef.current = data
         fetch('http://localhost:8081/Alta/Huesped', {
             method: 'POST',
             body: JSON.stringify(data),
@@ -38,8 +41,13 @@ function AltaHuesped() {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
-        }).then(res => res.json())
-            .then(res => console.log(res))
+        }).then(res => {
+            if (res.status === 409) {
+                setAlertaDocumentoOpen(true);
+            }else{
+                res.json().then(res => console.log(res))
+            }
+        })
     };
 
     return (
@@ -100,18 +108,19 @@ function AltaHuesped() {
                                    validation={validation['localidad']} register={register} errors={errors}/>
                         </Row>
                         <Row>
-                            <button type='button' onClick={() => setCancelarOpen(true)}>Cancelar</button>
+                            <button type='button' className='Button' onClick={() => setAlertaCancelarOpen(true)}>Cancelar</button>
                             <Campo field='Provincia' placeholder='Ej. Entre Ríos' isRequired={true}
                                    validation={validation['provincia']} register={register} errors={errors}/>
                             <Campo field='Pais' placeholder='Ej. Argentina' isRequired={true}
                                    validation={validation['pais']} register={register} errors={errors}/>
-                            <button type='submit'>Enviar</button>
+                            <button type='submit' className='Button'>Enviar</button>
                         </Row>
                     </div>
                 </div>
             </form>
-            <AlertaCancelar open={cancelarOpen} setOpen={setCancelarOpen} />
-        </>
+            <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} />
+            <AlertaDocumento open={alertaDocumentoOpen} setOpen={setAlertaDocumentoOpen} data={formRef.current}/>
+            </>
     );
 }
 

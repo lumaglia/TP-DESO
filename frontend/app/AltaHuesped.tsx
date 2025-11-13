@@ -1,8 +1,9 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
 import Campo from './Campo.tsx'
+import AlertaCancelar from './AlertaCancelar'
 import { validation, comboValues, FormValues, fieldTypes } from '../public/constants.ts'
 import './AltaHuesped.css'
 
@@ -19,6 +20,7 @@ function AltaHuesped() {
     const form = useForm<FormValues>();
     const { register, control, handleSubmit, formState, watch, clearErrors, trigger } = form;
     const { errors } = formState;
+    const [ cancelarOpen, setCancelarOpen] = useState(false);
 
     const posicionIVA = watch('posicionIva');
     if(validation['cuil'].required.value && posicionIVA !== 'Responsable Inscripto'){
@@ -28,10 +30,7 @@ function AltaHuesped() {
     }else validation['cuil'].required.value = posicionIVA === 'Responsable Inscripto'
 
     const onSubmit = (data: FieldValues) => {
-        console.log(data.fechaNac)
         data.fechaNac = data.fechaNac.toLocaleDateString('en-CA');
-        console.log(data.fechaNac)
-        console.log(JSON.parse(JSON.stringify(data)));
         fetch('http://localhost:8081/Alta/Huesped', {
             method: 'POST',
             body: JSON.stringify(data),
@@ -101,16 +100,17 @@ function AltaHuesped() {
                                    validation={validation['localidad']} register={register} errors={errors}/>
                         </Row>
                         <Row>
-                            <button type='button' style={{}}>Cancelar</button>
+                            <button type='button' onClick={() => setCancelarOpen(true)}>Cancelar</button>
                             <Campo field='Provincia' placeholder='Ej. Entre Ríos' isRequired={true}
                                    validation={validation['provincia']} register={register} errors={errors}/>
                             <Campo field='Pais' placeholder='Ej. Argentina' isRequired={true}
                                    validation={validation['pais']} register={register} errors={errors}/>
-                            <button type='submit' style={{}}>Enviar</button>
+                            <button type='submit'>Enviar</button>
                         </Row>
                     </div>
                 </div>
             </form>
+            <AlertaCancelar open={cancelarOpen} setOpen={setCancelarOpen} />
         </>
     );
 }

@@ -1,7 +1,14 @@
 package org.example.TP_DESO.dto;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class HuespedDTO {
     private String nombre;
     private String apellido;

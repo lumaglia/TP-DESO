@@ -1,5 +1,12 @@
 package org.example.TP_DESO.dto;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class DireccionDTO {
     private String domicilio;
     private String depto;

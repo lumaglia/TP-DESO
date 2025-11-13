@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UsuarioDAO extends JpaRepository<Usuario, String> {
+public interface UsuarioDAO {
     void CrearUsuario(Usuario usuario) throws FracasoOperacion;
     UsuarioDTO ObtenerUsuario(UsuarioDTO usuario) throws FracasoOperacion;
     void ModificarUsuario(String nombreUsuario, Usuario usuario) throws FracasoOperacion;

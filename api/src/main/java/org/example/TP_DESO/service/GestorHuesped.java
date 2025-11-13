@@ -9,9 +9,11 @@ import org.example.TP_DESO.dto.HuespedDTO;
 import org.example.TP_DESO.dto.HuespedDTOBuilder;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+@Service
 public class GestorHuesped {
 
     private static GestorHuesped singleton_instance;

@@ -1,6 +1,22 @@
 package org.example.TP_DESO.domain;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "direccion")
+
+@Getter
+@Setter
+
 public class Direccion {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+
     private String domicilio;
     private String depto;
     private String codigoPostal;
@@ -17,54 +33,6 @@ public class Direccion {
         this.codigoPostal = codigoPostal;
         this.localidad = localidad;
         this.provincia = provincia;
-        this.pais = pais;
-    }
-
-    public String getDomicilio() {
-        return domicilio;
-    }
-
-    public void setDomicilio(String domicilio) {
-        this.domicilio = domicilio;
-    }
-
-    public String getDepto() {
-        return depto;
-    }
-
-    public void setDepto(String depto) {
-        this.depto = depto;
-    }
-
-    public String getCodigoPostal() {
-        return codigoPostal;
-    }
-
-    public void setCodigoPostal(String codigoPostal) {
-        this.codigoPostal = codigoPostal;
-    }
-
-    public String getLocalidad() {
-        return localidad;
-    }
-
-    public void setLocalidad(String localidad) {
-        this.localidad = localidad;
-    }
-
-    public String getProvincia() {
-        return provincia;
-    }
-
-    public void setProvincia(String provincia) {
-        this.provincia = provincia;
-    }
-
-    public String getPais() {
-        return pais;
-    }
-
-    public void setPais(String pais) {
         this.pais = pais;
     }
 

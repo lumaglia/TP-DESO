@@ -2,8 +2,21 @@ package org.example.TP_DESO.domain;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "huesped")
+
+@Getter
+@Setter
 
 public class Huesped {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private String nombre;
     private String apellido;
@@ -16,8 +29,14 @@ public class Huesped {
     private String email;
     private String ocupacion;
     private String nacionalidad;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "direccion_id")
     private Direccion direccion;
+
+    @Transient
     private ArrayList<Reserva> reservas;
+    @Transient
     private ArrayList<Estadia> estadias;
 
     public Huesped() {
@@ -38,118 +57,6 @@ public class Huesped {
         this.nacionalidad = nacionalidad;
         this.direccion = direccion;
         this.reservas = reservas;
-        this.estadias = estadias;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    public String getTipoDoc() {
-        return tipoDoc;
-    }
-
-    public void setTipoDoc(String tipoDoc) {
-        this.tipoDoc = tipoDoc;
-    }
-
-    public String getNroDoc() {
-        return nroDoc;
-    }
-
-    public void setNroDoc(String nroDoc) {
-        this.nroDoc = nroDoc;
-    }
-
-    public String getCuil() {
-        return cuil;
-    }
-
-    public void setCuil(String cuil) {
-        this.cuil = cuil;
-    }
-
-    public String getPosicionIva() {
-        return posicionIva;
-    }
-
-    public void setPosicionIva(String posicionIva) {
-        this.posicionIva = posicionIva;
-    }
-
-    public LocalDate getFechaNac() {
-        return fechaNac;
-    }
-
-    public void setFechaNac(LocalDate fechaNac) {
-        this.fechaNac = fechaNac;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getOcupacion() {
-        return ocupacion;
-    }
-
-    public void setOcupacion(String ocupacion) {
-        this.ocupacion = ocupacion;
-    }
-
-    public String getNacionalidad() {
-        return nacionalidad;
-    }
-
-    public void setNacionalidad(String nacionalidad) {
-        this.nacionalidad = nacionalidad;
-    }
-
-    public Direccion getDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(Direccion direccion) {
-        this.direccion = direccion;
-    }
-
-    public ArrayList<Reserva> getReservas() {
-        return reservas;
-    }
-
-    public void setReservas(ArrayList<Reserva> reservas) {
-        this.reservas = reservas;
-    }
-
-    public ArrayList<Estadia> getEstadias() {
-        return estadias;
-    }
-
-    public void setEstadias(ArrayList<Estadia> estadias) {
         this.estadias = estadias;
     }
 

@@ -1,7 +1,20 @@
 package org.example.TP_DESO.domain;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "usuario")
+
+@Getter
+@Setter
+
 public class Usuario {
+
+    @Id
     private String usuario;
+
     private String contrasenna;
 
     public Usuario(String usuario, String contrasenna) {
@@ -9,12 +22,8 @@ public class Usuario {
         this.contrasenna = contrasenna;
     }
 
-    public String getUsuario() {
-        return usuario;
-    }
+    public Usuario() {
 
-    public String getContrasenna() {
-        return contrasenna;
     }
 
 

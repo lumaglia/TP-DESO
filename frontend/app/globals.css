@@ -8,3 +8,10 @@
 .root {
     isolation: isolate;
 }
+
+header {
+    background-color: #FFFFFF;
+    color: #4a5465;
+    margin: 0;
+    width: 100%;
+}

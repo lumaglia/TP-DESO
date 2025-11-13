@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import '../AltaHuesped.css'
+import Encabezado from "../../Encabezado";
 
 export default function successPage() {
     const router = useRouter();
@@ -9,7 +10,7 @@ export default function successPage() {
     const huesped = searchParams.get('huesped');
     return(
         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-            <h3 style={{textAlign:'center'}}>Dar Alta de Huésped</h3>
+            <Encabezado titulo='Dar Alta de Huésped' />
             <h2>El huesped {huesped} ha sido satisfactoriamente cargado al sistema</h2>
             <h3>¿Desea cargar otro?</h3>
             <div>

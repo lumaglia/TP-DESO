@@ -4,7 +4,7 @@
     font-weight: 400;
 
     color-scheme: light;
-    background-color: rgba(255, 255, 255, 0.87);
+    background-color: rgb(238, 241, 244);
     color: #000000;
 
     font-synthesis: none;
@@ -14,8 +14,10 @@
     -webkit-text-size-adjust: 100%;
 }
 
+
 body {
     margin: 0;
+    padding: 0;
     min-width: 320px;
     min-height: 100vh;
 }
@@ -27,7 +29,7 @@ body {
     font-size: 1em;
     font-weight: 500;
     font-family: inherit;
-    background-color: #545F71;
+    background-color: #545f71;
     color: #fff;
     cursor: pointer;
     transition: border-color 0.25s;
@@ -37,25 +39,25 @@ body {
     align-self: flex-end;
 }
 .Button:hover {
-    border-color: #3DAEE9;
+    background-color: #6f7c97;
 }
 .Button:focus,
 .Button:focus-visible {
-    outline: 1px solid #3DAEE9;
+    background-color: #3d4555;
 }
 
 input:focus {
-    outline: 2px solid #3DAEE9; /* Change to your desired color */
+    outline: 2px solid #80c7ea; /* Change to your desired color */
 }
 
 select.error,
 input.error{
-    outline: 1px solid #FA6861;
+    outline: 1px solid #ff3b30;
     color: black;
 }
 select.error:focus,
 input.error:focus{
-    outline: 2px solid #fa4036;
+    outline: 2px solid #ff3b30;
 }
 
 select,
@@ -80,13 +82,14 @@ p {
     margin: 0 0 0 2px;
 }
 .error {
-    color: red;
+    color: #ff3b30;
     font-size: 14px;
     text-align: left;
     margin: 0 0 0 2px;
 }
 
 .row {
+    color: #4a5465;
     display: flex;
     padding: 7px;
     justify-content: center;

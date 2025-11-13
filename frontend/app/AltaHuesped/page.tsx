@@ -1,10 +1,11 @@
 'use client';
 
-import { ReactNode, useState, useRef } from 'react';
+import React, { ReactNode, useState, useRef } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 import Campo from '../Campo.tsx'
+import Encabezado from '../Encabezado.tsx'
 import { AlertaCancelar, AlertaDocumento } from '../Alertas.tsx'
 import { validation, comboValues, FormValues, fieldTypes } from '../../public/constants.ts'
 import './AltaHuesped.css'
@@ -55,7 +56,7 @@ function AltaHuesped() {
 
     return (
         <>
-            <h3 style={{textAlign:'center'}}>Dar Alta de Huésped</h3>
+            <Encabezado titulo='Dar Alta de Huésped' />
             <h2 style={{textAlign:'center'}}>Ingresar los datos del nuevo huésped</h2>
             <form method='post' onSubmit={handleSubmit(onSubmit)} noValidate>
                 <div style={{display:'flex', justifyContent:'center', alignItems:'flex-start'}}>
@@ -73,7 +74,7 @@ function AltaHuesped() {
                                    register={register} errors={errors} validation={validation['numeroDocumento']} />
                         </Row>
                         <Row>
-                            <Campo field='CUIL' placeholder='11 - 11.222.333 - 2' register={register} errors={errors}
+                            <Campo field='CUIL' placeholder='11 - 11222333 - 2' register={register} errors={errors}
                                    validation={validation['cuil']}
                                    isRequired={posicionIVA === 'Responsable Inscripto'} />
                             <Campo field='Posición frente al IVA' placeholder='Consumidor Final' type={fieldTypes.COMBOBOX}
@@ -128,5 +129,7 @@ function AltaHuesped() {
             </>
     );
 }
+
+
 
 export default AltaHuesped

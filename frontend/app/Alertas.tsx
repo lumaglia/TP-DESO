@@ -1,6 +1,7 @@
 import { AlertDialog } from '@base-ui-components/react/alert-dialog';
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import Link from 'next/link'
 import warningIcon from '../public/warning.png'
 import './AlertaCancelar.css';
 
@@ -16,9 +17,9 @@ export function AlertaCancelar({open, setOpen} : {open: boolean, setOpen: (open:
                     <AlertDialog.Title className={'Title'}>¿Desea cancelar el alta de huesped?</AlertDialog.Title>
                     <div className={'Actions'}>
                         <AlertDialog.Close className={'PopupButton'} data-color="white">No</AlertDialog.Close>
-                        <AlertDialog.Close className={'PopupButton'} onClick={() => window.location.reload()}>
+                        <Link href={'/'} className='PopupButton' style={{textDecoration: 'none'}}>
                             Si
-                        </AlertDialog.Close>
+                        </Link>
                     </div>
                 </AlertDialog.Popup>
             </AlertDialog.Portal>

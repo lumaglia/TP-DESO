@@ -112,9 +112,7 @@ function AltaHuesped() {
                                    validation={validation['localidad']} register={register} errors={errors}/>
                         </Row>
                         <Row>
-                            <Link href={'/'} style={{margin:'0', padding:'0', display:'inline-flex', alignItems:'center', textDecoration:'none'}}>
-                                <button type='button' className='Button'>Cancelar</button>
-                            </Link>
+                            <button type='button' className='Button' onClick={() => setAlertaCancelarOpen(true)}>Cancelar</button>
                             <Campo field='Provincia' placeholder='Ej. Entre Ríos' isRequired={true}
                                    validation={validation['provincia']} register={register} errors={errors}/>
                             <Campo field='Pais' placeholder='Ej. Argentina' isRequired={true}

@@ -117,7 +117,7 @@ export const validation = {
     'posicionIva': {},
     'fechaNacimiento': {
         valueAsDate: true,
-        required: true,
+        required: 'La fecha de nacimiento es obligatoria',
         pattern: {
             value: /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/,
             message: 'La fecha debe seguir el patron DD/MM/YYYY'

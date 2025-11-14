@@ -35,7 +35,7 @@ public class Huesped {
     private String ocupacion;
     private String nacionalidad;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "direccion_id")
     private Direccion direccion;
 

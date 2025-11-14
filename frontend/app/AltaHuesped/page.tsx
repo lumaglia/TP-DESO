@@ -70,7 +70,7 @@ function AltaHuesped() {
                         <Row>
                             <Campo field='Tipo de documento' isRequired={true} type={fieldTypes.COMBOBOX}
                                    register={register} errors={errors} comboValues={comboValues['tipoDocumento']} validation={validation['tipoDocumento']} />
-                            <Campo field='Número de documento' placeholder='Ej. 11.222.333' isRequired={true}
+                            <Campo field='Número de documento' placeholder='Ej. 11222333' isRequired={true}
                                    register={register} errors={errors} validation={validation['numeroDocumento']} />
                         </Row>
                         <Row>

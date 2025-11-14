@@ -2,6 +2,7 @@ package org.example.TP_DESO.service;
 
 import org.example.TP_DESO.dao.HuespedCSV;
 import org.example.TP_DESO.dao.HuespedDAO;
+import org.example.TP_DESO.dao.HuespedDAOMySQL;
 import org.example.TP_DESO.domain.Direccion;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.DireccionDTO;
@@ -9,6 +10,8 @@ import org.example.TP_DESO.dto.HuespedDTO;
 import org.example.TP_DESO.dto.HuespedDTOBuilder;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,17 +19,11 @@ import java.util.ArrayList;
 @Service
 public class GestorHuesped {
 
-    private static GestorHuesped singleton_instance;
-    HuespedDAO huespedDAO;
+    private final HuespedDAO huespedDAO;
 
-    private GestorHuesped() throws FracasoOperacion {
-        super();
-        huespedDAO = new HuespedCSV();
-    }
-
-    public synchronized static GestorHuesped getInstance() throws FracasoOperacion {
-        if(singleton_instance == null) singleton_instance = new GestorHuesped();
-        return singleton_instance;
+    @Autowired
+    private GestorHuesped(HuespedDAO huespedDAO) throws FracasoOperacion {
+        this.huespedDAO = huespedDAO;
     }
 
     public void altaHuesped(HuespedDTO huespedDTO) throws DocumentoYaExistente, FracasoOperacion {

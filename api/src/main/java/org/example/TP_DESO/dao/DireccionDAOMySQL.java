@@ -17,7 +17,7 @@ public class DireccionDAOMySQL implements DireccionDAO {
     private DireccionRepository direccionRepository;
 
     @Override
-    public void crearDireccion(Direccion direccion) throws FracasoOperacion {
+    public Direccion crearDireccion(Direccion direccion) throws FracasoOperacion {
         try {
             Optional<Direccion> existente = direccionRepository
                     .findByPaisAndCodigoPostalAndDomicilioAndDepto(
@@ -27,8 +27,11 @@ public class DireccionDAOMySQL implements DireccionDAO {
                             direccion.getDepto()
                     );
 
-            if (existente.isEmpty()) {
-                direccionRepository.save(direccion);
+            if (existente.isPresent()) {
+                return existente.get();
+            }
+            else{
+                return direccionRepository.save(direccion);
             }
         } catch (Exception e) {
             throw new FracasoOperacion(e.getMessage());

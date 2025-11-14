@@ -21,7 +21,7 @@ public class DireccionCSV implements DireccionDAO {
         }
     }
 
-    public void crearDireccion(Direccion direccion) throws FracasoOperacion {
+    public Direccion crearDireccion(Direccion direccion) throws FracasoOperacion {
         try {
             if(obtenerDireccion(
                     direccion.getPais(),
@@ -33,6 +33,7 @@ public class DireccionCSV implements DireccionDAO {
                 fwDireccion.write(direccion.toString()+"\n");
                 fwDireccion.close();
             }
+            return direccion;
 
         } catch (IOException e) {
             throw new FracasoOperacion(e.getMessage());

@@ -1,5 +1,6 @@
 package org.example.TP_DESO.dao;
 
+import org.example.TP_DESO.domain.Direccion;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.HuespedDTO;
 import org.example.TP_DESO.dto.DireccionDTO;
@@ -28,7 +29,8 @@ public class HuespedDAOMySQL implements HuespedDAO {
     public void crearHuesped(Huesped huesped) throws FracasoOperacion {
         try {
             // Primero persistir la dirección
-            direccionDAO.crearDireccion(huesped.getDireccion());
+            Direccion direccionPersistida = direccionDAO.crearDireccion(huesped.getDireccion());
+            huesped.setDireccion(direccionPersistida);
             huespedRepository.save(huesped);
         } catch (Exception e) {
             throw new FracasoOperacion("Error al crear huésped: " + e.getMessage());

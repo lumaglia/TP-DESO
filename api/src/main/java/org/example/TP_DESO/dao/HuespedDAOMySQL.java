@@ -136,7 +136,18 @@ public class HuespedDAOMySQL implements HuespedDAO {
         try {
             Optional<Huesped> existente = huespedRepository.findByTipoDocAndNroDoc(tipoDoc, numeroDoc);
             if (existente.isPresent()) {
+
+                Huesped h = existente.get();
+                Direccion d = h.getDireccion();
+
                 huespedRepository.delete(existente.get());
+                boolean dirEnUso = huespedRepository.existsByDireccion(d);
+
+                if(!dirEnUso){
+                    direccionDAO.eliminarDireccion(d);
+                }
+
+
             } else {
                 throw new FracasoOperacion("Huésped no encontrado con tipoDoc: " + tipoDoc + " y nroDoc: " + numeroDoc);
             }

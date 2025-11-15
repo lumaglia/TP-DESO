@@ -75,4 +75,7 @@ public class DireccionCSV implements DireccionDAO {
         else if (campo.equals(csv)) return true;
         else return false;
     }
+    public void eliminarDireccion(Direccion direccion) throws FracasoOperacion {
+        //no se imlemento para CSV
+    }
 }

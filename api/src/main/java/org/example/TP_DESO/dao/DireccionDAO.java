@@ -7,4 +7,5 @@ import org.example.TP_DESO.exceptions.FracasoOperacion;
 public interface DireccionDAO {
     Direccion crearDireccion(Direccion direccion) throws FracasoOperacion;
     DireccionDTO obtenerDireccion(String pais, String codigoPostal, String domicilio, String depto) throws FracasoOperacion;
+    void eliminarDireccion(Direccion direccion) throws FracasoOperacion;
 }

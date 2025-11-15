@@ -60,4 +60,13 @@ public class DireccionDAOMySQL implements DireccionDAO {
             throw new FracasoOperacion(e.getMessage());
         }
     }
+
+    @Override
+    public void eliminarDireccion(Direccion direccion) throws FracasoOperacion {
+        try {
+            direccionRepository.delete(direccion);
+        } catch (Exception e) {
+            throw new FracasoOperacion(e.getMessage());
+        }
+    }
 }

@@ -38,7 +38,7 @@ function AltaHuesped() {
     const onSubmit = (data: FieldValues) => {
         data.fechaNac = data.fechaNac.toLocaleDateString('en-CA');
         formRef.current = data
-        fetch('http://localhost:8081/Alta/Huesped', {
+        fetch('http://localhost:8081/Huesped/Alta', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {

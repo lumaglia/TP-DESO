@@ -20,7 +20,7 @@ public class HuespedController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/Alta/Huesped")
+    @PostMapping("/Huesped/Alta")
     public ResponseEntity<HuespedDTO> altaHuesped(@RequestBody HuespedDTO huespedDTO, @RequestParam(required = false, defaultValue = "false") boolean modify) {
         if(!modify) {
             try {

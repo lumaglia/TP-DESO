@@ -30,7 +30,6 @@ export default function BuscarHuesped() {
                 data[key] = null
             }
         }
-        console.log(data)
         fetch('http://localhost:8081/Huesped/Buscar', {
             method: 'POST',
             body: JSON.stringify(data),
@@ -47,7 +46,6 @@ export default function BuscarHuesped() {
                 res.json().then(data => {
                     setHuespedes(data)
                     setSelectedHuesped(null)
-                    console.log(data)
                 })
             }
         })
@@ -114,7 +112,6 @@ export default function BuscarHuesped() {
                     </p>
                     <button className='Button' onClick={() => {
                         if (selectedHuesped) {
-                            console.log(selectedHuesped)
                             router.push('/Huesped/Modificar')
                         }else{
                             setErrorNoSeleccionado(true)

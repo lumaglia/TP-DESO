@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import '../AltaHuesped.css'
-import Encabezado from "../../Encabezado";
+import Encabezado from "../../../Encabezado";
 
 export default function successPage() {
     const router = useRouter();

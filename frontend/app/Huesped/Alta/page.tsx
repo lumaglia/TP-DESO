@@ -4,10 +4,10 @@ import React, { ReactNode, useState, useRef } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
-import Campo from '../Campo.tsx'
-import Encabezado from '../Encabezado.tsx'
-import { AlertaCancelar, AlertaDocumento } from '../Alertas.tsx'
-import { validation, comboValues, FormValues, fieldTypes } from '../../public/constants.ts'
+import Campo from '../../Campo.tsx'
+import Encabezado from '../../Encabezado.tsx'
+import { AlertaCancelar, AlertaDocumento } from '../../Alertas.tsx'
+import { validation, comboValues, FormValues, fieldTypes } from '../../../public/constants.ts'
 import './AltaHuesped.css'
 
 function Row({ children }: {children: ReactNode}) {

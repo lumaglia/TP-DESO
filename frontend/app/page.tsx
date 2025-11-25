@@ -7,7 +7,7 @@ export default function Home() {
     return(
         <>
             <Encabezado titulo='Menu Principal' />
-            <Link href='/AltaHuesped'>
+            <Link href='/Huesped/Alta'>
                 <button>Dar de alta Huesped</button>
             </Link>
         </>

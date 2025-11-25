@@ -1,22 +1,15 @@
 'use client';
 
-import React, { ReactNode, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link'
 import Campo from '../../Campo.tsx'
 import Encabezado from '../../Encabezado.tsx'
 import { AlertaCancelar, AlertaDocumento } from '../../Alertas.tsx'
+import Row from '../../Row.tsx'
 import { validation, comboValues, FormValues, fieldTypes } from '../../../public/constants.ts'
 import './AltaHuesped.css'
-
-function Row({ children }: {children: ReactNode}) {
-    return (
-        <div className='row'>
-            {children}
-        </div>
-    );
-}
 
 function AltaHuesped() {
 
@@ -122,8 +115,9 @@ function AltaHuesped() {
                     </div>
                 </div>
             </form>
-            <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} />
+            <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='el alta de huesped'/>
             <AlertaDocumento open={alertaDocumentoOpen} setOpen={setAlertaDocumentoOpen} data={formRef.current}/>
+
             </>
     );
 }

@@ -10,6 +10,9 @@ export default function Home() {
             <Link href='/Huesped/Alta'>
                 <button>Dar de alta Huesped</button>
             </Link>
+            <Link href='/Huesped/Buscar'>
+                <button>Buscar Huesped</button>
+            </Link>
         </>
     );
 }

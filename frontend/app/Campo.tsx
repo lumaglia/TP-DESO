@@ -20,7 +20,7 @@ export default function Campo({ field, register, errors, type = fieldTypes.TEXTB
                             :
                             <select className={errors[MapNameToApi[field]] && 'error'} required defaultValue={placeholder !== undefined ? placeholder : ''}
                                     {...register(MapNameToApi[field], validation)}>
-                                <option disabled key='' value='' hidden={true}>No Especificado</option>
+                                <option disabled={isRequired} key='' value='' hidden={isRequired}>No Especificado</option>
                                 {comboValues?.map((option) => (<option key={option} value={option}>{option}</option>))}
                             </select>
                     }

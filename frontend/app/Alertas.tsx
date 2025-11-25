@@ -5,7 +5,7 @@ import Link from 'next/link'
 import warningIcon from '../public/warning.png'
 import './AlertaCancelar.css';
 
-export function AlertaCancelar({open, setOpen} : {open: boolean, setOpen: (open: boolean, e: any) => void}) {
+export function AlertaCancelar({open, setOpen, text} : {open: boolean, setOpen: (open: boolean, e: any) => void, text: string}) {
     return (
         <AlertDialog.Root open={open} onOpenChange={setOpen}>
             {/*<AlertDialog.Trigger data-color="red" className={'Button'}>*/}
@@ -14,7 +14,7 @@ export function AlertaCancelar({open, setOpen} : {open: boolean, setOpen: (open:
             <AlertDialog.Portal>
                 <AlertDialog.Backdrop className={'Backdrop'} />
                 <AlertDialog.Popup className={'Popup'}>
-                    <AlertDialog.Title className={'Title'}>¿Desea cancelar el alta de huesped?</AlertDialog.Title>
+                    <AlertDialog.Title className={'Title'}>¿Desea cancelar {text}?</AlertDialog.Title>
                     <div className={'Actions'}>
                         <AlertDialog.Close className={'PopupButton'} data-color="white">No</AlertDialog.Close>
                         <Link href={'/'} className='PopupButton' style={{textDecoration: 'none'}}>
@@ -64,6 +64,28 @@ export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen:
                         }}>
                             Cargar Igualmente
                         </AlertDialog.Close>
+                    </div>
+                </AlertDialog.Popup>
+            </AlertDialog.Portal>
+        </AlertDialog.Root>
+    );
+}
+
+export function AlertaHuespedNoEncontrado({open, setOpen} : {open: boolean, setOpen: (open: boolean, e: any) => void}) {
+    return (
+        <AlertDialog.Root open={open} onOpenChange={setOpen}>
+            <AlertDialog.Portal>
+                <AlertDialog.Backdrop className={'Backdrop'} />
+                <AlertDialog.Popup className={'Popup'}>
+                    <AlertDialog.Title className={'Title'}>No se encontraron huespedes</AlertDialog.Title>
+                    <AlertDialog.Description className={'Description'}>
+                        ¿Desea dar de alta un huesped?
+                    </AlertDialog.Description>
+                    <div className={'Actions'}>
+                        <AlertDialog.Close className={'PopupButton'} data-color="white">No</AlertDialog.Close>
+                        <Link href={'/Huesped/Alta'} className='PopupButton' style={{textDecoration: 'none'}}>
+                            Si
+                        </Link>
                     </div>
                 </AlertDialog.Popup>
             </AlertDialog.Portal>

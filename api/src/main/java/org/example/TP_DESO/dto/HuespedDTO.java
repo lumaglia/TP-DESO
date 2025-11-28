@@ -43,54 +43,6 @@ public class HuespedDTO {
         this.nroDoc = nroDoc;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getApellido() {
-        return apellido;
-    }
-
-    public String getTipoDoc() {
-        return tipoDoc;
-    }
-
-    public String getNroDoc() {
-        return nroDoc;
-    }
-
-    public String getCuil() {
-        return cuil;
-    }
-
-    public String getPosicionIva() {
-        return posicionIva;
-    }
-
-    public LocalDate getFechaNac() {
-        return fechaNac;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getOcupacion() {
-        return ocupacion;
-    }
-
-    public String getNacionalidad() {
-        return nacionalidad;
-    }
-
-    public DireccionDTO getDireccion() {
-        return direccion;
-    }
-
     @Override
     public String toString() {
         String d = "";

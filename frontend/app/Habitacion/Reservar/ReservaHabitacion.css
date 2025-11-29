@@ -1,0 +1,71 @@
+.tableButton {
+    padding: 12px;
+    text-decoration: none;
+    border: 0;
+    border-radius: 5px;
+    position: relative;
+    margin: 0 10px;
+
+    &[data-estado='disponible'] {
+        background-color: white;
+    }
+
+    &[data-estado='reservado'] {
+        background-color: #F6BE2C;
+    }
+
+    &[data-estado='ocupado'] {
+        background-color: #9BA5B7;
+    }
+
+    &[data-seleccionado=true] {
+        outline: 2px solid #99C0FF;
+
+        &:after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 3px solid #99C0FF;
+
+        }
+
+        &[data-start=true]:after, &[data-end=true]:after {
+            outline-color: #77ABFF;
+            border-color: #77ABFF;
+        }
+        &[data-start=true]:after {
+            border-radius: 4px 4px 0 0;
+        }
+        &[data-end=true]:after {
+            border-radius: 0 0 4px 4px;
+        }
+
+        &:hover {
+            outline-color: #4586fc;
+            border-color: #4586fc;
+            background-color: white;
+            &:after {
+                outline-color: #4586fc;
+                border-color: #4586fc;
+            }
+        }
+
+    }
+
+    &:hover {
+        background-color: #99C0FF;
+    }
+
+
+}
+
+.tableButton:hover {
+    background-color: #99C0FF;
+}
+
+.tableButton:active {
+    background-color: #4586fc;
+}

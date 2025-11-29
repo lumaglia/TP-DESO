@@ -74,8 +74,8 @@ export default function BuscarHuesped() {
                 <ScrollArea.Root className='ScrollArea'>
                 <ScrollArea.Viewport className='Viewport'>
                     <ScrollArea.Content className='Content'>
-                        <table>
-                            <thead style={{position: 'sticky', top: '0'}}>
+                        <table className='TablaBuscar'>
+                            <thead>
                             <tr>
                                 <th>Nombre</th>
                                 <th>Apellido</th>

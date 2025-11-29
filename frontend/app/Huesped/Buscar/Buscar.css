@@ -2,7 +2,8 @@
     margin: 20px;
     box-sizing: border-box;
     width: 50rem;
-    height: 8.5rem;
+    /*height: 8.5rem;*/
+    height: 20rem;
 }
 
 .Viewport {
@@ -74,7 +75,7 @@ tr {
     width: auto;
 }
 
-tbody tr {
+.TablaBuscar tbody tr {
     border-top: 2px solid #D2D8E2;
     border-bottom: 2px solid #D2D8E2;
 
@@ -87,10 +88,22 @@ tbody tr {
     }
 }
 
-tbody > tr:hover > td {
+.TablaBuscar tbody > tr:hover > td {
     background-color: #d7e5fc;
 }
 
 tbody > tr.selected td {
     background-color: #C2D8FB;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+table tbody th {
+    position: sticky;
+    left: 0;
+    background: white;
 }

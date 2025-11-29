@@ -1,12 +1,29 @@
 package org.example.TP_DESO.domain;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Entity
+@Table(name = "habitacion")
+@Getter
+@Setter
+
 public class Habitacion {
+
+    @Id
     private String nroHabitacion;
     private float precioNoche;
     private int capacidad;
     private String tamanno;
+
+    @OneToMany(mappedBy = "habitacion")
+    private List<Estadia> estadias;
+
+    @OneToMany(mappedBy = "habitacion")
+    private List<Reserva> reservas;
 
     public Habitacion() {} //BORRAR CUANDO AVANZEMOS EL TP
 

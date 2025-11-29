@@ -39,9 +39,9 @@ public class Huesped {
     @JoinColumn(name = "direccion_id")
     private Direccion direccion;
 
-    @Transient
-    private ArrayList<Reserva> reservas;
-    @Transient
+    /*@Transient   //Esta relacion es desde habitacion y estadia nada mas
+    private ArrayList<Reserva> reservas;*/
+    @ManyToMany(mappedBy = "huespedes")
     private ArrayList<Estadia> estadias;
 
     public Huesped() {
@@ -61,7 +61,6 @@ public class Huesped {
         this.ocupacion = ocupacion;
         this.nacionalidad = nacionalidad;
         this.direccion = direccion;
-        this.reservas = reservas;
         this.estadias = estadias;
     }
 

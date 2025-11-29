@@ -6,23 +6,27 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "direccion")
-
+@IdClass(Direccion.class)
 @Getter
 @Setter
 
 public class Direccion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-
     private String domicilio;
+
+    @Id
     private String depto;
+
+    @Id
     private String codigoPostal;
+
+    @Id
+    private String pais;
+
     private String localidad;
     private String provincia;
-    private String pais;
+
 
     public Direccion(){
 

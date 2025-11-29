@@ -5,28 +5,24 @@ import java.util.ArrayList;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.TP_DESO.domain.Pks.DocumentoId;
 
 @Entity
-@Table(
-    name = "huesped",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"tipo_doc", "nro_doc"})
-    }
-    )
-
+@Table (name = "huesped")
+@IdClass(DocumentoId.class)
 @Getter
 @Setter
 
 public class Huesped {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String tipoDoc;
+
+    @Id
+    private String nroDoc;
 
     private String nombre;
     private String apellido;
-    private String tipoDoc;
-    private String nroDoc;
     private String cuil;
     private String posicionIva;
     private LocalDate fechaNac;
@@ -35,12 +31,15 @@ public class Huesped {
     private String ocupacion;
     private String nacionalidad;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "direccion_id")
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(name = "domicilio", referencedColumnName = "domicilio"),
+            @JoinColumn(name = "depto", referencedColumnName = "depto"),
+            @JoinColumn(name = "codigo_postal", referencedColumnName = "codigoPostal"),
+            @JoinColumn(name = "pais", referencedColumnName = "pais"),
+    })
     private Direccion direccion;
 
-    /*@Transient   //Esta relacion es desde habitacion y estadia nada mas
-    private ArrayList<Reserva> reservas;*/
     @ManyToMany(mappedBy = "huespedes")
     private ArrayList<Estadia> estadias;
 

@@ -21,13 +21,17 @@ public class Estadia {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
-    @ManyToMany (cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "estadia_huesped",
-            joinColumns = @JoinColumn(name = "estadia_id"),
-            inverseJoinColumns = @JoinColumn(name = "huesped_id")
+            joinColumns = @JoinColumn(name = "estadia_id"), // PK de Estadia
+            inverseJoinColumns = {
+                    @JoinColumn(name = "huesped_tipoDoc", referencedColumnName = "tipoDoc"),
+                    @JoinColumn(name = "huesped_nroDoc", referencedColumnName = "nroDoc")
+            }
     )
     private ArrayList<Huesped> huespedes;
+
 
     @OneToOne(mappedBy = "estadia", optional = true)
     private Reserva reserva;

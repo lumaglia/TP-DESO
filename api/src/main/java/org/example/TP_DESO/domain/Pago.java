@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Dictionary;
 
 @Entity
@@ -21,7 +22,8 @@ public class Pago {
     private LocalDate fechaCobro;
     private float montoTotal;
 
-    private Dictionary<MetodoPago, Pago> pagosParciales;
+    @OneToMany(mappedBy = "pago")
+    private ArrayList<PagoParcial> pagosParciales;
 
     @OneToOne(optional = false)
     @JoinColumn(name = "factura_id", unique = true, nullable = false)

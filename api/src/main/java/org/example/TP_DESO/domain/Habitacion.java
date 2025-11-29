@@ -7,11 +7,11 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table(name = "habitacion")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 
-public class Habitacion {
+public abstract class Habitacion {
 
     @Id
     private String nroHabitacion;

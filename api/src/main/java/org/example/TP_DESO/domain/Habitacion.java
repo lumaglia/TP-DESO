@@ -15,15 +15,11 @@ public abstract class Habitacion {
 
     @Id
     private String nroHabitacion;
+
     private float precioNoche;
     private int capacidad;
     private String tamanno;
 
-    @OneToMany(mappedBy = "habitacion")
-    private List<Estadia> estadias;
-
-    @OneToMany(mappedBy = "habitacion")
-    private List<Reserva> reservas;
 
     public Habitacion() {} //BORRAR CUANDO AVANZEMOS EL TP
 

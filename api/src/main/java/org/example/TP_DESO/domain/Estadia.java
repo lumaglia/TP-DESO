@@ -36,13 +36,8 @@ public class Estadia {
     @OneToOne(mappedBy = "estadia", optional = true)
     private Reserva reserva;
 
-    @OneToMany(mappedBy = "estadia")
-    private ArrayList<Factura> facturas;
 
-    @OneToMany(mappedBy = "estadia")
-    private ArrayList<Consumo> consumos;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(
             name = "habitacion_id",
             nullable = false

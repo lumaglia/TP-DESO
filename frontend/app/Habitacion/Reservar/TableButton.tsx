@@ -2,8 +2,10 @@
 
 import './ReservaHabitacion.css'
 
-export default function TableButton( {start = false, end = false, estado = 'disponible', date, habitacion, seleccionado = false, onClick, onRightClick }
-                                     : {start?: boolean, end?: boolean, estado?: string, date: Date, habitacion: number, seleccionado?: boolean, onClick: any, onRightClick: any} ) {
+export default function TableButton( {start = false, end = false, estado = 'disponible', date, habitacion,
+                                         seleccionado = false, onClick, onRightClick, onMouseEnter, onMouseLeave }
+                                     : {start?: boolean, end?: boolean, estado?: string, date: Date, habitacion: number,
+                                        seleccionado?: boolean, onClick: any, onRightClick: any, onMouseEnter: any, onMouseLeave: any} ) {
     return (
         <div>
             <button className='tableButton' data-estado={estado} data-seleccionado={seleccionado} data-start={start} data-end={end}
@@ -11,7 +13,7 @@ export default function TableButton( {start = false, end = false, estado = 'disp
                         e.preventDefault(); // Prevent the normal behavior of the click
                         e.stopPropagation(); // Stop the event from propagating
                         onRightClick(date, habitacion);
-            }} />
+            }} onMouseEnter={() => onMouseEnter(date, habitacion)} onMouseLeave={() => onMouseLeave(date, habitacion)} />
         </div>
     )
 }

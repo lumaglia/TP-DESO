@@ -23,6 +23,7 @@ export default function TablaReserva() {
 
     const [seleccionadas, setSeleccionadas] = useState(new Map<number, Array<Array<Date>>>());
     const [indiceSeleccionActual, setIndiceSeleccionActual] = useState<number | null>(null);
+    const [hovered, setHovered] = useState<Date | null>(null);
 
     function getKey(key: number, map: Map<number, Array<Array<Date>>>) {
         return map.get(key) || [[]];
@@ -148,6 +149,16 @@ export default function TablaReserva() {
             }
         });
     }
+    function handleMouseEnter(date: Date, habitacion: number) {
+        console.log("ENTER")
+        if(habitacion === indiceSeleccionActual) {
+            setHovered(date);
+        }
+    }
+
+    function handleMouseLeave() {
+        setHovered(null);
+    }
 
 
     return (
@@ -168,6 +179,7 @@ export default function TablaReserva() {
                                 {habitaciones.map((h, i) => <td key={date.toLocaleDateString("en-GB") + i}>
                                     <TableButton date={date} habitacion={h}
                                                  onClick={handleClick} onRightClick={handleRightClick}
+                                                 onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
                                                  seleccionado={getKey(h, seleccionadas).some((arr: Array<Date>) =>
                                         arr[0]?.getTime() == date.getTime() || (arr[0] <= date && arr[1] >= date))}
                                                  start={getKey(h, seleccionadas).some((arr: Array<Date>) => arr[0]?.getTime() == date.getTime())}

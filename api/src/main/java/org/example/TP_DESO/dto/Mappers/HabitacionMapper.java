@@ -1,6 +1,7 @@
-package org.example.TP_DESO.dto;
+package org.example.TP_DESO.dto.Mappers;
 
 import org.example.TP_DESO.domain.*;
+import org.example.TP_DESO.dto.*;
 
 public class HabitacionMapper {
 

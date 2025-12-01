@@ -16,15 +16,12 @@ public class EstadiaDTO {
     private Long id;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
-    private Reserva reserva;
-    private ArrayList<Huesped> huespedes;
+    private ArrayList<HuespedDTO> huespedes;
     private HabitacionDTO habitacion;
 
-    public EstadiaDTO(Long id, LocalDate fechaInicio, LocalDate fechaFin, Reserva reserva, ArrayList<Huesped> huespedes, HabitacionDTO habitacion) {
-        this.id = id;
+    public EstadiaDTO(LocalDate fechaInicio, LocalDate fechaFin, ArrayList<HuespedDTO> huespedes, HabitacionDTO habitacion) {
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
-        this.reserva = reserva;
         this.huespedes = huespedes;
         this.habitacion = habitacion;
     }

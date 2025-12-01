@@ -2,9 +2,10 @@ package org.example.TP_DESO.dao;
 
 
 import org.example.TP_DESO.domain.Estadia;
-import org.example.TP_DESO.dto.EstadiaDTO;
-import org.example.TP_DESO.dto.HabitacionDTO;
-import org.example.TP_DESO.dto.HabitacionMapper;
+import org.example.TP_DESO.domain.Huesped;
+import org.example.TP_DESO.dto.*;
+import org.example.TP_DESO.dto.Mappers.EstadiaMapper;
+import org.example.TP_DESO.dto.Mappers.HabitacionMapper;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.EstadiaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,12 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
     @Override
     public void crearEstadia(Estadia estadia) throws FracasoOperacion {
         try {
+
+            if (estadia == null) {
+                throw new FracasoOperacion("La estadia no puede ser null");
+            }
             estadiaRepository.save(estadia);
+
         } catch (Exception e) {
             throw new FracasoOperacion("Error al crear estadía: " + e.getMessage());
         }
@@ -47,17 +53,7 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
             ArrayList<EstadiaDTO> resultado = new ArrayList<>();
 
             for (Estadia e : estadias) {
-
-                HabitacionDTO habitacionDTO = HabitacionMapper.toDTO(e.getHabitacion());
-
-                resultado.add(new EstadiaDTO(
-                        e.getId(),
-                        e.getFechaInicio(),
-                        e.getFechaFin(),
-                        e.getReserva(),
-                        e.getHuespedes(),
-                        habitacionDTO
-                ));
+                resultado.add(EstadiaMapper.toDTO(e));
             }
 
             return resultado;
@@ -76,11 +72,10 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
             Optional<Estadia> existente = estadiaRepository.findById(idEstadia);
             if (existente.isPresent()) {
                 Estadia e = existente.get();
-                // Actualizar campos
+
                 e.setFechaInicio(estadia.getFechaInicio());
                 e.setFechaFin(estadia.getFechaFin());
                 e.setHabitacion(estadia.getHabitacion());
-                e.setReserva(estadia.getReserva());
                 e.setHuespedes(estadia.getHuespedes());
 
                 estadiaRepository.save(e);
@@ -112,6 +107,119 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
         }
     }
 
+    @Override
+    public EstadiaDTO buscarEstadiaPorHabitacionYFechaFin(int numeroHabitacion, LocalDate fechaFin) throws FracasoOperacion {
+        try {
+            Optional<Estadia> estadiaOpt = estadiaRepository.findByHabitacion_NumeroAndFechaFin(numeroHabitacion, fechaFin);
+
+            if (estadiaOpt.isEmpty()) {
+                throw new FracasoOperacion("Estadía no encontrada con habitacion y fecha fin: " + numeroHabitacion + ", " + fechaFin);
+            }
+
+            Estadia e = estadiaOpt.get();
+            HabitacionDTO habitacionDTO = HabitacionMapper.toDTO(e.getHabitacion());
+            ArrayList<HuespedDTO> huespedDTO = new ArrayList<HuespedDTO>();
+
+            for (Huesped h : e.getHuespedes()) {
+
+                DireccionDTO direccionDTO = new DireccionDTO(
+                        h.getDireccion().getDomicilio(),
+                        h.getDireccion().getDepto(),
+                        h.getDireccion().getCodigoPostal(),
+                        h.getDireccion().getLocalidad(),
+                        h.getDireccion().getProvincia(),
+                        h.getDireccion().getPais()
+                );
+
+                huespedDTO.add(new HuespedDTO(
+                        h.getTipoDoc(),
+                        h.getNroDoc(),
+                        h.getApellido(),
+                        h.getNombre(),
+                        h.getCuil(),
+                        h.getPosicionIva(),
+                        h.getFechaNac(),
+                        h.getTelefono(),
+                        h.getEmail(),
+                        h.getOcupacion(),
+                        h.getNacionalidad(),
+                        direccionDTO
+                ));
+            }
+
+            return new EstadiaDTO(
+                    e.getFechaInicio(),
+                    e.getFechaFin(),
+                    huespedDTO,
+                    habitacionDTO
+            );
+
+        } catch (Exception ex) {
+            throw new FracasoOperacion(
+                    "Error al buscar estadía por habitación y fecha fin: " + ex.getMessage()
+            );
+        }
+    }
+
+    @Override
+    public ArrayList<EstadiaDTO> obtenerEstadiasDeHuesped(String tipoDoc, String nroDoc)
+            throws FracasoOperacion {
+
+        try {
+            ArrayList<Estadia> estadias = estadiaRepository.findByHuespedes_TipoDocAndHuespedes_NroDoc(tipoDoc, nroDoc);
+
+            if (estadias.isEmpty()) {
+                throw new FracasoOperacion("El huésped no posee estadías registradas");
+            }
+
+            ArrayList<EstadiaDTO> resultado = new ArrayList<>();
+
+            for (Estadia e : estadias) {
+
+                HabitacionDTO habitacionDTO = HabitacionMapper.toDTO(e.getHabitacion());
+                ArrayList<HuespedDTO> huespedDTO = new ArrayList<>();
+
+                for (Huesped h : e.getHuespedes()) {
+
+                    DireccionDTO direccionDTO = new DireccionDTO(
+                            h.getDireccion().getDomicilio(),
+                            h.getDireccion().getDepto(),
+                            h.getDireccion().getCodigoPostal(),
+                            h.getDireccion().getLocalidad(),
+                            h.getDireccion().getProvincia(),
+                            h.getDireccion().getPais()
+                    );
+
+                    huespedDTO.add(new HuespedDTO(
+                            h.getTipoDoc(),
+                            h.getNroDoc(),
+                            h.getApellido(),
+                            h.getNombre(),
+                            h.getCuil(),
+                            h.getPosicionIva(),
+                            h.getFechaNac(),
+                            h.getTelefono(),
+                            h.getEmail(),
+                            h.getOcupacion(),
+                            h.getNacionalidad(),
+                            direccionDTO
+                    ));
+                }
+
+                resultado.add(new EstadiaDTO(
+                        e.getFechaInicio(),
+                        e.getFechaFin(),
+                        huespedDTO,
+                        habitacionDTO
+                ));
+            }
+
+            return resultado;
+
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al buscar estadías del huésped: " + e.getMessage());
+        }
+    }
 
 
 

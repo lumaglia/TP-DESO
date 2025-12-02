@@ -28,7 +28,6 @@ public class HuespedDAOMySQL implements HuespedDAO {
     @Override
     public void crearHuesped(Huesped huesped) throws FracasoOperacion {
         try {
-            // Primero persistir la dirección
             Direccion direccionPersistida = direccionDAO.crearDireccion(huesped.getDireccion());
             huesped.setDireccion(direccionPersistida);
             huespedRepository.save(huesped);
@@ -41,8 +40,7 @@ public class HuespedDAOMySQL implements HuespedDAO {
     public ArrayList<HuespedDTO> obtenerHuesped(HuespedDTO filtro) throws FracasoOperacion {
         ArrayList<HuespedDTO> resultado = new ArrayList<>();
         try {
-            // En JPA podés usar Specification o Query Methods.
-            // Para simplificar, traemos todos y filtramos en memoria.
+
             List<Huesped> huespedes = huespedRepository.findAll();
 
             for (Huesped h : huespedes) {

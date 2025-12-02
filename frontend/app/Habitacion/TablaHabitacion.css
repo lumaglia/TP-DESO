@@ -83,9 +83,6 @@
         }
     }
 
-    &:active {
-        background-color: #4586fc;
-    }
 }
 
 td {
@@ -94,10 +91,15 @@ td {
     font-weight: normal;
 }
 
-td:hover > div > .tableButton {
-    filter: opacity(60%);
-    &[data-estado='disponible'] {
-        background-color: #99C0FF;
+td:hover:not(.noSeleccionable) > div > .tableButton {
+    &:not(&[data-start=true]):not([data-end=true]) {
+        filter: opacity(60%);
+        &[data-estado='disponible'] {
+            background-color: #99C0FF;
+            &[data-seleccionado=true] {
+                background-color: #f69691;
+            }
+        }
     }
 }
 

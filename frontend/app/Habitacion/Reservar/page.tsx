@@ -1,14 +1,14 @@
 'use client';
 
-import TablaReserva from './TablaReserva.tsx'
-import './ReservaHabitacion.css'
+import { TablaHabitacion } from '../TablaHabitacion.tsx'
+import { tiposTablaHabitacion } from '../../../public/constants'
 
 
 export default function ReservarHabitacion() {
     const array = [...Array(10).keys()]
     return (
         <>
-            <TablaReserva/>
+            <TablaHabitacion tipo={tiposTablaHabitacion.CU04}/>
         </>
     )
 }

@@ -318,3 +318,9 @@ export type DateValues = {
     fechaInicio: string;
     fechaFin: string;
 }
+
+export enum tiposTablaHabitacion {
+    CU04,
+    CU05,
+    CU015
+}

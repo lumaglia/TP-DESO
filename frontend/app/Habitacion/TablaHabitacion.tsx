@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import TableButton from './TableButton';
 import { ScrollArea } from '@base-ui-components/react/scroll-area';
-import './ReservaHabitacion.css'
-import '../../Huesped/Buscar/Buscar.css'
+import './TablaHabitacion.css'
+import '../Huesped/Buscar/Buscar.css'
+import { tiposTablaHabitacion } from '../../public/constants'
 
-export default function TablaReserva() {
+export function TablaHabitacion({tipo} : {tipo: tiposTablaHabitacion}) {
     const habitaciones = [...Array(50).keys()]
 
     const d1 = new Date('2022-01-18');
@@ -154,16 +155,26 @@ export default function TablaReserva() {
                             {dates.map((date, i) => <tr key={date.toLocaleDateString("en-GB")}>
                                 <th>{date.toLocaleDateString("en-GB")}</th>
                                 {habitaciones.map((h, i) => <td key={date.toLocaleDateString("en-GB") + i}
-                                                                className={(indiceSeleccionActual === null || h === indiceSeleccionActual)
-                                                                    ? ''
-                                                                    : 'invalido' }
-                                                                onMouseEnter={() => handleMouseEnter(date, h)}
-                                                                onMouseLeave={() => handleMouseLeave()}
-                                                                onClick={() => handleClick(date, h)}
-                                                                onContextMenu={(e) => {
+                                                                className={tipo === tiposTablaHabitacion.CU04
+                                                                    ? (indiceSeleccionActual === null || h === indiceSeleccionActual)
+                                                                        ? ''
+                                                                        : 'invalido'
+                                                                    : 'noSeleccionable'}
+                                                                onMouseEnter={tipo === tiposTablaHabitacion.CU04
+                                                                    ? () => handleMouseEnter(date, h)
+                                                                    : undefined}
+                                                                onMouseLeave={tipo === tiposTablaHabitacion.CU04
+                                                                    ? () => handleMouseLeave()
+                                                                    : undefined}
+                                                                onClick={tipo === tiposTablaHabitacion.CU04
+                                                                    ? () => handleClick(date, h)
+                                                                    : undefined}
+                                                                onContextMenu={tipo === tiposTablaHabitacion.CU04
+                                                                    ? (e) => {
                                                                     e.preventDefault();
                                                                     e.stopPropagation();
-                                                                    handleRightClick(date, h)}}>
+                                                                    handleRightClick(date, h)}
+                                                                    : undefined}>
                                     <TableButton seleccionado={getKey(h, seleccionadas).some((arr: Array<Date>) =>
                                         arr[0]?.getTime() == date.getTime() || (arr[0] <= date && arr[1] >= date))}
                                                  hovered={h===indiceSeleccionActual

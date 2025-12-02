@@ -1,6 +1,6 @@
 'use client';
 
-import './ReservaHabitacion.css'
+import './TablaHabitacion.css'
 
 export default function TableButton( {start = false, end = false, estado = 'disponible', seleccionado = false, hovered = false}
 : {start?: boolean, end?: boolean, estado?: string, seleccionado?: boolean, hovered?: boolean} ) {

@@ -235,33 +235,6 @@ export const validation = {
             message: 'Ingrese caracteres válidos',
         }
     },
-
-    'fechaInicio': {
-        valueAsDate: true,
-        required: 'La fecha inicial es obligatoria',
-        pattern: {
-            value: /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/,
-            message: 'La fecha debe seguir el patron DD/MM/YYYY'
-        },
-        validate: {
-            validDate: (value: Date) => {return !isNaN(value.getTime()) || 'Debe ingresarse una fecha valida'},
-
-        },
-    },
-    'fechaFin': {
-        valueAsDate: true,
-        required: 'La fecha de fin es obligatoria',
-        pattern: {
-            value: /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/,
-            message: 'La fecha debe seguir el patron DD/MM/YYYY'
-        },
-        validate: {
-            validDate: (value: Date) => {return !isNaN(value.getTime()) || 'Debe ingresarse una fecha valida'},
-            //afterStartDate: (value: Date) => {return value >= getValues(fechaInicio) || 'La fecha fin debe ser posterior a la inicial'},
-        },
-    },
-
-
 }
 
 export const MapNameToApi : {[key: string]: string} = {
@@ -315,8 +288,8 @@ export type FormValues = {
 };
 
 export type DateValues = {
-    fechaInicio: string;
-    fechaFin: string;
+    fechaInicio: Date;
+    fechaFin: Date;
 }
 
 export enum tiposTablaHabitacion {

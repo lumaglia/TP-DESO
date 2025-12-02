@@ -73,6 +73,14 @@ tr {
     user-select: none;
     text-align: center;
     width: auto;
+
+    &:nth-child(even) * {
+        background-color: #EEF1F4;
+    }
+    &:nth-child(odd) * {
+        background-color: white;
+    }
+
 }
 
 .TablaBuscar tbody tr {

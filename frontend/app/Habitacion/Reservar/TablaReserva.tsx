@@ -186,9 +186,13 @@ export default function TablaReserva() {
 
                     </ScrollArea.Content>
                 </ScrollArea.Viewport>
-                <ScrollArea.Scrollbar className='Scrollbar'>
+                <ScrollArea.Scrollbar className='Scrollbar' orientation='vertical'>
                     <ScrollArea.Thumb className='Thumb'/>
                 </ScrollArea.Scrollbar>
+                <ScrollArea.Scrollbar className='Scrollbar' orientation="horizontal">
+                    <ScrollArea.Thumb className='Thumb' />
+                </ScrollArea.Scrollbar>
+                <ScrollArea.Corner />
             </ScrollArea.Root>
 
         </>

@@ -98,7 +98,7 @@ export default function BuscarHuesped() {
 
                     </ScrollArea.Content>
                 </ScrollArea.Viewport>
-                <ScrollArea.Scrollbar className='Scrollbar'>
+                <ScrollArea.Scrollbar className='Scrollbar' orientation='vertical'>
                     <ScrollArea.Thumb className='Thumb'/>
                 </ScrollArea.Scrollbar>
             </ScrollArea.Root>

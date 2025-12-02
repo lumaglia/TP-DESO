@@ -62,8 +62,26 @@
 
     }
 
-    &:hover {
+    &:hover, &[data-hovered=true] {
         background-color: #99C0FF;
+    }
+
+    &[data-hovered=true][data-seleccionado=true] {
+        background-color: #f69691;
+        outline-color: #FF6C64;
+
+        &[data-start=true], &[data-end=true] {
+            outline-color: #ff3b30;
+            &:after {
+                border-color: #ff3b30;
+            }
+        }
+
+        &:after {
+            /*background-color: #FF6C64;*/
+            outline-color: #FF6C64;
+            border-color: #FF6C64;
+        }
     }
 
     &:active {

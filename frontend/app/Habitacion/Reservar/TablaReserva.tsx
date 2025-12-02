@@ -112,28 +112,6 @@ export default function TablaReserva() {
                     }else{
                         return newMap.set(habitacion, [[]])
                     }
-                    // if(arr[index][0].getTime() === arr[index][1]?.getTime()) {
-                    //     setIndiceSeleccionActual(null)
-                    //     if(arr.length > 1) {
-                    //         return newMap.set(habitacion, [...arr.slice(0, index), ...arr.slice(index + 1)])
-                    //     }else{
-                    //         return newMap.set(habitacion, [[]])
-                    //     }
-                    //
-                    // }else {
-                    //     if(arr[index][0].getTime() === date.getTime() && arr[index][1]){
-                    //         setIndiceSeleccionActual(habitacion)
-                    //         return newMap.set(habitacion, [...arr.slice(0, index), [arr[index][1]], ...arr.slice(index + 1)])
-                    //     }else if(arr[index][1]?.getTime() === date.getTime()){
-                    //         setIndiceSeleccionActual(habitacion)
-                    //         return newMap.set(habitacion, [...arr.slice(0, index), [arr[index][0]], ...arr.slice(index + 1)])
-                    //     }else {
-                    //         setIndiceSeleccionActual(null)
-                    //         if(arr.length > 1){
-                    //             return newMap.set(habitacion, [...arr.slice(0, index), ...arr.slice(index + 1)])
-                    //         }else return newMap.set(habitacion, [[]])
-                    //     }
-                    // }
 
                 }else return seleccionadas
             }else {
@@ -150,7 +128,6 @@ export default function TablaReserva() {
         });
     }
     function handleMouseEnter(date: Date, habitacion: number) {
-        console.log("ENTER")
         if(habitacion === indiceSeleccionActual) {
             setHovered(date);
         }
@@ -182,6 +159,12 @@ export default function TablaReserva() {
                                                  onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
                                                  seleccionado={getKey(h, seleccionadas).some((arr: Array<Date>) =>
                                         arr[0]?.getTime() == date.getTime() || (arr[0] <= date && arr[1] >= date))}
+                                                 hovered={h===indiceSeleccionActual
+                                                     && hovered !== null
+                                                     && ((date > (getKey(h, seleccionadas).find((arr: any) => arr.length === 1)?.[0] ?? hovered)
+                                                     && date <= hovered)
+                                                     || (date < (getKey(h, seleccionadas).find((arr: any) => arr.length === 1)?.[0] ?? hovered)
+                                                     && date >= hovered))}
                                                  start={getKey(h, seleccionadas).some((arr: Array<Date>) => arr[0]?.getTime() == date.getTime())}
                                                  end={getKey(h, seleccionadas).some((arr: Array<Date>) => arr[1]?.getTime() == date.getTime())}
                                                  estado={(date.getDate()*h)%3==0

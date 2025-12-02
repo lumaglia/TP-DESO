@@ -153,7 +153,12 @@ export default function TablaReserva() {
                             <tbody>
                             {dates.map((date, i) => <tr key={date.toLocaleDateString("en-GB")}>
                                 <th>{date.toLocaleDateString("en-GB")}</th>
-                                {habitaciones.map((h, i) => <td key={date.toLocaleDateString("en-GB") + i}>
+                                {habitaciones.map((h, i) => <td key={date.toLocaleDateString("en-GB") + i}
+                                onMouseEnter={() => handleMouseEnter(date, h)} onMouseLeave={() => handleMouseLeave()} onClick={() => handleClick(date, h)}
+                                                                onContextMenu={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    handleRightClick(date, h)}}>
                                     <TableButton date={date} habitacion={h}
                                                  onClick={handleClick} onRightClick={handleRightClick}
                                                  onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}

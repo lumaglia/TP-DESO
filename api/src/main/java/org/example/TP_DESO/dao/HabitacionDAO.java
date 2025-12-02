@@ -13,8 +13,7 @@ public interface HabitacionDAO {
     void crearHabitacion(Habitacion habitacion) throws FracasoOperacion;
     void modificarHabitacion(Long id, Habitacion habitacion) throws FracasoOperacion;
     void eliminarHabitacion(Long id) throws FracasoOperacion;
-    HabitacionDTO obtenerHabitacion(Long id) throws FracasoOperacion;
-
+    HabitacionDTO obtenerHabitacion(String id) throws FracasoOperacion;
     ArrayList<HabitacionDTO> obtenerTodas() throws FracasoOperacion;
     HabitacionDTO buscarPorNumero(int numero) throws FracasoOperacion;
     ArrayList<HabitacionDTO> buscarHabitacionesDisponibles(LocalDate desde, LocalDate hasta) throws FracasoOperacion;

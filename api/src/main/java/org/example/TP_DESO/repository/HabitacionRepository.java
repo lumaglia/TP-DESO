@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HabitacionRepository extends JpaRepository<Habitacion, String> {
+    Habitacion getByNroHabitacion(String nroHabitacion);
 }

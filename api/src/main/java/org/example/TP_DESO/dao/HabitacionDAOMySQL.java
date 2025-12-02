@@ -1,9 +1,7 @@
 package org.example.TP_DESO.dao;
 
-import org.example.TP_DESO.domain.DobleEstandar;
-import org.example.TP_DESO.domain.Habitacion;
-import org.example.TP_DESO.domain.IndividualEstandar;
-import org.example.TP_DESO.domain.SuiteDoble;
+import org.example.TP_DESO.domain.*;
+import org.example.TP_DESO.dto.EstadiaDTO;
 import org.example.TP_DESO.dto.HabitacionDTO;
 import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Primary
@@ -71,8 +70,20 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
     }
 
     @Override
-    public HabitacionDTO obtenerHabitacion(Long id) throws FracasoOperacion {
-        return null;
+    public HabitacionDTO obtenerHabitacion(String id) throws FracasoOperacion {
+        try{
+            Habitacion h = habitacionRepository.getByNroHabitacion(id);
+
+            if(h != null){
+                return HabitacionMapper.toDTO(h);
+            }
+            else{
+                throw new FracasoOperacion("No se ha encontrado la habitación de ID:"+id);
+            }
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("No se pudo obtener la habitacion " + id + ":" + e.getMessage());
+        }
     }
 
     @Override
@@ -92,23 +103,67 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
         }
     }
 
-    @Override
+    @Override // No es lo mismo que obtenerHabitacion?
     public HabitacionDTO buscarPorNumero(int numero) throws FracasoOperacion {
-        return null;
+        try{
+            return this.obtenerHabitacion(String.valueOf(numero));
+        } catch (FracasoOperacion e) {
+            throw new FracasoOperacion("Error al buscar por numero: " + e.getMessage());
+        }
     }
 
     @Override
     public ArrayList<HabitacionDTO> buscarHabitacionesOcupadas(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
-        return null;
+        try{
+            ArrayList<HabitacionDTO> resultado = new ArrayList<>();
+            EstadiaDAOMySQL daoEstadias = new EstadiaDAOMySQL();
+
+            ArrayList<EstadiaDTO> estadias = daoEstadias.obtenerEstadiaEntreFechas(desde, hasta);
+            for(EstadiaDTO e : estadias) resultado.add(e.getHabitacion());
+
+            return resultado;
+        } catch (Exception e) {
+            throw new FracasoOperacion("No se pudo recuperar las habitaciones ocupadas" + e.getMessage());
+        }
     }
 
     @Override
     public ArrayList<HabitacionDTO> buscarHabitacionesDisponibles(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
-        return null;
+        try{
+            ArrayList<HabitacionDTO> totales = this.obtenerTodas();
+            ArrayList<HabitacionDTO> ocupadas = this.buscarHabitacionesOcupadas(desde, hasta);
+
+            totales.removeAll(ocupadas);
+
+            return totales;
+        } catch (Exception e) {
+            throw new FracasoOperacion("No se pudo buscar las habitaciones disponibles" + e.getMessage());
+        }
     }
 
     @Override
     public ArrayList<HabitacionDTO> buscarPorTipo(String tipoHabitacion) throws FracasoOperacion {
-        return null;
+        try{
+            ArrayList<HabitacionDTO> resultado = new ArrayList<>();
+            List<Habitacion> bddResult = habitacionRepository.findAll();
+            for(Habitacion h : bddResult){
+                if(h instanceof SuiteDoble && Objects.equals(tipoHabitacion, "Suite Doble")){
+                    resultado.add(HabitacionMapper.toDTO(h));
+                }
+                else if(h instanceof DobleEstandar && Objects.equals(tipoHabitacion, "Doble Estandar")){
+                    resultado.add(HabitacionMapper.toDTO(h));
+                }
+                else if(h instanceof IndividualEstandar && Objects.equals(tipoHabitacion, "Individual Estándar")){
+                    resultado.add(HabitacionMapper.toDTO(h));
+                }
+                else if(h instanceof SuperiorFamilyPlan && Objects.equals(tipoHabitacion, "Superior Family Plan")){
+                    resultado.add(HabitacionMapper.toDTO(h));
+                }
+            }
+            return resultado;
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al buscar por tipo: " + e.getMessage());
+        }
     }
 }

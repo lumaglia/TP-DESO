@@ -31,7 +31,7 @@ public class Huesped {
     private String ocupacion;
     private String nacionalidad;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumns({
         @JoinColumn(name = "direccion_domicilio", referencedColumnName = "domicilio"),
         @JoinColumn(name = "direccion_depto", referencedColumnName = "depto"),
@@ -40,18 +40,14 @@ public class Huesped {
     })
     private Direccion direccion;
 
-    /*@ManyToMany(mappedBy = "huespedes")
-    private ArrayList<Estadia> estadias;*/
 
-    @ManyToMany(mappedBy = "huespedes")
-    private ArrayList<Estadia> estadias;
 
 
     public Huesped() {
 
     }
 
-    public Huesped(String nombre, String apellido, String tipoDoc, String nroDoc, String cuil, String posicionIva, LocalDate fechaNac, String telefono, String email, String ocupacion, String nacionalidad, Direccion direccion/*, ArrayList<Estadia> estadias*/) {
+    public Huesped(String nombre, String apellido, String tipoDoc, String nroDoc, String cuil, String posicionIva, LocalDate fechaNac, String telefono, String email, String ocupacion, String nacionalidad, Direccion direccion) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.tipoDoc = tipoDoc;
@@ -64,7 +60,6 @@ public class Huesped {
         this.ocupacion = ocupacion;
         this.nacionalidad = nacionalidad;
         this.direccion = direccion;
-        //this.estadias = estadias;
     }
 
     @Override

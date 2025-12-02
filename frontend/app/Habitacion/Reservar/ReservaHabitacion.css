@@ -6,10 +6,6 @@
     position: relative;
     margin: 0 5px;
 
-    &[data-estado='disponible'] {
-        background-color: white;
-    }
-
     &[data-estado='reservado'] {
         background-color: #F6BE2C;
     }
@@ -62,8 +58,11 @@
 
     }
 
-    &:hover, &[data-hovered=true] {
-        background-color: #99C0FF;
+    &[data-hovered=true] {
+        filter: opacity(75%);
+        &[data-estado='disponible'] {
+            background-color: #99C0FF;
+        }
     }
 
     &[data-hovered=true][data-seleccionado=true] {
@@ -96,5 +95,12 @@ td {
 }
 
 td:hover > div > .tableButton {
-    background-color: #99C0FF;
+    filter: opacity(60%);
+    &[data-estado='disponible'] {
+        background-color: #99C0FF;
+    }
+}
+
+tr td.invalido {
+    filter: brightness(85%);
 }

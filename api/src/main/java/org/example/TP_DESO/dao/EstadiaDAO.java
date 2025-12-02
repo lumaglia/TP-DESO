@@ -12,7 +12,7 @@ public interface EstadiaDAO {
     ArrayList <EstadiaDTO> obtenerEstadiaEntreFechas(LocalDate fechaInicio, LocalDate fechaFin) throws FracasoOperacion;
     void modificarEstadia(Long idEstadia, Estadia estadia) throws FracasoOperacion;
     void eliminarEstadia(Long idEstadia) throws FracasoOperacion;
-    EstadiaDTO buscarEstadiaPorHabitacionYFechaFin(int numeroHabitacion, LocalDate fechaFin) throws FracasoOperacion;
+    EstadiaDTO buscarEstadiaPorHabitacionYFechaFin(String numeroHabitacion, LocalDate fechaFin) throws FracasoOperacion;
     ArrayList<EstadiaDTO> obtenerEstadiasDeHuesped(String tipoDoc, String nroDoc) throws FracasoOperacion;
     //ArrayList<FacturaDTO> obtenerFacturasDeEstadiaPorHabitacionYEstado(int numeroHabitacion, EstadoFactura estado) throws FracasoOperacion;
     //Hacer cuando se implemente lo de factura

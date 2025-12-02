@@ -1,4 +1,4 @@
-package org.example.TP_DESO.dto.Mappers;
+package org.example.TP_DESO.dao.Mappers;
 
 import org.example.TP_DESO.domain.Estadia;
 import org.example.TP_DESO.domain.Huesped;
@@ -7,6 +7,7 @@ import org.example.TP_DESO.dto.HabitacionDTO;
 import org.example.TP_DESO.dto.HuespedDTO;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EstadiaMapper {
      public static EstadiaDTO toDTO(Estadia e) {

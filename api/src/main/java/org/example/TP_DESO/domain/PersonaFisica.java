@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "pagoParcial")
+@Table(name = "PersonaFisica")
 @Getter
 @Setter
 

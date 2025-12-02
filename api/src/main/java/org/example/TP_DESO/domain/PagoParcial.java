@@ -22,7 +22,7 @@ public class PagoParcial {
     private Pago pago;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "metodo_pago_id", nullable = false)
+    @JoinColumn(name = "metodo_pago_id", referencedColumnName = "id", nullable = false)
     private MetodoPago metodoPago;
 
     private float monto;

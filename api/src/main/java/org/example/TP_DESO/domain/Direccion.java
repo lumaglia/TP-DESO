@@ -3,25 +3,29 @@ package org.example.TP_DESO.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.TP_DESO.domain.Pks.DireccionId; // Importar la clase PK correcta
 
 @Entity
 @Table(name = "direccion")
-@IdClass(Direccion.class)
+@IdClass(DireccionId.class)
 @Getter
 @Setter
-
 public class Direccion {
 
     @Id
+    @Column (length = 50)
     private String domicilio;
 
     @Id
+    @Column (length = 50)
     private String depto;
 
     @Id
+    @Column (length = 10)
     private String codigoPostal;
 
     @Id
+    @Column (length = 50)
     private String pais;
 
     private String localidad;

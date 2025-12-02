@@ -3,17 +3,19 @@ package org.example.TP_DESO.dao;
 import org.example.TP_DESO.domain.Reserva;
 import org.example.TP_DESO.dto.EstadiaDTO;
 import org.example.TP_DESO.dto.HabitacionDTO;
-import org.example.TP_DESO.dto.Mappers.EstadiaMapper;
-import org.example.TP_DESO.dto.Mappers.HabitacionMapper;
-import org.example.TP_DESO.dto.Mappers.ReservaMapper;
+import org.example.TP_DESO.dao.Mappers.EstadiaMapper;
+import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
+import org.example.TP_DESO.dao.Mappers.ReservaMapper;
 import org.example.TP_DESO.dto.ReservaDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.ReservaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
+@Transactional
 public class ReservaDAOMySQL implements ReservaDAO{
 
 
@@ -51,7 +53,10 @@ public class ReservaDAOMySQL implements ReservaDAO{
 
             for (Reserva r : reservas) {
 
-                HabitacionDTO habitacionDTO = HabitacionMapper.toDTO(r.getHabitacion());
+                HabitacionDTO habitacionDTO = null;
+                if(r.getHabitacion() != null) {
+                    habitacionDTO = HabitacionMapper.toDTO(r.getHabitacion());
+                }
 
                 EstadiaDTO estadiaDTO = null;
                 if (r.getEstadia() != null) {

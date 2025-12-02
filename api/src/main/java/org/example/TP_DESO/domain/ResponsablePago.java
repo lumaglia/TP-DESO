@@ -12,6 +12,4 @@ public abstract class ResponsablePago {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "responsablePago")
-    private ArrayList<Factura> facturas;
 }

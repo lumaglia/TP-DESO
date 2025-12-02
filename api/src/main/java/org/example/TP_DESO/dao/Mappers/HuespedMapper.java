@@ -1,4 +1,4 @@
-package org.example.TP_DESO.dto.Mappers;
+package org.example.TP_DESO.dao.Mappers;
 
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.DireccionDTO;

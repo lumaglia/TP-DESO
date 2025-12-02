@@ -24,9 +24,9 @@ public class Consumo {
     private TipoConsumo tipo;
     private String detalle;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(
-            name = "estadia_id",
+            name = "estadia_id",referencedColumnName = "idEstadia",
             nullable = false)
     private Estadia estadia;
 }

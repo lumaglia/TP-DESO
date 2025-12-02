@@ -15,7 +15,7 @@ public class Reserva {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idReserva;
 
     private LocalDate fechaReserva;
     private LocalDate fechaInicio;
@@ -24,20 +24,12 @@ public class Reserva {
     private String nombre;
     private String telefono;
     private boolean cancelada;
-    //private Huesped huesped;   No hay relacion directa en el DER
 
-    @ManyToOne
-    @JoinColumn(
-            name = "habitacion_id",
-            nullable = false
-    )
-    private Habitacion habitacion;
-
-    @OneToOne(optional = true)
-    @JoinColumn(
-            name = "estadia_id",
-            unique = true,
-            nullable = true
-    )
+    @OneToOne
+    @JoinColumn(name = "id_estadia", referencedColumnName = "idEstadia")
     private Estadia estadia;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "id_habitacion", referencedColumnName = "nroHabitacion")
+    private Habitacion habitacion;
 }

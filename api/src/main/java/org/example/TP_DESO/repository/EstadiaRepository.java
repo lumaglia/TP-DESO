@@ -9,15 +9,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
-
 @Repository
 public interface EstadiaRepository extends JpaRepository<Estadia, Long> {
 
     ArrayList<Estadia> findByFechaInicioBetween(LocalDate desde, LocalDate hasta);
-    Optional<Estadia> findByHabitacion_NumeroAndFechaFin(int numeroHabitacion, LocalDate fechaFin);
-    ArrayList<Estadia> findByHuespedes_TipoDocAndHuespedes_NroDoc(String tipoDoc, String nroDoc);
-
-
-
+    Optional<Estadia> findByHabitacionNroHabitacionAndFechaFin(String nroHabitacion, LocalDate fechaFin);
+    ArrayList<Estadia> findByHuespedesTipoDocAndHuespedesNroDoc(String tipoDoc, String nroDoc);
 
 }

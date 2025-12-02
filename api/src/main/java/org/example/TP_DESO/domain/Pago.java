@@ -22,10 +22,7 @@ public class Pago {
     private LocalDate fechaCobro;
     private float montoTotal;
 
-    @OneToMany(mappedBy = "pago")
-    private ArrayList<PagoParcial> pagosParciales;
-
     @OneToOne(optional = false)
-    @JoinColumn(name = "factura_id", unique = true, nullable = false)
+    @JoinColumn(name = "factura_id", referencedColumnName = "nroFactura", unique = true, nullable = false)
     private Factura factura;
 }

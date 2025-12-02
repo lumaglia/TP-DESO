@@ -20,6 +20,4 @@ public class NotaCredito {
     private float iva;
     private float importeTotal;
 
-    @OneToMany(mappedBy = "notaCredito")
-    private ArrayList<Factura> facturas;
 }

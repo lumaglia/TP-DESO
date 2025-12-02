@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "estadia")
@@ -16,7 +17,7 @@ public class Estadia {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idEstadia;
 
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
@@ -24,19 +25,17 @@ public class Estadia {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "estadia_huesped",
-            joinColumns = @JoinColumn(name = "estadia_id"),
+            joinColumns = @JoinColumn(name = "id_estadia", referencedColumnName = "idEstadia"),
             inverseJoinColumns = {
-                    @JoinColumn(name = "huesped_tipoDoc", referencedColumnName = "tipoDoc"),
-                    @JoinColumn(name = "huesped_nroDoc", referencedColumnName = "nroDoc")
+                    @JoinColumn(name = "tipo_doc", referencedColumnName = "tipoDoc"),
+                    @JoinColumn(name = "nro_doc",  referencedColumnName = "nroDoc")
             }
     )
-    private ArrayList<Huesped> huespedes;
+    private List<Huesped> huespedes = new ArrayList<>();
 
 
-    @ManyToOne(optional = false)
-    @JoinColumn(
-            name = "habitacion_id",
-            nullable = false
-    )
+
+    @ManyToOne
+    @JoinColumn(name = "id_habitacion", referencedColumnName = "nroHabitacion")
     private Habitacion habitacion;
 }

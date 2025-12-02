@@ -4,13 +4,14 @@ package org.example.TP_DESO.dao;
 import org.example.TP_DESO.domain.Estadia;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.*;
-import org.example.TP_DESO.dto.Mappers.EstadiaMapper;
-import org.example.TP_DESO.dto.Mappers.HabitacionMapper;
+import org.example.TP_DESO.dao.Mappers.EstadiaMapper;
+import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.EstadiaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 @Primary
 @Service
+@Transactional
 public class EstadiaDAOMySQL implements EstadiaDAO{
 
     @Autowired
@@ -108,9 +110,9 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
     }
 
     @Override
-    public EstadiaDTO buscarEstadiaPorHabitacionYFechaFin(int numeroHabitacion, LocalDate fechaFin) throws FracasoOperacion {
+    public EstadiaDTO buscarEstadiaPorHabitacionYFechaFin(String numeroHabitacion, LocalDate fechaFin) throws FracasoOperacion {
         try {
-            Optional<Estadia> estadiaOpt = estadiaRepository.findByHabitacion_NumeroAndFechaFin(numeroHabitacion, fechaFin);
+            Optional<Estadia> estadiaOpt = estadiaRepository.findByHabitacionNroHabitacionAndFechaFin(numeroHabitacion, fechaFin);
 
             if (estadiaOpt.isEmpty()) {
                 throw new FracasoOperacion("Estadía no encontrada con habitacion y fecha fin: " + numeroHabitacion + ", " + fechaFin);
@@ -122,14 +124,17 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
 
             for (Huesped h : e.getHuespedes()) {
 
-                DireccionDTO direccionDTO = new DireccionDTO(
-                        h.getDireccion().getDomicilio(),
-                        h.getDireccion().getDepto(),
-                        h.getDireccion().getCodigoPostal(),
-                        h.getDireccion().getLocalidad(),
-                        h.getDireccion().getProvincia(),
-                        h.getDireccion().getPais()
-                );
+                DireccionDTO direccionDTO = null;
+                if (h.getDireccion() != null) {
+                    direccionDTO = new DireccionDTO(
+                            h.getDireccion().getDomicilio(),
+                            h.getDireccion().getDepto(),
+                            h.getDireccion().getCodigoPostal(),
+                            h.getDireccion().getLocalidad(),
+                            h.getDireccion().getProvincia(),
+                            h.getDireccion().getPais()
+                    );
+                }
 
                 huespedDTO.add(new HuespedDTO(
                         h.getTipoDoc(),
@@ -166,7 +171,7 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
             throws FracasoOperacion {
 
         try {
-            ArrayList<Estadia> estadias = estadiaRepository.findByHuespedes_TipoDocAndHuespedes_NroDoc(tipoDoc, nroDoc);
+            ArrayList<Estadia> estadias = estadiaRepository.findByHuespedesTipoDocAndHuespedesNroDoc(tipoDoc, nroDoc);
 
             if (estadias.isEmpty()) {
                 throw new FracasoOperacion("El huésped no posee estadías registradas");
@@ -181,14 +186,17 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
 
                 for (Huesped h : e.getHuespedes()) {
 
-                    DireccionDTO direccionDTO = new DireccionDTO(
-                            h.getDireccion().getDomicilio(),
-                            h.getDireccion().getDepto(),
-                            h.getDireccion().getCodigoPostal(),
-                            h.getDireccion().getLocalidad(),
-                            h.getDireccion().getProvincia(),
-                            h.getDireccion().getPais()
-                    );
+                    DireccionDTO direccionDTO = null;
+                    if (h.getDireccion() != null) {
+                        direccionDTO = new DireccionDTO(
+                                h.getDireccion().getDomicilio(),
+                                h.getDireccion().getDepto(),
+                                h.getDireccion().getCodigoPostal(),
+                                h.getDireccion().getLocalidad(),
+                                h.getDireccion().getProvincia(),
+                                h.getDireccion().getPais()
+                        );
+                    }
 
                     huespedDTO.add(new HuespedDTO(
                             h.getTipoDoc(),

@@ -1,10 +1,10 @@
 package org.example.TP_DESO.dao;
 
 import org.example.TP_DESO.domain.*;
-import org.example.TP_DESO.dto.EstadiaDTO;
 import org.example.TP_DESO.dto.HabitacionDTO;
 import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
+import org.example.TP_DESO.repository.EstadiaRepository;
 import org.example.TP_DESO.repository.HabitacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -22,6 +22,9 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
     @Autowired
     private HabitacionRepository habitacionRepository;
 
+    @Autowired
+    private EstadiaRepository estadiaRepository;
+
     @Override
     public void crearHabitacion(Habitacion habitacion) throws FracasoOperacion {
         try{
@@ -38,10 +41,10 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
             if(existente.isPresent()){
                 Habitacion h = existente.get();
 
-                h.setCapacidad(existente.get().getCapacidad());
-                h.setNroHabitacion(existente.get().getNroHabitacion());
-                h.setTamanno(existente.get().getTamanno());
-                h.setPrecioNoche(existente.get().getPrecioNoche());
+                h.setNroHabitacion(habitacion.getNroHabitacion());
+                h.setCapacidad(habitacion.getCapacidad());
+                h.setPrecioNoche(habitacion.getPrecioNoche());
+                h.setTamanno(habitacion.getTamanno());
 
                 habitacionRepository.save(h);
             }
@@ -90,9 +93,8 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
     public ArrayList<HabitacionDTO> obtenerTodas() throws FracasoOperacion {
         try{
             ArrayList<HabitacionDTO> resultado = new ArrayList<>();
-            List<Habitacion> bddResult = habitacionRepository.findAll();
 
-            for(Habitacion h : bddResult){
+            for(Habitacion h : habitacionRepository.findAll()){
                 resultado.add(HabitacionMapper.toDTO(h));
             }
 
@@ -116,10 +118,9 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
     public ArrayList<HabitacionDTO> buscarHabitacionesOcupadas(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
         try{
             ArrayList<HabitacionDTO> resultado = new ArrayList<>();
-            EstadiaDAOMySQL daoEstadias = new EstadiaDAOMySQL();
+            ArrayList<Estadia> estadias = estadiaRepository.findByFechaInicioBetween(desde, hasta);
 
-            ArrayList<EstadiaDTO> estadias = daoEstadias.obtenerEstadiaEntreFechas(desde, hasta);
-            for(EstadiaDTO e : estadias) resultado.add(e.getHabitacion());
+            for(Estadia e : estadias) resultado.add(HabitacionMapper.toDTO(e.getHabitacion()));
 
             return resultado;
         } catch (Exception e) {
@@ -130,8 +131,8 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
     @Override
     public ArrayList<HabitacionDTO> buscarHabitacionesDisponibles(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
         try{
-            ArrayList<HabitacionDTO> totales = this.obtenerTodas();
-            ArrayList<HabitacionDTO> ocupadas = this.buscarHabitacionesOcupadas(desde, hasta);
+            ArrayList<HabitacionDTO> totales = obtenerTodas();
+            ArrayList<HabitacionDTO> ocupadas = buscarHabitacionesOcupadas(desde, hasta);
 
             totales.removeAll(ocupadas);
 

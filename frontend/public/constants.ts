@@ -234,7 +234,32 @@ export const validation = {
             value: /^[a-zA-Z0-9\s-_]+$/,
             message: 'Ingrese caracteres válidos',
         }
-    }
+    },
+
+    'fechaInicio': {
+        valueAsDate: true,
+        required: 'La fecha inicial es obligatoria',
+        pattern: {
+            value: /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/,
+            message: 'La fecha debe seguir el patron DD/MM/YYYY'
+        },
+        validate: {
+            validDate: (value: Date) => {return !isNaN(value.getTime()) || 'Debe ingresarse una fecha valida'},
+
+        },
+    },
+    'fechaFin': {
+        valueAsDate: true,
+        required: 'La fecha de fin es obligatoria',
+        pattern: {
+            value: /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/,
+            message: 'La fecha debe seguir el patron DD/MM/YYYY'
+        },
+        validate: {
+            validDate: (value: Date) => {return !isNaN(value.getTime()) || 'Debe ingresarse una fecha valida'},
+            //afterStartDate: (value: Date) => {return value >= getValues(fechaInicio) || 'La fecha fin debe ser posterior a la inicial'},
+        },
+    },
 
 
 }
@@ -257,6 +282,8 @@ export const MapNameToApi : {[key: string]: string} = {
     'Localidad': 'direccion.localidad',
     'Provincia': 'direccion.provincia',
     'Pais': 'direccion.pais',
+    'Desde Fecha': 'fechaInicio',
+    'Hasta Fecha': 'fechaFin'
 };
 
 export type FormValues = {
@@ -286,3 +313,8 @@ export type FormValues = {
         pais: string;
     };
 };
+
+export type DateValues = {
+    fechaInicio: string;
+    fechaFin: string;
+}

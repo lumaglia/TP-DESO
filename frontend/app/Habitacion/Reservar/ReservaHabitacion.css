@@ -88,3 +88,13 @@
         background-color: #4586fc;
     }
 }
+
+td {
+    font-family: serif;
+    line-height: normal;
+    font-weight: normal;
+}
+
+td:hover > div > .tableButton {
+    background-color: #99C0FF;
+}

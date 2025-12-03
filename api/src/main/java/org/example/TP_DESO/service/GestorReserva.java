@@ -11,4 +11,24 @@ public class GestorReserva {
         if(singleton_instance == null) singleton_instance = new GestorReserva();
         return singleton_instance;
     }
+
+    public void hacerReserva(){
+
+    }
+
+    public void mostrarReserva(){
+
+    }
+
+    public void cancelarReserva(){
+
+    }
+
+    public void checkIn(){
+
+    }
+
+    public void checkOut(){
+
+    }
 }

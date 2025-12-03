@@ -13,4 +13,32 @@ public class GestorFactura {
         return singleton_instance;
     }
 
+    public void buscarResponsablePago(){
+
+    }
+
+    public void altaResponsablePago(){
+
+    }
+
+    public void modificarResponsablePago(){
+
+    }
+
+    public void bajaResponsablePago(){
+
+    }
+
+    public void generarFactura(){
+
+    }
+
+    public void mostrarFacturasResponsablePago(){
+
+    }
+
+    public void generarNotaCredito(){
+
+    }
+
 }

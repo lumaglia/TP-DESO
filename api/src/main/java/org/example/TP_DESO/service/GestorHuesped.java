@@ -22,7 +22,7 @@ public class GestorHuesped {
 
     @Autowired
     private GestorHuesped(HuespedDAO huespedDAO) throws FracasoOperacion {
-        this.huespedDAO = new HuespedDAOMySQL();
+        this.huespedDAO = huespedDAO;
     }
 
     public void altaHuesped(HuespedDTO huespedDTO) throws DocumentoYaExistente, FracasoOperacion {

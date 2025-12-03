@@ -104,7 +104,7 @@ public class HuespedDAOMySQL implements HuespedDAO {
     @Override
     public ArrayList<HuespedDTO> obtenerHuesped() throws FracasoOperacion {
         try{
-            return (ArrayList<HuespedDTO>) huespedRepository.findAll().stream().map(h -> {
+            return huespedRepository.findAll().stream().map(h -> {
                 DireccionDTO direccionDTO = new DireccionDTO(
                         h.getDireccion().getDomicilio(),
                         h.getDireccion().getDepto(),
@@ -128,7 +128,7 @@ public class HuespedDAOMySQL implements HuespedDAO {
                         h.getNacionalidad(),
                         direccionDTO
                 );
-            }).toList();
+            }).collect(Collectors.toCollection(ArrayList::new));
         } catch (Exception e) {
             throw new FracasoOperacion("Error al obtener huesped: " + e.getMessage());
         }

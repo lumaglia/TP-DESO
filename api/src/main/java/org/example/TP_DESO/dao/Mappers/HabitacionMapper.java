@@ -58,4 +58,68 @@ public class HabitacionMapper {
 
         throw new IllegalArgumentException("Tipo de habitación desconocido: " + h.getClass());
     }
+
+    public static Habitacion toDomain(HabitacionDTO h) {
+
+        if (h instanceof DobleEstandarDTO de) {
+            DobleEstandar d = new DobleEstandar();
+
+            d.setCapacidad(de.getCapacidad());
+            d.setPrecioNoche(de.getPrecioNoche());
+            d.setTamanno(de.getTamanno());
+            d.setCamasInd(de.getCamasInd());
+            d.setCamasDob(de.getCamasDob());
+            d.setNroHabitacion(h.getNroHabitacion());
+
+            return d;
+        }
+        if (h instanceof DobleSuperiorDTO ds) {
+            DobleSuperior d = new DobleSuperior();
+
+            d.setCapacidad(ds.getCapacidad());
+            d.setPrecioNoche(ds.getPrecioNoche());
+            d.setTamanno(ds.getTamanno());
+            d.setCamasKingInd(ds.getCamasKingInd());
+            d.setCamasKingDob(ds.getCamasKingDob());
+            d.setNroHabitacion(h.getNroHabitacion());
+
+            return d;
+        }
+        if (h instanceof IndividualEstandarDTO ie) {
+            IndividualEstandar i = new IndividualEstandar();
+
+            i.setCapacidad(ie.getCapacidad());
+            i.setPrecioNoche(ie.getPrecioNoche());
+            i.setTamanno(ie.getTamanno());
+            i.setCamasInd(ie.getCamasInd());
+            i.setNroHabitacion(ie.getNroHabitacion());
+
+            return i;
+        }
+        if (h instanceof SuiteDobleDTO sd) {
+            SuiteDoble s = new SuiteDoble();
+
+            s.setCapacidad(sd.getCapacidad());
+            s.setPrecioNoche(sd.getPrecioNoche());
+            s.setTamanno(sd.getTamanno());
+            s.setCamasKingDob(sd.getCamasKingDob());
+            s.setNroHabitacion(sd.getNroHabitacion());
+
+            return s;
+        }
+        if (h instanceof SuperiorFamilyPlanDTO sfp){
+            SuperiorFamilyPlan s = new SuperiorFamilyPlan();
+
+            s.setCapacidad(sfp.getCapacidad());
+            s.setPrecioNoche(sfp.getPrecioNoche());
+            s.setTamanno(sfp.getTamanno());
+            s.setCamasInd(sfp.getCamasInd());
+            s.setCamasDob(sfp.getCamasDob());
+            s.setNroHabitacion(sfp.getNroHabitacion());
+
+            return s;
+        }
+
+        throw new IllegalArgumentException("Tipo de habitación desconocido: " + h.getClass());
+    }
 }

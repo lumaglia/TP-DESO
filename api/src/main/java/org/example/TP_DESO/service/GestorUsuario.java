@@ -11,12 +11,10 @@ import org.springframework.stereotype.Service;
 public class GestorUsuario {
 
     private static GestorUsuario singleton_instance;
-    UsuarioDAO dao;
+    private final UsuarioDAO dao = new UsuarioDAOMySQL();
 
 
     public GestorUsuario() throws FracasoOperacion {
-        super();
-        dao = new UsuarioDAOMySQL();
     }
 
     private synchronized static GestorUsuario getInstance() throws FracasoOperacion {

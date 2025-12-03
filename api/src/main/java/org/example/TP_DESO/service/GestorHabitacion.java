@@ -1,5 +1,6 @@
 package org.example.TP_DESO.service;
 
+import org.example.TP_DESO.dao.HabitacionDAO;
 import org.example.TP_DESO.dao.HabitacionDAOMySQL;
 import org.example.TP_DESO.dto.HabitacionDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 
 public class GestorHabitacion {
     private static GestorHabitacion singleton_instance;
+    private static final HabitacionDAO dao =  new HabitacionDAOMySQL();
 
     private GestorHabitacion() {
 
@@ -30,9 +32,7 @@ public class GestorHabitacion {
 
     public boolean obtenerEstadoHabitacion(String nroHabitacion, LocalDate desde, LocalDate hasta) throws FracasoOperacion {
         try {
-            HabitacionDAOMySQL dao = new HabitacionDAOMySQL();
             HabitacionDTO dto = dao.obtenerHabitacion(nroHabitacion);
-
             return !(dao.buscarHabitacionesOcupadas(desde, hasta).contains(dto));
 
         } catch (FracasoOperacion e) {

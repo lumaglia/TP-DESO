@@ -1,6 +1,7 @@
 package org.example.TP_DESO.service;
 
 import org.example.TP_DESO.dao.HuespedDAO;
+import org.example.TP_DESO.dao.HuespedDAOMySQL;
 import org.example.TP_DESO.domain.Direccion;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.DireccionDTO;
@@ -21,7 +22,7 @@ public class GestorHuesped {
 
     @Autowired
     private GestorHuesped(HuespedDAO huespedDAO) throws FracasoOperacion {
-        this.huespedDAO = huespedDAO;
+        this.huespedDAO = new HuespedDAOMySQL();
     }
 
     public void altaHuesped(HuespedDTO huespedDTO) throws DocumentoYaExistente, FracasoOperacion {

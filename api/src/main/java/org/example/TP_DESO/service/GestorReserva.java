@@ -1,5 +1,10 @@
 package org.example.TP_DESO.service;
 
+import org.example.TP_DESO.dao.EstadiaDAOMySQL;
+import org.example.TP_DESO.dto.EstadiaDTO;
+import org.example.TP_DESO.dto.ReservaDTO;
+import org.example.TP_DESO.exceptions.FracasoOperacion;
+
 public class GestorReserva {
     private static GestorReserva singleton_instance;
 
@@ -16,19 +21,25 @@ public class GestorReserva {
 
     }
 
-    public void mostrarReserva(){
+    public ReservaDTO mostrarReserva(){
 
     }
 
-    public void cancelarReserva(){
-
+    public boolean cancelarReserva(EstadiaDTO estadia) throws  FracasoOperacion {
+        try {
+            EstadiaDAOMySQL dao = new EstadiaDAOMySQL();
+            dao.eliminarEstadia(estadia.getId());
+            return true;
+        } catch (FracasoOperacion e) {
+            throw new FracasoOperacion("No se ha podido cancelar la reserva" +  e.getMessage());
+        }
     }
 
     public void checkIn(){
 
     }
 
-    public void checkOut(){
+    public void checkOut(EstadiaDTO estadiaDTO){
 
     }
 }

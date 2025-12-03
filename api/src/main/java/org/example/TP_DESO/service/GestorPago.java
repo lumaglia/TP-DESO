@@ -15,7 +15,7 @@ public class GestorPago {
         return singleton_instance;
     }
 
-    public boolean registrarPago(){
+    public void registrarPago(){
 
     }
 
@@ -27,7 +27,7 @@ public class GestorPago {
 
     }
 
-    public boolean corroborarPago(){
+    public void corroborarPago(){
 
     }
 }

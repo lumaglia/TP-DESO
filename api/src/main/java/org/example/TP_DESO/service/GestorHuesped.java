@@ -64,7 +64,22 @@ public class GestorHuesped {
     }
 
     public ArrayList<HuespedDTO> buscarHuesped(HuespedDTO huespedDTO) throws FracasoOperacion {
-        return huespedDAO.obtenerHuesped(huespedDTO);
+        if(huespedDTO.getNombre() == null &&
+        huespedDTO.getApellido() == null &&
+        huespedDTO.getTipoDoc() == null &&
+        huespedDTO.getNroDoc() == null &&
+        huespedDTO.getCuil() == null &&
+        huespedDTO.getPosicionIva() == null &&
+        huespedDTO.getFechaNac() == null &&
+        huespedDTO.getTelefono() == null &&
+        huespedDTO.getEmail() == null &&
+        huespedDTO.getOcupacion() == null &&
+        huespedDTO.getNacionalidad() == null &&
+        huespedDTO.getDireccion() == null) {
+            return huespedDAO.obtenerHuesped();
+        }else{
+            return huespedDAO.obtenerHuesped(huespedDTO);
+        }
     }
 
     public void modificarHuesped(String tipoDoc, String numeroDoc, HuespedDTO huespedDTO) throws DocumentoYaExistente, FracasoOperacion{

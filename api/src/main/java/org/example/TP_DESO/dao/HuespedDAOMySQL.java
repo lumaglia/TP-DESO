@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Primary
 @Service
@@ -97,6 +99,39 @@ public class HuespedDAOMySQL implements HuespedDAO {
             throw new FracasoOperacion("Error al obtener huéspedes: " + e.getMessage());
         }
         return resultado;
+    }
+
+    @Override
+    public ArrayList<HuespedDTO> obtenerHuesped() throws FracasoOperacion {
+        try{
+            return (ArrayList<HuespedDTO>) huespedRepository.findAll().stream().map(h -> {
+                DireccionDTO direccionDTO = new DireccionDTO(
+                        h.getDireccion().getDomicilio(),
+                        h.getDireccion().getDepto(),
+                        h.getDireccion().getCodigoPostal(),
+                        h.getDireccion().getLocalidad(),
+                        h.getDireccion().getProvincia(),
+                        h.getDireccion().getPais()
+                );
+
+                return new HuespedDTO(
+                        h.getTipoDoc(),
+                        h.getNroDoc(),
+                        h.getApellido(),
+                        h.getNombre(),
+                        h.getCuil(),
+                        h.getPosicionIva(),
+                        h.getFechaNac(),
+                        h.getTelefono(),
+                        h.getEmail(),
+                        h.getOcupacion(),
+                        h.getNacionalidad(),
+                        direccionDTO
+                );
+            }).toList();
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al obtener huesped: " + e.getMessage());
+        }
     }
 
     @Override

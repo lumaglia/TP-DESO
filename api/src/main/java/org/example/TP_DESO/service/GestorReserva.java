@@ -8,12 +8,10 @@ import org.example.TP_DESO.domain.*;
 import org.example.TP_DESO.dto.*;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -108,9 +106,9 @@ public class GestorReserva {
 
     }
 
-    public ArrayList<ReservasEstadiasPoHabitacionDTO> getReservaEstadia(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
+    public ArrayList<ReservasEstadiasPorHabitacionDTO> getReservaEstadia(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
         try{
-            ArrayList<ReservasEstadiasPoHabitacionDTO> resultado = new ArrayList<>();
+            ArrayList<ReservasEstadiasPorHabitacionDTO> resultado = new ArrayList<>();
             ArrayList<HabitacionDTO> habitaciones = daoHabitacion.obtenerTodas();
 
             for(HabitacionDTO h : habitaciones) {
@@ -120,7 +118,7 @@ public class GestorReserva {
                 Stream<EstadiaDTO> estadiaDTOS = daoEstadia.obtenerEstadiaEntreFechas(desde, hasta).stream().filter(p->Objects.equals(p.getHabitacion().getNroHabitacion(), h.getNroHabitacion()));
                 ArrayList<EstadiaDTO> estadiaList = (ArrayList<EstadiaDTO>) estadiaDTOS;
 
-                ReservasEstadiasPoHabitacionDTO e = new ReservasEstadiasPoHabitacionDTO(h, estadiaList, reservaList);
+                ReservasEstadiasPorHabitacionDTO e = new ReservasEstadiasPorHabitacionDTO(h, estadiaList, reservaList);
                 resultado.add(e);
             }
 

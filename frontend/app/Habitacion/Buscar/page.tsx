@@ -21,8 +21,8 @@ export default function BuscarHabitacion({tipo} : {tipo: tiposTablaHabitacion}) 
     const formRef = useRef<FieldValues>(null);
     const router = useRouter();
 
-    const [ fechaInicio, setFechaInicio ] = useState("");
-    const [ fechaFin, setFechaFin ] = useState("");
+    const [ fechaInicio, setFechaInicio ] = useState<Date>(new Date());
+    const [ fechaFin, setFechaFin ] = useState<Date>(new Date());
 
     const validation =
         {
@@ -55,22 +55,24 @@ export default function BuscarHabitacion({tipo} : {tipo: tiposTablaHabitacion}) 
     const onSubmit = (data: FieldValues) => {
         data.fechaInicio.setTime(data.fechaInicio.getTime()+4*3600000);
         data.fechaFin.setTime(data.fechaFin.getTime()+4*3600000);
-        setFechaInicio(data.fechaInicio = data.fechaInicio.toLocaleDateString('en-GB'));
-        setFechaFin(data.fechaFin = data.fechaFin.toLocaleDateString('en-GB'));
+        setFechaInicio(data.fechaInicio);
+        setFechaFin(data.fechaFin);
         formRef.current = data
         console.log(formRef.current);
         // PONER EL FETCH A LA API ACA
         setSolicitudValida(true); //Si sale bien cambia el contenido mostrado
 
     };
-
+    console.log('INICIO', fechaInicio)
+    console.log('FIN', fechaFin)
     return (
         <>
             {
                 solicitudValida? (
                     <>
-                    <h2 style={{textAlign: 'center'}}>Disponibilidad de habitaciones entre {fechaInicio} y {fechaFin}</h2>
-                    <TablaHabitacion tipo={tipo}/>
+                    <h2 style={{textAlign: 'center'}}>Disponibilidad de habitaciones entre
+                        {fechaInicio.toLocaleDateString('en-GB')} y {fechaFin.toLocaleDateString('en-GB')}</h2>
+                    <TablaHabitacion fechaInicio={fechaInicio} fechaFin={fechaFin} infoDisponibilidad={[]}/>
                     </>
                 ): (
                     <><h2 style={{textAlign: 'center'}}>Ingresar el periodo a revisar</h2>

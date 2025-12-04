@@ -7,22 +7,22 @@ import './TablaHabitacion.css'
 import '../Huesped/Buscar/Buscar.css'
 import { tiposTablaHabitacion } from '../../public/constants'
 
-export function TablaHabitacion({tipo} : {tipo: tiposTablaHabitacion}) {
+export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibilidad, fechaInicio, fechaFin,
+                                    seleccionadas= new Map<number, Array<Array<Date>>>(), setSeleccionadas=()=>{}}
+                                : {tipo?: tiposTablaHabitacion, infoDisponibilidad: Array<Object>, fechaInicio: Date, fechaFin: Date,
+                                    seleccionadas?: Map<number, Array<Array<Date>>>, setSeleccionadas?: Function}) {
+
     const habitaciones = [...Array(50).keys()]
 
-    const d1 = new Date('2022-01-18');
-    const d2 = new Date('2022-02-24');
-    const date = new Date(d1.getTime());
-
     const dates = [];
-
-    while (date <= d2) {
+    const date = new Date(fechaInicio)
+    while (date <= fechaFin) {
         dates.push(new Date(date));
         date.setDate(date.getDate() + 1);
     }
 
-
-    const [seleccionadas, setSeleccionadas] = useState(new Map<number, Array<Array<Date>>>());
+    // Lo dejo comentado para poder copiarlo facil en loscodigos del CU04 y CU15
+    // const [seleccionadas, setSeleccionadas] = useState(new Map<number, Array<Array<Date>>>());
     const [indiceSeleccionActual, setIndiceSeleccionActual] = useState<number | null>(null);
     const [hovered, setHovered] = useState<Date | null>(null);
 

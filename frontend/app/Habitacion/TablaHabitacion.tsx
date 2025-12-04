@@ -35,8 +35,6 @@ export function TablaHabitacion({tipo} : {tipo: tiposTablaHabitacion}) {
         return new Date(Number(year), Number(month) - 1, Number(day));
     }
 
-    console.log(seleccionadas);
-    console.log("indice", indiceSeleccionActual);
     function handleClick(date: Date, habitacion: number) {
         if(!indiceSeleccionActual || indiceSeleccionActual === habitacion){
             setSeleccionadas((seleccionadas: Map<number, Array<Array<Date>>>) => {
@@ -44,7 +42,6 @@ export function TablaHabitacion({tipo} : {tipo: tiposTablaHabitacion}) {
                 const newMap = new Map<number, Array<Array<Date>>>(seleccionadas);
                 const index = arr.findIndex(x =>
                     x.length === 1);
-                console.log("index", index);
                 if (index > -1) {
                     if(!arr.some(selection => selection[0] <= date && selection[1] >= date
                         || selection[0] > date && selection[0] < arr[index][0]
@@ -54,7 +51,6 @@ export function TablaHabitacion({tipo} : {tipo: tiposTablaHabitacion}) {
                         if(indiceSeleccionActual) {
                             setIndiceSeleccionActual(null)
                         }else setIndiceSeleccionActual(habitacion)
-                        console.log("SISISI")
                         if(arr[index][0] > date){
                             return newMap.set(habitacion, [...arr.slice(0, index), [date, arr[index][0]], ...arr.slice(index + 1)]);
                         }else {
@@ -98,7 +94,6 @@ export function TablaHabitacion({tipo} : {tipo: tiposTablaHabitacion}) {
     }
 
     function handleRightClick(date: Date, habitacion: number) {
-        console.log("ELIMINAR indice", habitacion, indiceSeleccionActual);
         setSeleccionadas((seleccionadas: Map<number, Array<Array<Date>>>) => {
             const newMap = new Map<number, Array<Array<Date>>>(seleccionadas);
 
@@ -106,7 +101,6 @@ export function TablaHabitacion({tipo} : {tipo: tiposTablaHabitacion}) {
                 const arr = getKey(habitacion, seleccionadas)
                 const index = arr.findIndex(x => x[0]?.getTime() <= date.getTime() && (!x[1] || x[1]?.getTime() >= date.getTime()))
                 if (index > -1) {
-                    console.log("ENTRO IF")
                     setIndiceSeleccionActual(null)
                     if(arr.length > 1) {
                         return newMap.set(habitacion, [...arr.slice(0, index), ...arr.slice(index + 1)])
@@ -117,10 +111,8 @@ export function TablaHabitacion({tipo} : {tipo: tiposTablaHabitacion}) {
                 }else return seleccionadas
             }else {
                 habitacion = indiceSeleccionActual
-                console.log("else")
                 const arr = getKey(habitacion, seleccionadas)
                 const index = arr.findIndex(x => x.length === 1)
-                console.log("ELSE LOG", arr, arr[index])
                 setIndiceSeleccionActual(null)
                 if(arr.length > 1){
                     return newMap.set(habitacion, [...arr.slice(0, index), ...arr.slice(index + 1)])

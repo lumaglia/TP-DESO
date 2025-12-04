@@ -3,6 +3,7 @@ package org.example.TP_DESO.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Service
 public class GestorPago {
     private static GestorPago singleton_instance;
 

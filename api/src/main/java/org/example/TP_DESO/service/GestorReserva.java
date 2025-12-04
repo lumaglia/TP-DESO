@@ -7,6 +7,7 @@ import org.example.TP_DESO.dao.Mappers.ReservaMapper;
 import org.example.TP_DESO.domain.*;
 import org.example.TP_DESO.dto.*;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +20,15 @@ import java.util.stream.Stream;
 @Service
 public class GestorReserva {
     private static GestorReserva singleton_instance;
-    private final ReservaDAO daoReserva = new ReservaDAOMySQL();
-    private final HabitacionDAO daoHabitacion = new HabitacionDAOMySQL();
-    private final HuespedDAO daoHuesped = new HuespedDAOMySQL();
-    private final EstadiaDAO daoEstadia = new EstadiaDAOMySQL();
+
+    @Autowired
+    private ReservaDAOMySQL daoReserva;
+    @Autowired
+    private HabitacionDAOMySQL daoHabitacion;
+    @Autowired
+    private HuespedDAOMySQL daoHuesped;
+    @Autowired
+    private EstadiaDAOMySQL daoEstadia;
 
     private GestorReserva() {
     }
@@ -102,9 +108,23 @@ public class GestorReserva {
 
     }
 
-    public void getReservaEstadia(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
+    public ArrayList<ReservasEstadiasPoHabitacionDTO> getReservaEstadia(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
         try{
-            //Mirar si el dao de habitaciones tiene el JOIN entre habitacion-estadia-reserva
+            ArrayList<ReservasEstadiasPoHabitacionDTO> resultado = new ArrayList<>();
+            ArrayList<HabitacionDTO> habitaciones = daoHabitacion.obtenerTodas();
+
+            for(HabitacionDTO h : habitaciones) {
+                Stream<ReservaDTO> reservaDTOs = daoReserva.obtenerReservasEntreFechas(desde, hasta).stream().filter(p-> Objects.equals(p.getHabitacion().getNroHabitacion(), h.getNroHabitacion()));
+                ArrayList<ReservaDTO> reservaList = (ArrayList<ReservaDTO>) reservaDTOs;
+
+                Stream<EstadiaDTO> estadiaDTOS = daoEstadia.obtenerEstadiaEntreFechas(desde, hasta).stream().filter(p->Objects.equals(p.getHabitacion().getNroHabitacion(), h.getNroHabitacion()));
+                ArrayList<EstadiaDTO> estadiaList = (ArrayList<EstadiaDTO>) estadiaDTOS;
+
+                ReservasEstadiasPoHabitacionDTO e = new ReservasEstadiasPoHabitacionDTO(h, estadiaList, reservaList);
+                resultado.add(e);
+            }
+
+            return resultado;
         }
         catch (Exception e){
             throw new FracasoOperacion("Error al obtener la reserva" + e.getMessage());

@@ -17,12 +17,11 @@ import java.util.ArrayList;
 
 @Service
 public class GestorHuesped {
-
-    private final HuespedDAO huespedDAO;
-
     @Autowired
+    private HuespedDAOMySQL huespedDAO;
+
     private GestorHuesped(HuespedDAO huespedDAO) throws FracasoOperacion {
-        this.huespedDAO = huespedDAO;
+
     }
 
     public void altaHuesped(HuespedDTO huespedDTO) throws DocumentoYaExistente, FracasoOperacion {

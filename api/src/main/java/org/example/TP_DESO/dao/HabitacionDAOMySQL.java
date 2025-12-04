@@ -167,4 +167,8 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
             throw new FracasoOperacion("Error al buscar por tipo: " + e.getMessage());
         }
     }
+
+    public void getReservasEstadias(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
+
+    }
 }

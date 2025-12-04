@@ -4,13 +4,18 @@ import org.example.TP_DESO.dao.HabitacionDAO;
 import org.example.TP_DESO.dao.HabitacionDAOMySQL;
 import org.example.TP_DESO.dto.HabitacionDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+@Service
 public class GestorHabitacion {
+    @Autowired
+    private HabitacionDAOMySQL dao;
+
     private static GestorHabitacion singleton_instance;
-    private static final HabitacionDAO dao =  new HabitacionDAOMySQL();
 
     private GestorHabitacion() {
 

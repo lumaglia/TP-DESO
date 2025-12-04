@@ -168,7 +168,4 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
         }
     }
 
-    public void getReservasEstadias(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
-
-    }
 }

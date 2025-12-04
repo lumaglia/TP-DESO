@@ -4,7 +4,6 @@ import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.HuespedDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public interface HuespedDAO {
@@ -14,6 +13,5 @@ public interface HuespedDAO {
     ArrayList<HuespedDTO> obtenerHuesped() throws FracasoOperacion;
     void modificarHuesped(String tipoDoc, String numeroDoc, Huesped huesped) throws FracasoOperacion;
     void eliminarHuesped(String tipoDoc, String numeroDoc) throws FracasoOperacion;
-    void getReservasEstadias(LocalDate desde, LocalDate hasta) throws FracasoOperacion;
 
 }

@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Service
@@ -110,17 +109,23 @@ public class GestorReserva {
         try{
             ArrayList<ReservasEstadiasPorHabitacionDTO> resultado = new ArrayList<>();
             ArrayList<HabitacionDTO> habitaciones = daoHabitacion.obtenerTodas();
+            ArrayList<ReservaDTO> reservaDTOs = daoReserva.obtenerReservasEntreFechas(desde, hasta);
+            ArrayList<EstadiaDTO> estadiaDTOS = daoEstadia.obtenerEstadiaEntreFechas(desde, hasta);
 
-            for(HabitacionDTO h : habitaciones) {
-                Stream<ReservaDTO> reservaDTOs = daoReserva.obtenerReservasEntreFechas(desde, hasta).stream().filter(p-> Objects.equals(p.getHabitacion().getNroHabitacion(), h.getNroHabitacion()));
-                ArrayList<ReservaDTO> reservaList = (ArrayList<ReservaDTO>) reservaDTOs;
+            Map<String, Integer> nroHabitacionToIndex = new HashMap<>();
 
-                Stream<EstadiaDTO> estadiaDTOS = daoEstadia.obtenerEstadiaEntreFechas(desde, hasta).stream().filter(p->Objects.equals(p.getHabitacion().getNroHabitacion(), h.getNroHabitacion()));
-                ArrayList<EstadiaDTO> estadiaList = (ArrayList<EstadiaDTO>) estadiaDTOS;
+            habitaciones.forEach((habitacion) -> {
+                nroHabitacionToIndex.put(habitacion.getNroHabitacion(), nroHabitacionToIndex.size());
+                resultado.add(new ReservasEstadiasPorHabitacionDTO(habitacion, new ArrayList<EstadiaDTO>(), new ArrayList<ReservaDTO>()));
+            });
 
-                ReservasEstadiasPorHabitacionDTO e = new ReservasEstadiasPorHabitacionDTO(h, estadiaList, reservaList);
-                resultado.add(e);
-            }
+            reservaDTOs.forEach((reserva) -> {
+                resultado.get(nroHabitacionToIndex.get(reserva.getHabitacion().getNroHabitacion())).getReservasAsociadas().add(reserva);
+            });
+
+            estadiaDTOS.forEach((estadia) -> {
+                resultado.get(nroHabitacionToIndex.get(estadia.getHabitacion().getNroHabitacion())).getEstadiasAsociadas().add(estadia);
+            });
 
             return resultado;
         }

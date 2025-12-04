@@ -1,10 +1,12 @@
 package org.example.TP_DESO.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
+@Setter
 public class ReservasEstadiasPorHabitacionDTO {
     private HabitacionDTO habitacion;
     private List<EstadiaDTO> estadiasAsociadas;

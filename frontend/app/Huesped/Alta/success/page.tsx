@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation'
+import '../../../globals.css'
 import '../AltaHuesped.css'
 import Encabezado from "../../../Encabezado";
 
@@ -15,7 +16,7 @@ export default function successPage() {
             <h3>¿Desea cargar otro?</h3>
             <div>
                 <button className='Button' onClick={() => router.push('/')}>No</button>
-                <button className='Button' onClick={() => router.push('/AltaHuesped')}>Si</button>
+                <button className='Button' onClick={() => router.push('/Huesped/Alta')}>Si</button>
             </div>
         </div>
     )

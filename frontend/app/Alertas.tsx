@@ -58,7 +58,7 @@ export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen:
                                 }
                             }).then(res => {
                                 if(res.ok){
-                                    router.push(`/AltaHuesped/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
+                                    router.push(`/Huesped/Alta/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
                                 }
                             })
                         }}>

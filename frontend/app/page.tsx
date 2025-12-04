@@ -13,6 +13,9 @@ export default function Home() {
             <Link href='/Huesped/Buscar'>
                 <button>Buscar Huesped</button>
             </Link>
+            <Link href='/Reserva/Alta'>
+                <button>Reservar Habitación</button>
+            </Link>
         </>
     );
 }

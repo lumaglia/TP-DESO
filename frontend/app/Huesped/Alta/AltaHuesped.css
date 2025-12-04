@@ -23,7 +23,9 @@
 .Button:focus-visible {
     background-color: #3d4555;
 }
-
+.Button.Disabled {
+    background-color: #9ba5b7;
+}
 input:focus {
     outline: 2px solid #80c7ea; /* Change to your desired color */
 }

@@ -201,9 +201,13 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
             </ScrollArea.Root>
             </Row>
             <Row>
-                <TableButton estado={"ocupado"}/><p> Ocupado </p><TableButton estado={"reservado"}/><p> Reservado </p>
+                <TableButton estado={"ocupado"}/><p style={{alignSelf:'flex-end', marginBottom:'2px', marginRight:'4px'}}> Ocupado </p>
+                <TableButton estado={"reservado"}/><p style={{alignSelf:'flex-end', marginBottom:'2px', marginRight:'4px'}}> Reservado </p>
                 { tipo == tiposTablaHabitacion.CU05? <></>
-                    : <><TableButton start={true} end={true} seleccionado={true}/><p> Selección </p><TableButton start={true} end={true} seleccionado={true} hovered={true}/><p> Selección Invalida </p></>
+                    : <><TableButton start={true} end={true} seleccionado={true}/>
+                        <p style={{alignSelf:'flex-end', marginBottom:'2px', marginRight:'4px'}}> Selección </p>
+                        <TableButton start={true} end={true} seleccionado={true} hovered={true}/>
+                        <p style={{alignSelf:'flex-end', marginBottom:'2px', marginRight:'4px'}}> Selección Invalida </p></>
                 }
             </Row>
             {

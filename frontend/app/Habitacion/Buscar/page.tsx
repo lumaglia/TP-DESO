@@ -12,9 +12,9 @@ import {TablaHabitacion} from "../TablaHabitacion";
 
 
 export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, seleccionadas,
-                                             setSeleccionadas}
+                                             setSeleccionadas, onNext}
                                          : {tipo?: tiposTablaHabitacion, seleccionadas?: Map<string, Array<Array<Date>>>,
-                                            setSeleccionadas?: Function}) {
+                                            setSeleccionadas?: Function, onNext?: React.MouseEventHandler<HTMLButtonElement>}) {
 
     const form = useForm<DateValues>();
     const { register, control, handleSubmit, formState, watch, clearErrors, trigger, getValues } = form;
@@ -87,7 +87,13 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
                     <TablaHabitacion fechaInicio={fechaInicio} fechaFin={fechaFin} infoDisponibilidad={disponibilidad ?? []} tipo={tipo}
                                      {...(seleccionadas != undefined && setSeleccionadas != undefined
                                          &&{seleccionadas: seleccionadas, setSeleccionadas: setSeleccionadas})} />
+                        {seleccionadas != undefined && setSeleccionadas != undefined &&
+                                <Row>
+                                    <button style={{marginLeft: 'auto', marginRight:'100px'}}
+                                            className='Button' onClick={onNext}>Siguiente</button>
+                                </Row>}
                     </>
+
                 ): (
                     <><h2 style={{textAlign: 'center'}}>Ingresar el periodo a revisar</h2>
                         <form method='post' onSubmit={handleSubmit(onSubmit)} noValidate>

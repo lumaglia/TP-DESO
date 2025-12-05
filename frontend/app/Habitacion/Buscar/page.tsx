@@ -11,7 +11,10 @@ import {TablaHabitacion} from "../TablaHabitacion";
 
 
 
-export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05} : {tipo?: tiposTablaHabitacion}) {
+export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, seleccionadas,
+                                             setSeleccionadas}
+                                         : {tipo?: tiposTablaHabitacion, seleccionadas?: Map<string, Array<Array<Date>>>,
+                                            setSeleccionadas?: Function}) {
 
     const form = useForm<DateValues>();
     const { register, control, handleSubmit, formState, watch, clearErrors, trigger, getValues } = form;
@@ -81,7 +84,9 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05} : {tip
                 solicitudValida? (
                     <>
                     <h2 style={{textAlign: 'center'}}>Disponibilidad de habitaciones entre {fechaInicio.toLocaleDateString('en-GB')} y {fechaFin.toLocaleDateString('en-GB')}</h2>
-                    <TablaHabitacion fechaInicio={fechaInicio} fechaFin={fechaFin} infoDisponibilidad={disponibilidad ?? []} tipo={tipo}/>
+                    <TablaHabitacion fechaInicio={fechaInicio} fechaFin={fechaFin} infoDisponibilidad={disponibilidad ?? []} tipo={tipo}
+                                     {...(seleccionadas != undefined && setSeleccionadas != undefined
+                                         &&{seleccionadas: seleccionadas, setSeleccionadas: setSeleccionadas})} />
                     </>
                 ): (
                     <><h2 style={{textAlign: 'center'}}>Ingresar el periodo a revisar</h2>

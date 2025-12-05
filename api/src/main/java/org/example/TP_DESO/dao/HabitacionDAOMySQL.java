@@ -105,40 +105,23 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
         }
     }
 
+    @Override
+    public ArrayList<Habitacion> obtenerTodasDomainForm() throws FracasoOperacion{
+        try{
+            return (ArrayList<Habitacion>) habitacionRepository.findAll();
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al recuperar las habitaciones" + e.getMessage());
+
+        }
+    }
+
     @Override // No es lo mismo que obtenerHabitacion?
     public HabitacionDTO buscarPorNumero(int numero) throws FracasoOperacion {
         try{
             return this.obtenerHabitacion(String.valueOf(numero));
         } catch (FracasoOperacion e) {
             throw new FracasoOperacion("Error al buscar por numero: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public ArrayList<HabitacionDTO> buscarHabitacionesOcupadas(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
-        try{
-            ArrayList<HabitacionDTO> resultado = new ArrayList<>();
-            ArrayList<Estadia> estadias = estadiaRepository.findByFechaInicioBetween(desde, hasta);
-
-            for(Estadia e : estadias) resultado.add(HabitacionMapper.toDTO(e.getHabitacion()));
-
-            return resultado;
-        } catch (Exception e) {
-            throw new FracasoOperacion("No se pudo recuperar las habitaciones ocupadas" + e.getMessage());
-        }
-    }
-
-    @Override
-    public ArrayList<HabitacionDTO> buscarHabitacionesDisponibles(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
-        try{
-            ArrayList<HabitacionDTO> totales = obtenerTodas();
-            ArrayList<HabitacionDTO> ocupadas = buscarHabitacionesOcupadas(desde, hasta);
-
-            totales.removeAll(ocupadas);
-
-            return totales;
-        } catch (Exception e) {
-            throw new FracasoOperacion("No se pudo buscar las habitaciones disponibles" + e.getMessage());
         }
     }
 
@@ -167,4 +150,5 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
             throw new FracasoOperacion("Error al buscar por tipo: " + e.getMessage());
         }
     }
+
 }

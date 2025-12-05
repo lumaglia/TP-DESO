@@ -92,3 +92,36 @@ export function AlertaHuespedNoEncontrado({open, setOpen} : {open: boolean, setO
         </AlertDialog.Root>
     );
 }
+
+export function AlertaReserva({open, setOpen, data} : {open: boolean, setOpen: (open: boolean, e: any) => void, data: Array<any>}) {
+    const router = useRouter();
+    return (
+        <AlertDialog.Root open={open} onOpenChange={setOpen}>
+            <AlertDialog.Portal>
+                <AlertDialog.Backdrop className={'Backdrop'} />
+                <AlertDialog.Popup className={'Popup'} outline-color='yellow'>
+                    <div style={{display: 'flex', alignItems: 'flex-start', margin: '0', padding: '0'}}>
+                        <Image src={warningIcon} width={28} height={28} alt="warning" />
+                        <AlertDialog.Title className={'Title'}>
+                            Cuidado
+                        </AlertDialog.Title>
+                    </div>
+                    <AlertDialog.Description className={'Description'}>
+                        Se ha seleccionado un rango de fechas sobre las reservas:
+                        data.forEach(e => {/* HACER CODIGO PARA MOSTRAR COMO LISTA LAS RESERVAS SOBRE LAS QUE CAE */})
+                    </AlertDialog.Description>
+                    <div className={'Actions'}>
+                        <AlertDialog.Close className={'PopupButton'} data-color='white' onClick={() => {
+                            //CODIGO PARA DESHACER LA SELECCIÓN
+                        }}>Volver y Cambiar</AlertDialog.Close>
+                        <AlertDialog.Close className={'PopupButton'} onClick={() => {
+                            //CODIGO PARA CONTINUAR
+                        }}>
+                            Ocupar Igualmente
+                        </AlertDialog.Close>
+                    </div>
+                </AlertDialog.Popup>
+            </AlertDialog.Portal>
+        </AlertDialog.Root>
+    );
+}

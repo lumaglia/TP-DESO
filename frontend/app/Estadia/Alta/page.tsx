@@ -6,7 +6,7 @@ import { ScrollArea } from '@base-ui-components/react/scroll-area';
 import Campo from '../../Campo.tsx'
 import Row from '../../Row'
 import Encabezado from '../../Encabezado.tsx'
-import { AlertaCancelar } from '../../Alertas.tsx'
+import { AlertaCancelar , AlertaReserva } from '../../Alertas.tsx'
 import '../../globals.css'
 import '../../Huesped/Alta/AltaHuesped.css'
 import { comboValues, fieldTypes } from '../../../public/constants.ts'
@@ -76,9 +76,11 @@ export default function BuscarHuesped() {
         <>
             <Encabezado titulo="Ocupar Habitación" />
             { pantalla == EstadoPantalla.Habitacion ?
+                //ACA LO DEL CU05
                 (<>
 
                 </>)
+                //USAR AlertaReserva SI SELECCION ES SOBRE UNA O MAS RESERVAS Y EN DATA PASARLE TODAS LAS RESERVAS
                 : pantalla == EstadoPantalla.Huesped ? (
                     <>
                         <h3 style={{textAlign:'center'}}>Ingrese datos en los campos por los que desea filtrar</h3>

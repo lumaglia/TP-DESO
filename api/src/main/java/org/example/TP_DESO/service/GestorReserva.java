@@ -111,7 +111,7 @@ public class GestorReserva {
     public ArrayList<ReservasEstadiasPorHabitacionDTO> getReservaEstadia(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
         try{
             ArrayList<ReservasEstadiasPorHabitacionDTO> resultado = new ArrayList<>();
-            ArrayList<Habitacion> hs = GestorHabitacion.getInstance().mostrarHabitacionDomain();
+            ArrayList<Habitacion> hs = gestorHabitacion.mostrarHabitacionDomain();
             ArrayList<Reserva> rs;
             ArrayList<Estadia> es;
             try{

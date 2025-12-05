@@ -8,12 +8,33 @@ import '../Huesped/Buscar/Buscar.css'
 import { tiposTablaHabitacion } from '../../public/constants'
 import Row from "../Row";
 
-export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibilidad, fechaInicio, fechaFin,
-                                    seleccionadas= new Map<number, Array<Array<Date>>>(), setSeleccionadas=()=>{}}
-                                : {tipo?: tiposTablaHabitacion, infoDisponibilidad: Array<Object>, fechaInicio: Date, fechaFin: Date,
-                                    seleccionadas?: Map<number, Array<Array<Date>>>, setSeleccionadas?: Function}) {
+type info = {
+    habitacion: {
+        nroHabitacion: string,
+        tipo: string,
+    },
+    estadias: Array<
+        {
+            fechaInicio: string,
+            fechaFin: string,
+        }
+    >,
+    reservas: Array<
+        {
+            fechaInicio: string,
+            fechaFin: string,
+            apellido: string,
+            nombre: string,
+        }
+    >
+}
 
-    const habitaciones = [...Array(50).keys()]
+export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibilidad, fechaInicio, fechaFin,
+                                    seleccionadas= new Map<string, Array<Array<Date>>>(), setSeleccionadas=()=>{}}
+                                : {tipo?: tiposTablaHabitacion, infoDisponibilidad: Array<info>, fechaInicio: Date, fechaFin: Date,
+    seleccionadas?: Map<string, Array<Array<Date>>>, setSeleccionadas?: Function}) {
+
+    const habitaciones = [...infoDisponibilidad.map(e => e.habitacion.nroHabitacion)];
 
     const dates = [];
     const date = new Date(fechaInicio)
@@ -23,11 +44,11 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
     }
 
     // Lo dejo comentado para poder copiarlo facil en loscodigos del CU04 y CU15
-    // const [seleccionadas, setSeleccionadas] = useState(new Map<number, Array<Array<Date>>>());
-    const [indiceSeleccionActual, setIndiceSeleccionActual] = useState<number | null>(null);
+    // const [seleccionadas, setSeleccionadas] = useState(new Map<string, Array<Array<Date>>>());
+    const [indiceSeleccionActual, setIndiceSeleccionActual] = useState<string | null>(null);
     const [hovered, setHovered] = useState<Date | null>(null);
 
-    function getKey(key: number, map: Map<number, Array<Array<Date>>>) {
+    function getKey(key: string, map: Map<string, Array<Array<Date>>>) {
         return map.get(key) || [[]];
     }
 
@@ -36,11 +57,11 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
         return new Date(Number(year), Number(month) - 1, Number(day));
     }
 
-    function handleClick(date: Date, habitacion: number) {
+    function handleClick(date: Date, habitacion: string) {
         if(!indiceSeleccionActual || indiceSeleccionActual === habitacion){
-            setSeleccionadas((seleccionadas: Map<number, Array<Array<Date>>>) => {
+            setSeleccionadas((seleccionadas: Map<string, Array<Array<Date>>>) => {
                 const arr = getKey(habitacion, seleccionadas)
-                const newMap = new Map<number, Array<Array<Date>>>(seleccionadas);
+                const newMap = new Map<string, Array<Array<Date>>>(seleccionadas);
                 const index = arr.findIndex(x =>
                     x.length === 1);
                 if (index > -1) {
@@ -94,9 +115,9 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
         }
     }
 
-    function handleRightClick(date: Date, habitacion: number) {
-        setSeleccionadas((seleccionadas: Map<number, Array<Array<Date>>>) => {
-            const newMap = new Map<number, Array<Array<Date>>>(seleccionadas);
+    function handleRightClick(date: Date, habitacion: string) {
+        setSeleccionadas((seleccionadas: Map<string, Array<Array<Date>>>) => {
+            const newMap = new Map<string, Array<Array<Date>>>(seleccionadas);
 
             if(indiceSeleccionActual === null){
                 const arr = getKey(habitacion, seleccionadas)
@@ -121,7 +142,7 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
             }
         });
     }
-    function handleMouseEnter(date: Date, habitacion: number) {
+    function handleMouseEnter(date: Date, habitacion: string) {
         if(habitacion === indiceSeleccionActual) {
             setHovered(date);
         }
@@ -135,70 +156,77 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
     return (
         <>
             <Row>
-            <ScrollArea.Root className='ScrollArea TablaHabitacion'>
-                <ScrollArea.Viewport className='Viewport'>
-                    <ScrollArea.Content className='Content'>
-                        <table>
-                            <thead>
-                            <tr>
-                                <th></th>
-                                {habitaciones.map((habitacion) => <th key={habitacion}>{habitacion}</th>)}
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {dates.map((date, i) => <tr key={date.toLocaleDateString("en-GB")}>
-                                <th>{date.toLocaleDateString("en-GB")}</th>
-                                {habitaciones.map((h, i) => <td key={date.toLocaleDateString("en-GB") + i}
-                                                                className={tipo === tiposTablaHabitacion.CU04
-                                                                    ? (indiceSeleccionActual === null || h === indiceSeleccionActual)
-                                                                        ? ''
-                                                                        : 'invalido'
-                                                                    : 'noSeleccionable'}
-                                                                onMouseEnter={tipo === tiposTablaHabitacion.CU04
-                                                                    ? () => handleMouseEnter(date, h)
-                                                                    : undefined}
-                                                                onMouseLeave={tipo === tiposTablaHabitacion.CU04
-                                                                    ? () => handleMouseLeave()
-                                                                    : undefined}
-                                                                onClick={tipo === tiposTablaHabitacion.CU04
-                                                                    ? () => handleClick(date, h)
-                                                                    : undefined}
-                                                                onContextMenu={tipo === tiposTablaHabitacion.CU04
-                                                                    ? (e) => {
-                                                                    e.preventDefault();
-                                                                    e.stopPropagation();
-                                                                    handleRightClick(date, h)}
-                                                                    : undefined}>
-                                    <TableButton seleccionado={getKey(h, seleccionadas).some((arr: Array<Date>) =>
-                                        arr[0]?.getTime() == date.getTime() || (arr[0] <= date && arr[1] >= date))}
-                                                 hovered={h===indiceSeleccionActual
-                                                     && hovered !== null
-                                                     && ((date > (getKey(h, seleccionadas).find((arr: any) => arr.length === 1)?.[0] ?? hovered)
-                                                     && date <= hovered)
-                                                     || (date < (getKey(h, seleccionadas).find((arr: any) => arr.length === 1)?.[0] ?? hovered)
-                                                     && date >= hovered))}
-                                                 start={getKey(h, seleccionadas).some((arr: Array<Date>) => arr[0]?.getTime() == date.getTime())}
-                                                 end={getKey(h, seleccionadas).some((arr: Array<Date>) => arr[1]?.getTime() == date.getTime())}
-                                                 estado={(date.getDate()*h)%3==0
-                                                     ? 'disponible'
-                                                     : (date.getDate()*h)%3==1
+                <ScrollArea.Root className='ScrollArea TablaHabitacion'>
+                    <ScrollArea.Viewport className='Viewport'>
+                        <ScrollArea.Content className='Content'>
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    {habitaciones.map((habitacion) => <th key={parseInt(habitacion)}>{habitacion}</th>)}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {dates.map((date, i) => <tr key={date.toLocaleDateString("en-GB")}>
+                                    <th>{date.toLocaleDateString("en-GB")}</th>
+                                    {habitaciones.map((h, i) => <td key={date.toLocaleDateString("en-GB") + i}
+                                                                    className={tipo === tiposTablaHabitacion.CU04
+                                                                        ? (indiceSeleccionActual === null || h === indiceSeleccionActual)
+                                                                            ? ''
+                                                                            : 'invalido'
+                                                                        : 'noSeleccionable'}
+                                                                    onMouseEnter={tipo === tiposTablaHabitacion.CU04
+                                                                        ? () => handleMouseEnter(date, h)
+                                                                        : undefined}
+                                                                    onMouseLeave={tipo === tiposTablaHabitacion.CU04
+                                                                        ? () => handleMouseLeave()
+                                                                        : undefined}
+                                                                    onClick={tipo === tiposTablaHabitacion.CU04
+                                                                        ? () => handleClick(date, h)
+                                                                        : undefined}
+                                                                    onContextMenu={tipo === tiposTablaHabitacion.CU04
+                                                                        ? (e) => {
+                                                                            e.preventDefault();
+                                                                            e.stopPropagation();
+                                                                            handleRightClick(date, h)}
+                                                                        : undefined}>
+                                        <TableButton seleccionado={getKey(h, seleccionadas).some((arr: Array<Date>) =>
+                                            arr[0]?.getTime() == date.getTime() || (arr[0] <= date && arr[1] >= date))}
+                                                     hovered={h===indiceSeleccionActual
+                                                         && hovered !== null
+                                                         && ((date > (getKey(h, seleccionadas).find((arr: any) => arr.length === 1)?.[0] ?? hovered)
+                                                                 && date <= hovered)
+                                                             || (date < (getKey(h, seleccionadas).find((arr: any) => arr.length === 1)?.[0] ?? hovered)
+                                                                 && date >= hovered))}
+                                                     start={getKey(h, seleccionadas).some((arr: Array<Date>) => arr[0]?.getTime() == date.getTime())}
+                                                     end={getKey(h, seleccionadas).some((arr: Array<Date>) => arr[1]?.getTime() == date.getTime())}
+                                                     estado={infoDisponibilidad[parseInt(h)]?.estadias.some((arr: {
+                                                         fechaInicio: string,
+                                                         fechaFin: string,
+                                                     }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= date)
                                                          ? 'ocupado'
-                                                         : 'reservado'} />
-                                </td>)}
-                            </tr>)}
-                            </tbody>
-                        </table>
 
-                    </ScrollArea.Content>
-                </ScrollArea.Viewport>
-                <ScrollArea.Scrollbar className='Scrollbar' orientation='vertical'>
-                    <ScrollArea.Thumb className='Thumb'/>
-                </ScrollArea.Scrollbar>
-                <ScrollArea.Scrollbar className='Scrollbar' orientation="horizontal">
-                    <ScrollArea.Thumb className='Thumb' />
-                </ScrollArea.Scrollbar>
-                <ScrollArea.Corner />
-            </ScrollArea.Root>
+                                                         : infoDisponibilidad[parseInt(h)]?.reservas.some((arr: {
+                                                             fechaInicio: string,
+                                                             fechaFin: string,
+                                                         }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= date)
+                                                             ? 'reservado'
+                                                             :'disponible'}/>
+                                    </td>)}
+                                </tr>)}
+                                </tbody>
+                            </table>
+
+                        </ScrollArea.Content>
+                    </ScrollArea.Viewport>
+                    <ScrollArea.Scrollbar className='Scrollbar' orientation='vertical'>
+                        <ScrollArea.Thumb className='Thumb'/>
+                    </ScrollArea.Scrollbar>
+                    <ScrollArea.Scrollbar className='Scrollbar' orientation="horizontal">
+                        <ScrollArea.Thumb className='Thumb' />
+                    </ScrollArea.Scrollbar>
+                    <ScrollArea.Corner />
+                </ScrollArea.Root>
             </Row>
             <Row>
                 <TableButton estado={"ocupado"}/><p style={{alignSelf:'flex-end', marginBottom:'2px', marginRight:'4px'}}> Ocupado </p>

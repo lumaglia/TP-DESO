@@ -67,17 +67,19 @@ export default function ReservarHabitacion() {
         const conflictos: any[] = []
         infoDisponibilidad.forEach(info => {
             info.reservas.forEach(reserva => {
-                console.log(seleccionadas.get(info.habitacion.nroHabitacion)?.[0].length)
                 if(seleccionadas.get(info.habitacion.nroHabitacion)?.[0].length ?? 0 > 0) {
                     seleccionadas.get(info.habitacion.nroHabitacion)?.forEach(seleccion => {
                         const reservaInicio = new Date(reserva.fechaInicio);
                         const reservaFin = new Date(reserva.fechaFin);
-                        const seleccionInicio = new Date(seleccion[0]);
-                        const seleccionFin = new Date(seleccion[1]);
+                        const seleccionInicio = new Date(seleccion[0].getTime()-24*3600000);
+                        const seleccionFin = new Date(seleccion[1].getTime()-24*3600000)
                         if (
                             (reservaInicio <= seleccionInicio && reservaFin >= seleccionFin) ||
-                            (reservaInicio >= seleccionInicio && reservaInicio <= seleccionFin) ||
-                            (reservaFin >= seleccionInicio && reservaFin <= seleccionFin)
+                            (reservaInicio >= seleccionInicio && (reservaInicio <= seleccionFin
+                                || reservaInicio.toLocaleDateString('en-GB') == seleccionFin.toLocaleDateString('en-GB'))) ||
+                            (reservaFin >= seleccionInicio && reservaFin <= seleccionFin) || (
+                                seleccionInicio.toLocaleDateString('en-GB') === seleccionFin.toLocaleDateString('en-GB') && seleccionInicio.toLocaleDateString('en-GB') === reservaInicio.toLocaleDateString('en-GB')
+                            )
                         ) {
                             conflictos.push({
                                 reserva,

@@ -8,6 +8,7 @@ import org.example.TP_DESO.dto.HuespedDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class EstadiaMapper {
      public static EstadiaDTO toDTO(Estadia e) {
@@ -26,5 +27,22 @@ public class EstadiaMapper {
                  e.getFechaFin(),
                  huespedDTO,
                  habitacionDTO);
+     }
+
+     public static Estadia toDomain(EstadiaDTO dto) {
+         if (dto == null){
+             return null;
+         }
+         Estadia estadia = new Estadia();
+         Stream<HuespedDTO> huespedDTO = dto.getHuespedes().stream();
+         ArrayList<Huesped> huespedes = (ArrayList<Huesped>) huespedDTO.map(p->HuespedMapper.toDomain(p));
+
+         estadia.setFechaInicio(dto.getFechaInicio());
+         estadia.setFechaFin(dto.getFechaFin());
+         estadia.setIdEstadia(dto.getId());
+         estadia.setHuespedes(huespedes);
+         estadia.setHabitacion(HabitacionMapper.toDomain(dto.getHabitacion()));
+
+         return  estadia;
      }
 }

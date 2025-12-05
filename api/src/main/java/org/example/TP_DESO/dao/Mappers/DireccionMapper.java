@@ -8,4 +8,11 @@ public class DireccionMapper {
         if(d == null) return null;
         return new DireccionDTO(d.getDomicilio(), d.getDepto(), d.getCodigoPostal(), d.getLocalidad(), d.getProvincia(), d.getPais());
     }
+
+    public static Direccion toDomain(DireccionDTO d) {
+        if(d == null){
+            return null;
+        }
+        return new Direccion(d.getDomicilio(), d.getDepto(), d.getCodigoPostal(), d.getLocalidad(), d.getProvincia(), d.getPais());
+    }
 }

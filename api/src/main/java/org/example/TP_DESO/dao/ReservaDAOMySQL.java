@@ -9,16 +9,19 @@ import org.example.TP_DESO.dao.Mappers.ReservaMapper;
 import org.example.TP_DESO.dto.ReservaDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.ReservaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
+@Service
 @Transactional
 public class ReservaDAOMySQL implements ReservaDAO{
 
-
+    @Autowired
     private ReservaRepository reservaRepository;
 
     @Override
@@ -43,7 +46,7 @@ public class ReservaDAOMySQL implements ReservaDAO{
         try {
 
             ArrayList<Reserva> reservas =
-                    reservaRepository.findByFechaInicioBetween(fechaInicio, fechaFin);
+                    reservaRepository.findByFechaFinAfterAndFechaInicioBefore(fechaInicio, fechaFin);
 
             if (reservas.isEmpty()) {
                 throw new FracasoOperacion("No hay reservas en ese rango de fechas");
@@ -79,6 +82,22 @@ public class ReservaDAOMySQL implements ReservaDAO{
             return resultado;
 
         } catch (Exception e) {
+            throw new FracasoOperacion("Error al obtener reservas: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public ArrayList<Reserva> obtenerReservasEntreFechasDomainForm(LocalDate fechaInicio, LocalDate fechaFin)
+            throws FracasoOperacion{
+        try{
+            ArrayList<Reserva> reservas =
+                    reservaRepository.findByFechaFinAfterAndFechaInicioBefore(fechaInicio, fechaFin);
+
+            if (reservas.isEmpty()) throw new FracasoOperacion("No hay reservas en ese rango de fechas");
+
+            return reservas;
+        }
+        catch (Exception e){
             throw new FracasoOperacion("Error al obtener reservas: " + e.getMessage());
         }
     }

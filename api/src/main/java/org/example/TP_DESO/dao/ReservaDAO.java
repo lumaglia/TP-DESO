@@ -10,7 +10,10 @@ import java.util.ArrayList;
 public interface ReservaDAO {
 
     void crearReserva(Reserva reserva) throws FracasoOperacion;
+
     ArrayList<ReservaDTO> obtenerReservasEntreFechas(LocalDate fechaInicio, LocalDate fechaFin) throws FracasoOperacion;
+    ArrayList<Reserva> obtenerReservasEntreFechasDomainForm(LocalDate fechaInicio, LocalDate fechaFin) throws FracasoOperacion;
+
     void modificarReserva(Long idReserva, Reserva reserva) throws FracasoOperacion;
     void eliminarReserva(Long idReserva) throws FracasoOperacion;
     ArrayList<ReservaDTO> buscarReservasPorApellidoYNombre(String apellido, String nombre) throws FracasoOperacion;

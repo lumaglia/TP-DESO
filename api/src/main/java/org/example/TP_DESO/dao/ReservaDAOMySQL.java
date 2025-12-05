@@ -87,6 +87,22 @@ public class ReservaDAOMySQL implements ReservaDAO{
     }
 
     @Override
+    public ArrayList<Reserva> obtenerReservasEntreFechasDomainForm(LocalDate fechaInicio, LocalDate fechaFin)
+            throws FracasoOperacion{
+        try{
+            ArrayList<Reserva> reservas =
+                    reservaRepository.findByFechaInicioBetween(fechaInicio, fechaFin);
+
+            if (reservas.isEmpty()) throw new FracasoOperacion("No hay reservas en ese rango de fechas");
+
+            return reservas;
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al obtener reservas: " + e.getMessage());
+        }
+    }
+
+    @Override
     public void modificarReserva(Long idReserva, Reserva reserva) throws FracasoOperacion {
 
         try {

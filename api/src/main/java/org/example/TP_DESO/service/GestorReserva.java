@@ -111,23 +111,39 @@ public class GestorReserva {
     public ArrayList<ReservasEstadiasPorHabitacionDTO> getReservaEstadia(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
         try{
             ArrayList<ReservasEstadiasPorHabitacionDTO> resultado = new ArrayList<>();
-            ArrayList<HabitacionDTO> habitaciones = gestorHabitacion.mostrarHabitaciones();
-            ArrayList<ReservaDTO> reservaDTOs = daoReserva.obtenerReservasEntreFechas(desde, hasta);
-            ArrayList<EstadiaDTO> estadiaDTOS = daoEstadia.obtenerEstadiaEntreFechas(desde, hasta);
+            ArrayList<Habitacion> hs = GestorHabitacion.getInstance().mostrarHabitacionDomain();
+            ArrayList<Reserva> rs;
+            ArrayList<Estadia> es;
+            try{
+                rs = daoReserva.obtenerReservasEntreFechasDomainForm(desde, hasta);
+            }
+            catch (FracasoOperacion e) {
+                rs = new ArrayList<>();
+            }
+            try{
+                es = daoEstadia.obtenerEstadiaEntreFechasDomainForm(desde, hasta);
+            }
+            catch (FracasoOperacion e) {
+                es = new ArrayList<>();
+            }
 
             Map<String, Integer> nroHabitacionToIndex = new HashMap<>();
 
-            habitaciones.forEach((habitacion) -> {
+            hs.forEach((habitacion) -> {
                 nroHabitacionToIndex.put(habitacion.getNroHabitacion(), nroHabitacionToIndex.size());
-                resultado.add(new ReservasEstadiasPorHabitacionDTO(habitacion, new ArrayList<EstadiaDTO>(), new ArrayList<ReservaDTO>()));
+                resultado.add(new ReservasEstadiasPorHabitacionDTO(habitacion, new ArrayList<Estadia>(), new ArrayList<Reserva>()));
             });
 
-            reservaDTOs.forEach((reserva) -> {
-                resultado.get(nroHabitacionToIndex.get(reserva.getHabitacion().getNroHabitacion())).getReservasAsociadas().add(reserva);
+            rs.forEach((reserva) -> {
+                resultado.get(nroHabitacionToIndex.get(reserva.getHabitacion().getNroHabitacion()))
+                        .getReservas()
+                        .add(new ReservasEstadiasPorHabitacionDTO.ReservasAsociadas(reserva));
             });
 
-            estadiaDTOS.forEach((estadia) -> {
-                resultado.get(nroHabitacionToIndex.get(estadia.getHabitacion().getNroHabitacion())).getEstadiasAsociadas().add(estadia);
+            es.forEach((estadia) -> {
+                resultado.get(nroHabitacionToIndex.get(estadia.getHabitacion().getNroHabitacion()))
+                        .getEstadias()
+                        .add(new ReservasEstadiasPorHabitacionDTO.EstadiasAsociadas(estadia));
             });
 
             return resultado;

@@ -105,6 +105,17 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
         }
     }
 
+    @Override
+    public ArrayList<Habitacion> obtenerTodasDomainForm() throws FracasoOperacion{
+        try{
+            return (ArrayList<Habitacion>) habitacionRepository.findAll();
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al recuperar las habitaciones" + e.getMessage());
+
+        }
+    }
+
     @Override // No es lo mismo que obtenerHabitacion?
     public HabitacionDTO buscarPorNumero(int numero) throws FracasoOperacion {
         try{

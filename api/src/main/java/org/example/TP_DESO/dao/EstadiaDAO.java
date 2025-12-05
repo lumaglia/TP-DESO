@@ -9,7 +9,10 @@ import java.util.ArrayList;
 
 public interface EstadiaDAO {
     void crearEstadia(Estadia estadia) throws FracasoOperacion;
+
     ArrayList <EstadiaDTO> obtenerEstadiaEntreFechas(LocalDate fechaInicio, LocalDate fechaFin) throws FracasoOperacion;
+    ArrayList <Estadia> obtenerEstadiaEntreFechasDomainForm(LocalDate fechaInicio, LocalDate fechaFin) throws FracasoOperacion;
+
     void modificarEstadia(Long idEstadia, Estadia estadia) throws FracasoOperacion;
     void eliminarEstadia(Long idEstadia) throws FracasoOperacion;
     EstadiaDTO buscarEstadiaPorHabitacionYFechaFin(String numeroHabitacion, LocalDate fechaFin) throws FracasoOperacion;

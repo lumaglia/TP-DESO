@@ -1,13 +1,12 @@
 package org.example.TP_DESO.service;
 
-import org.example.TP_DESO.dao.HabitacionDAO;
 import org.example.TP_DESO.dao.HabitacionDAOMySQL;
+import org.example.TP_DESO.domain.Habitacion;
 import org.example.TP_DESO.dto.HabitacionDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 @Service
@@ -26,9 +25,16 @@ public class GestorHabitacion {
         return singleton_instance;
     }
 
-    public ArrayList<HabitacionDTO> mostrarHabitaciones() throws FracasoOperacion {
+    public ArrayList<Habitacion> mostrarHabitacionDomain() throws FracasoOperacion{
         try{
-            HabitacionDAOMySQL dao = new HabitacionDAOMySQL();
+            return dao.obtenerTodasDomainForm();
+        } catch (FracasoOperacion e) {
+            throw new FracasoOperacion("Error al obtener las habitaciones." + e.getMessage());
+        }
+    }
+
+    public ArrayList<HabitacionDTO> mostrarHabitacionesDTO() throws FracasoOperacion {
+        try{
             return dao.obtenerTodas();
         } catch (FracasoOperacion e) {
             throw new FracasoOperacion("Error al obtener las habitaciones." + e.getMessage());

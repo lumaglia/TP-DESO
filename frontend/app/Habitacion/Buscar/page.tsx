@@ -11,7 +11,7 @@ import {TablaHabitacion} from "../TablaHabitacion";
 
 
 
-export default function BuscarHabitacion({tipo} : {tipo: tiposTablaHabitacion}) {
+export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05} : {tipo?: tiposTablaHabitacion}) {
 
     const form = useForm<DateValues>();
     const { register, control, handleSubmit, formState, watch, clearErrors, trigger, getValues } = form;
@@ -70,9 +70,8 @@ export default function BuscarHabitacion({tipo} : {tipo: tiposTablaHabitacion}) 
             {
                 solicitudValida? (
                     <>
-                    <h2 style={{textAlign: 'center'}}>Disponibilidad de habitaciones entre
-                        {fechaInicio.toLocaleDateString('en-GB')} y {fechaFin.toLocaleDateString('en-GB')}</h2>
-                    <TablaHabitacion fechaInicio={fechaInicio} fechaFin={fechaFin} infoDisponibilidad={[]}/>
+                    <h2 style={{textAlign: 'center'}}>Disponibilidad de habitaciones entre {fechaInicio.toLocaleDateString('en-GB')} y {fechaFin.toLocaleDateString('en-GB')}</h2>
+                    <TablaHabitacion fechaInicio={fechaInicio} fechaFin={fechaFin} infoDisponibilidad={[]} tipo={tipo}/>
                     </>
                 ): (
                     <><h2 style={{textAlign: 'center'}}>Ingresar el periodo a revisar</h2>

@@ -89,13 +89,14 @@ public class GestorReserva {
             estadia.setFechaFin(estadiaDTO.getFechaFin());
             estadia.setHuespedes(huespedes);
 
+            daoEstadia.crearEstadia(estadia);
+
             if(!reservaList.isEmpty()){
                 Reserva reserva = reservaList.getFirst();
                 reserva.setEstadia(estadia);
                 daoReserva.modificarReserva(reserva.getIdReserva(),reserva);
             }
 
-            daoEstadia.crearEstadia(estadia);
             return true;
         }
         catch (Exception e) {

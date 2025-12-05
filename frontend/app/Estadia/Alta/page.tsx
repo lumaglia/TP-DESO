@@ -6,10 +6,11 @@ import { ScrollArea } from '@base-ui-components/react/scroll-area';
 import Campo from '../../Campo.tsx'
 import Row from '../../Row'
 import Encabezado from '../../Encabezado.tsx'
-import { AlertaCancelar , AlertaReserva } from '../../Alertas.tsx'
+import BuscarHabitacion from '../../Habitacion/Buscar/page.tsx'
+import { AlertaCancelar } from '../../Alertas.tsx'
 import '../../globals.css'
 import '../../Huesped/Alta/AltaHuesped.css'
-import { comboValues, fieldTypes } from '../../../public/constants.ts'
+import {comboValues, fieldTypes, tiposTablaHabitacion, infoDisponibilidad} from '../../../public/constants.ts'
 import '../../Huesped/Buscar/Buscar.css'
 import './OcuparHabitacion.css'
 
@@ -33,8 +34,11 @@ export default function BuscarHuesped() {
     const [ huespedes , setHuespedes ] = useState<Array<HuespedValues>>([])
     const [ errorNoSeleccionado, setErrorNoSeleccionado] = useState(false)
     const [ selectedHuespedes, setSelectedHuespedes ] = useState<Array<HuespedValues>>([]);
-    const [ pantalla, setPantalla ] = useState(EstadoPantalla.Huesped); //USAR HABITACION CUANDO ESTE CONECTADO AL CU05
-    let tipoHabitacion = "Simple Estandar", idHabitacion = "5", fechaInicio = "Jueves 04-12-2025 12:00:00", fechaFin = "Martes 09-12-2025 10:00:00";
+    const [ pantalla, setPantalla ] = useState(EstadoPantalla.Habitacion); //USAR HABITACION CUANDO ESTE CONECTADO AL CU05
+    const [seleccionadas, setSeleccionadas] = useState(new Map<string, Array<Array<Date>>>());
+    const [tipoHabitacion, setTipoHabitacion] = useState("Simple Estandar")
+    const idHabitacion = "5", fechaInicio = "Jueves 04-12-2025 12:00:00", fechaFin = "Martes 09-12-2025 10:00:00";
+
     function onSubmit(data: any) {
         for (let key in data) {
             if(!data[key]){
@@ -60,6 +64,45 @@ export default function BuscarHuesped() {
             }
         })
     }
+
+    function onNext(infoDisponibilidad: Array<infoDisponibilidad>) {
+        const conflictos: any[] = []
+        infoDisponibilidad.forEach(info => {
+            info.reservas.forEach(reserva => {
+                console.log(seleccionadas.get(info.habitacion.nroHabitacion)?.[0].length)
+                if(seleccionadas.get(info.habitacion.nroHabitacion)?.[0].length ?? 0 > 0) {
+                    seleccionadas.get(info.habitacion.nroHabitacion)?.forEach(seleccion => {
+                        const reservaInicio = new Date(reserva.fechaInicio);
+                        const reservaFin = new Date(reserva.fechaFin);
+                        const seleccionInicio = new Date(seleccion[0]);
+                        const seleccionFin = new Date(seleccion[1]);
+                        if (
+                            (reservaInicio <= seleccionInicio && reservaFin >= seleccionFin) ||
+                            (reservaInicio >= seleccionInicio && reservaInicio <= seleccionFin) ||
+                            (reservaFin >= seleccionInicio && reservaFin <= seleccionFin)
+                        ) {
+                            conflictos.push({
+                                reserva,
+                                seleccion,
+                                habitacion: info.habitacion.nroHabitacion
+                            });
+                        }
+                    });
+                }
+            });
+        });
+        if(conflictos.length > 0){
+            console.log("MOSTRAR POPUP NO SE PUEDE PORQUE CASILLAS RESERVADAS")
+        }else{
+            seleccionadas.forEach((value, key) =>{
+                if(value[0].length > 0){
+                    setTipoHabitacion(infoDisponibilidad.find(d => d.habitacion.nroHabitacion === key)?.habitacion.tipo ?? '')
+                }
+            })
+            setPantalla(EstadoPantalla.Huesped)
+        }
+    }
+
     function cargarEstadia(cargarOtra:boolean){
         //POST PARA ESTADIA
 
@@ -76,9 +119,9 @@ export default function BuscarHuesped() {
         <>
             <Encabezado titulo="Ocupar Habitación" />
             { pantalla == EstadoPantalla.Habitacion ?
-                //ACA LO DEL CU05
                 (<>
-
+                    <BuscarHabitacion tipo={tiposTablaHabitacion.CU15} seleccionadas={seleccionadas}
+                                      setSeleccionadas={setSeleccionadas} onNext={onNext}/>
                 </>)
                 //USAR AlertaReserva SI SELECCION ES SOBRE UNA O MAS RESERVAS Y EN DATA PASARLE TODAS LAS RESERVAS
                 : pantalla == EstadoPantalla.Huesped ? (
@@ -153,7 +196,39 @@ export default function BuscarHuesped() {
                                 </p>
                                 <button className='Button' onClick={() => {
                                     if (selectedHuespedes.length > 0) {
-                                        setPantalla(EstadoPantalla.MenuFin)
+                                        let body: any = null
+                                        seleccionadas.forEach((value, key) =>{
+                                            if(value[0].length > 0){
+                                                value.forEach((val) => {
+                                                    body = {
+                                                        habitacion:{
+                                                            nroHabitacion: key
+                                                        },
+                                                        fechaInicio: val[0],
+                                                        fechaFin: val[1],
+                                                        huespedes: selectedHuespedes
+                                                    }
+                                                })
+                                            }
+                                        })
+                                        console.log(body)
+                                        fetch('http://localhost:8081/Habitacion/Ocupar/', {
+                                            method: 'POST',
+                                            body: JSON.stringify(body),
+                                            headers: {
+                                                'Accept': 'application/json',
+                                                'Content-Type': 'application/json'
+                                            }
+                                        }).then(res => {
+                                            if(res.ok) {
+                                                console.log("EXITO")
+                                                res.json().then(data => {
+                                                    console.log(data)
+                                                })
+                                                // setPantalla(EstadoPantalla.MenuFin)
+                                            }
+                                        })
+
                                     }else{
                                         setErrorNoSeleccionado(true)
                                     }

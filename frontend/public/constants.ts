@@ -295,7 +295,7 @@ export type DateValues = {
 export enum tiposTablaHabitacion {
     CU04,
     CU05,
-    CU015
+    CU15
 }
 
 export type infoDisponibilidad = {

@@ -56,13 +56,6 @@ public class ReservaController {
                         .nombre(requestReservaDTO.getNombre())
                         .telefono(requestReservaDTO.getTelefono())
                         .habitacion(habitacionDTO).build();
-                System.out.println("Nro Habitacion: " + reservaDTO.getHabitacion().getNroHabitacion());
-                System.out.println("Precio Noche: " + reservaDTO.getHabitacion().getPrecioNoche());
-                System.out.println("Fecha Inicio: " + reservaDTO.getFechaInicio());
-                System.out.println("Fecha Fin: " + reservaDTO.getFechaFin());
-                System.out.println("Nombre: " + reservaDTO.getNombre());
-                System.out.println("Apellido: " + reservaDTO.getApellido());
-                System.out.println("Telefono: " + reservaDTO.getTelefono());
 
                 gestorReserva.hacerReserva(reservaDTO);
                 response.add(reservaDTO);
@@ -72,6 +65,14 @@ public class ReservaController {
         });
 
         return ResponseEntity.ok(response);
+
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/Habitacion/Ocupar/")
+    public ResponseEntity<EstadiaDTO> hacerReserva(@RequestBody EstadiaDTO estadiaDTO) {
+
+        return ResponseEntity.ok(estadiaDTO);
 
     }
 

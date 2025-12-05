@@ -115,11 +115,11 @@ export default function ReservarHabitacion() {
     return(
 
         <>
+            <Encabezado titulo="Reservar Habitación"/>
             {
                 !solicitudValida
                 ?(
                         <>
-                            <Encabezado titulo="Reservar Habitación"/>
                             <BuscarHabitacion tipo={tiposTablaHabitacion.CU04} seleccionadas={seleccionadas}
                                               setSeleccionadas={setSeleccionadas} onNext={onNext}/>
                         </>

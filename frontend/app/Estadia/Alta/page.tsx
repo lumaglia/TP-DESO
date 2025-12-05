@@ -7,7 +7,7 @@ import Campo from '../../Campo.tsx'
 import Row from '../../Row'
 import Encabezado from '../../Encabezado.tsx'
 import BuscarHabitacion from '../../Habitacion/Buscar/page.tsx'
-import { AlertaCancelar } from '../../Alertas.tsx'
+import { AlertaCancelar, AlertaReserva } from '../../Alertas.tsx'
 import '../../globals.css'
 import '../../Huesped/Alta/AltaHuesped.css'
 import {comboValues, fieldTypes, tiposTablaHabitacion, infoDisponibilidad} from '../../../public/constants.ts'
@@ -31,6 +31,7 @@ export default function BuscarHuesped() {
     const router = useRouter();
     const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
     const [ alertaHuespedNoEncontradoOpen, setAlertaHuespedNoEncontradoOpen] = useState(false);
+    const [ alertaReservaOpen, setAlertaReservaOpen] = useState(false);
     const [ huespedes , setHuespedes ] = useState<Array<HuespedValues>>([])
     const [ errorNoSeleccionado, setErrorNoSeleccionado] = useState(false)
     const [ selectedHuespedes, setSelectedHuespedes ] = useState<Array<HuespedValues>>([]);
@@ -40,6 +41,7 @@ export default function BuscarHuesped() {
     const [idHabitacion, setIdHabitacion] = useState("5");
     const [fechaInicio, setFechaInicio] = useState<string>("Jueves 04-12-2025 12:00:00");
     const [fechaFin, setFechaFin] = useState<string>("Martes 09-12-2025 10:00:00");
+    const [conflict, setConflict] = useState<Array<any>>([])
 
     function onSubmit(data: any) {
         for (let key in data) {
@@ -96,8 +98,9 @@ export default function BuscarHuesped() {
                 }
             });
         });
+        setConflict(conflictos);
         if(conflictos.length > 0){
-            console.log("MOSTRAR POPUP NO SE PUEDE PORQUE CASILLAS RESERVADAS")
+            setAlertaReservaOpen(true)
         }else{
             seleccionadas.forEach((value, key) =>{
                 if(value[0].length > 0){
@@ -127,7 +130,6 @@ export default function BuscarHuesped() {
                     })}`);
                 }
             })
-            // setPantalla(EstadoPantalla.Huesped)
         }
     }
 
@@ -308,7 +310,7 @@ export default function BuscarHuesped() {
             }
 
             <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la carga de estadía'/>
-
+            <AlertaReserva open={alertaReservaOpen} setOpen={setAlertaReservaOpen} data={conflict} setPantalla={setPantalla} />
         </>
     );
 }

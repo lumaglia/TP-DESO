@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -21,11 +22,9 @@ public class GestorReserva {
     @Autowired
     private ReservaDAOMySQL daoReserva;
     @Autowired
-    private HabitacionDAOMySQL daoHabitacion;
-    @Autowired
-    private HuespedDAOMySQL daoHuesped;
-    @Autowired
     private EstadiaDAOMySQL daoEstadia;
+    @Autowired
+    private GestorHabitacion gestorHabitacion;
 
     private GestorReserva() {
     }
@@ -69,29 +68,33 @@ public class GestorReserva {
     public boolean checkIn(EstadiaDTO estadiaDTO) throws FracasoOperacion{
         try{
             ArrayList<Huesped> huespedes = new ArrayList<>();
-            ArrayList<HuespedDTO> huespedesDTO = new ArrayList<>();
 
             for(HuespedDTO h : estadiaDTO.getHuespedes()){
-                huespedesDTO.addAll(daoHuesped.obtenerHuesped(h));
-            }
-
-            for(HuespedDTO h : huespedesDTO){
                 huespedes.add(HuespedMapper.toDomain(h));
             }
 
-            Habitacion habitacion = HabitacionMapper.toDomain(daoHabitacion.obtenerHabitacion(estadiaDTO.getHabitacion().getNroHabitacion()));
+            Habitacion habitacion = HabitacionMapper.toDomain(gestorHabitacion.obtenerHabitacion(estadiaDTO.getHabitacion().getNroHabitacion()));
 
             ArrayList<ReservaDTO> reservaDTOS = daoReserva.obtenerReservasEntreFechas(estadiaDTO.getFechaInicio(), estadiaDTO.getFechaFin());
             Stream<ReservaDTO> reservaDTOStream = reservaDTOS.stream();
-            ArrayList<Reserva> reservaList = (ArrayList<Reserva>) reservaDTOStream
-                    .filter(p -> Objects.equals(p.getHabitacion().getNroHabitacion(), habitacion.getNroHabitacion()) && !p.isCancelada())
-                    .map(p -> ReservaMapper.toDomain(p));
+            ArrayList<Reserva> reservaList = reservaDTOStream
+                    .filter(p -> Objects.equals(p.getHabitacion().getNroHabitacion(), habitacion.getNroHabitacion()) && !p.isCancelada()
+                            && Objects.equals(p.getFechaInicio(),estadiaDTO.getFechaInicio())
+                            && Objects.equals(p.getFechaFin(),estadiaDTO.getFechaFin())
+                    )
+                    .map(ReservaMapper::toDomain).collect(Collectors.toCollection(ArrayList::new));
 
             Estadia estadia = new Estadia();
             estadia.setHabitacion(habitacion);
-            estadia.setFechaInicio(LocalDate.now());
-            estadia.setFechaFin(LocalDate.now());
+            estadia.setFechaInicio(estadiaDTO.getFechaInicio());
+            estadia.setFechaFin(estadiaDTO.getFechaFin());
             estadia.setHuespedes(huespedes);
+
+            if(!reservaList.isEmpty()){
+                Reserva reserva = reservaList.getFirst();
+                reserva.setEstadia(estadia);
+                daoReserva.modificarReserva(reserva.getIdReserva(),reserva);
+            }
 
             daoEstadia.crearEstadia(estadia);
             return true;
@@ -108,7 +111,7 @@ public class GestorReserva {
     public ArrayList<ReservasEstadiasPorHabitacionDTO> getReservaEstadia(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
         try{
             ArrayList<ReservasEstadiasPorHabitacionDTO> resultado = new ArrayList<>();
-            ArrayList<HabitacionDTO> habitaciones = daoHabitacion.obtenerTodas();
+            ArrayList<HabitacionDTO> habitaciones = gestorHabitacion.mostrarHabitaciones();
             ArrayList<ReservaDTO> reservaDTOs = daoReserva.obtenerReservasEntreFechas(desde, hasta);
             ArrayList<EstadiaDTO> estadiaDTOS = daoEstadia.obtenerEstadiaEntreFechas(desde, hasta);
 

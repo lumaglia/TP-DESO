@@ -34,14 +34,7 @@ public class GestorHabitacion {
             throw new FracasoOperacion("Error al obtener las habitaciones." + e.getMessage());
         }
     }
-
-    public boolean obtenerEstadoHabitacion(String nroHabitacion, LocalDate desde, LocalDate hasta) throws FracasoOperacion {
-        try {
-            HabitacionDTO dto = dao.obtenerHabitacion(nroHabitacion);
-            return !(dao.buscarHabitacionesOcupadas(desde, hasta).contains(dto));
-
-        } catch (FracasoOperacion e) {
-            throw new FracasoOperacion("Error al obtener el estado de la habitacion: " + e.getMessage());
-        }
+    public HabitacionDTO obtenerHabitacion(String id) throws FracasoOperacion {
+        return dao.obtenerHabitacion(id);
     }
 }

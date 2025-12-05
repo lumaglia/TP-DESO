@@ -49,7 +49,7 @@ public class ReservaDAOMySQL implements ReservaDAO{
                     reservaRepository.findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(fechaInicio, fechaFin);
 
             if (reservas.isEmpty()) {
-                throw new FracasoOperacion("No hay reservas en ese rango de fechas");
+                return new ArrayList<ReservaDTO>();
             }
 
             ArrayList<ReservaDTO> resultado = new ArrayList<>();

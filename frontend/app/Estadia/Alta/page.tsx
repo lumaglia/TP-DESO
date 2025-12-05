@@ -134,9 +134,7 @@ export default function BuscarHuesped() {
             if(value[0].length > 0){
                 value.forEach((val) => {
                     body = {
-                        habitacion:{
-                            nroHabitacion: key
-                        },
+                        nroHabitacion: key,
                         fechaInicio: val[0],
                         fechaFin: val[1],
                         huespedes: selectedHuespedes

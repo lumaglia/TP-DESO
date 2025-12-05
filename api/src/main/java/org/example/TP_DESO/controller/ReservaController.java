@@ -8,6 +8,7 @@ import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.service.GestorHabitacion;
 import org.example.TP_DESO.service.GestorHuesped;
 import org.example.TP_DESO.service.GestorReserva;
+import org.example.TP_DESO.dto.BuscarHuespedDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +21,15 @@ import java.util.stream.Collectors;
 
 @RestController
 public class ReservaController {
+    private final GestorHuesped gestorHuesped;
     GestorReserva gestorReserva;
     GestorHabitacion gestorHabitacion;
 
     @Autowired
-    public ReservaController(GestorReserva gestorReserva, GestorHabitacion gestorHabitacion) {
+    public ReservaController(GestorReserva gestorReserva, GestorHabitacion gestorHabitacion, GestorHuesped gestorHuesped) {
         this.gestorReserva = gestorReserva;
         this.gestorHabitacion = gestorHabitacion;
+        this.gestorHuesped = gestorHuesped;
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -70,10 +73,41 @@ public class ReservaController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/Habitacion/Ocupar/")
-    public ResponseEntity<EstadiaDTO> hacerReserva(@RequestBody EstadiaDTO estadiaDTO) {
+    public ResponseEntity<EstadiaDTO> hacerReserva(@RequestBody RequestEstadiaDTO estadiaDTO) {
+        System.out.print(estadiaDTO.toString());
 
-        return ResponseEntity.ok(estadiaDTO);
+        try {
+            System.out.print(estadiaDTO.getNroHabitacion());
+            HabitacionDTO habitacionDTO = gestorHabitacion.obtenerHabitacion(estadiaDTO.getNroHabitacion());
 
+            ArrayList<HuespedDTO> huespedDTO = estadiaDTO.getHuespedes().stream().map(h ->
+            {
+                try {
+                    return gestorHuesped.buscarHuesped(new HuespedDTOBuilder()
+                    .setNombre(h.getNombre())
+                    .setApellido(h.getApellido())
+                    .setTipoDoc(h.getTipoDoc())
+                    .setNroDoc(h.getNroDoc())
+                    .createHuespedDTO()).getFirst();
+                } catch (FracasoOperacion e) {
+                    throw new RuntimeException(e);
+                }
+            }).collect(Collectors.toCollection(ArrayList::new));
+
+            EstadiaDTO eDTO = EstadiaDTO.builder()
+                    .fechaInicio(estadiaDTO.getFechaInicio())
+                    .fechaFin(estadiaDTO.getFechaFin())
+                    .huespedes(huespedDTO)
+                    .habitacion(habitacionDTO).build();
+
+            System.out.print(eDTO.toString());
+            gestorReserva.checkIn(eDTO);
+
+            return ResponseEntity.ok(eDTO);
+
+        } catch (FracasoOperacion e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Getter
@@ -86,5 +120,14 @@ public class ReservaController {
         String apellido;
         String telefono;
 
+    }
+
+    @Getter
+    @Setter
+    private static class RequestEstadiaDTO {
+        String nroHabitacion;
+        LocalDate fechaInicio;
+        LocalDate fechaFin;
+        ArrayList<BuscarHuespedDTO> huespedes;
     }
 }

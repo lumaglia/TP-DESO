@@ -7,6 +7,7 @@ import './TablaHabitacion.css'
 import '../Huesped/Buscar/Buscar.css'
 import { tiposTablaHabitacion, infoDisponibilidad } from '../../public/constants'
 import Row from "../Row";
+import { useRouter } from 'next/navigation'
 
 export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibilidad, fechaInicio, fechaFin,
                                     seleccionadas= new Map<string, Array<Array<Date>>>(), setSeleccionadas=()=>{}}
@@ -14,7 +15,7 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
     seleccionadas?: Map<string, Array<Array<Date>>>, setSeleccionadas?: Function}) {
 
     const habitaciones = [...infoDisponibilidad.map(e => e.habitacion.nroHabitacion)];
-
+    const router = useRouter();
     const dates = [];
     const date = new Date(fechaInicio)
     while (date <= fechaFin) {
@@ -231,7 +232,9 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                 }
             </Row>
             {
-                tipo == tiposTablaHabitacion.CU05? <></>:<Row>
+                tipo == tiposTablaHabitacion.CU05? <Row>
+                    <button className='Button' onClick={() => router.push('/')} style={{marginLeft: 'auto', marginRight:'100px'}}>Volver al menú principal </button>
+                </Row>:<Row>
                     <p>Seleccione o modifique rangos de fecha con Click Izquierdo y elimine selecciones con Click Derecho</p>
                 </Row>
             }

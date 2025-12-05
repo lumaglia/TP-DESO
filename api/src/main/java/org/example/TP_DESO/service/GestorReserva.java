@@ -149,7 +149,7 @@ public class GestorReserva {
             return resultado;
         }
         catch (Exception e){
-            throw new FracasoOperacion("Error al obtener la reserva" + e.getMessage());
+            throw new FracasoOperacion("Error al obtener la columna" + e.getMessage());
         }
     }
 }

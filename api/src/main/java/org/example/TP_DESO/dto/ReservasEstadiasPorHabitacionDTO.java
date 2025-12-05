@@ -9,6 +9,7 @@ import org.example.TP_DESO.domain.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter @Setter
 public class ReservasEstadiasPorHabitacionDTO {
@@ -86,14 +87,15 @@ public class ReservasEstadiasPorHabitacionDTO {
 
 
     public ArrayList<EstadiasAsociadas> toEstadiasAsociadas(List<Estadia> estadias) {
-        ArrayList<EstadiasAsociadas> estadiasAsociadas = new ArrayList<>();
-        for (Estadia e : estadias) estadiasAsociadas.add(new EstadiasAsociadas(e));
-        return estadiasAsociadas;
+        return estadias.stream()
+                .map(EstadiasAsociadas::new)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ArrayList<ReservasAsociadas> toReservasAsociadas(List<Reserva> reservas) {
-        ArrayList<ReservasAsociadas> reservasAsociadas = new ArrayList<>();
-        for (Reserva r : reservas) reservasAsociadas.add(new ReservasAsociadas(r));
-        return reservasAsociadas;
+        return reservas.stream()
+                .filter(r -> !r.isCancelada())
+                .map(ReservasAsociadas::new)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

@@ -4,7 +4,6 @@ import org.example.TP_DESO.domain.*;
 import org.example.TP_DESO.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -19,7 +18,8 @@ public class PopulateBDD implements CommandLineRunner {
     private final EstadiaRepository estadiaRepository;
     private final ReservaRepository reservaRepository;
 
-    private static final boolean hardReset = true;
+    private static final boolean hardReset = false;
+    private static final boolean test = false;
 
 
     @Autowired
@@ -39,31 +39,42 @@ public class PopulateBDD implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if(hardReset) resetearTablas();
+        try{
+            if(!test){
+                System.out.println("-> No se esta poblando la bdd!");
+                return;
+            }
 
-        System.out.println("-> Poblando con datos a la bdd");
-        //HABITACIONES
-        if(habitacionRepository.count()==0 && hardReset) poblarHabitaciones();
-        //DIRECCIONES
-        if(direccionRepository.count()==0) poblarDirecciones();
-        //HUESPEDES
-        if(huespedRepository.count()==0) poblarHuespedes();
-        //ESTADIAS
-        if(estadiaRepository.count()==0) poblarEstadias();
-        //RESERVAS
-        if(reservaRepository.count()==0) poblarReservas();
-        //ELEMENTOS DE PRUEBA
-        poblarEstadiasOcupacionTotal(
-                LocalDate.of(2025, 1, 1),
-                LocalDate.of(2025, 1, 20));
-        poblarReservasYEstados(
-                LocalDate.of(2025, 2, 1),
-                LocalDate.of(2025, 2, 27),
-                LocalDate.of(2025, 1, 29)
-        );
+            if(hardReset) resetearTablas();
 
-        System.out.println("-> Finalizada la carga de datos");
-        //ESPERO QUE ESO SEA TODO POR FAVOR QUE DIFICIL FUE ESTO
+            System.out.println("-> Poblando con datos a la bdd");
+            //HABITACIONES
+            poblarHabitaciones();
+            //DIRECCIONES
+            poblarDirecciones();
+            //HUESPEDES
+            poblarHuespedes();
+            //ESTADIAS
+            poblarEstadias();
+            //RESERVAS
+            poblarReservas();
+            //ELEMENTOS DE PRUEBA
+
+            poblarEstadiasOcupacionTotal(
+                    LocalDate.of(2025, 1, 1),
+                    LocalDate.of(2025, 1, 20));
+            poblarReservasYEstados(
+                    LocalDate.of(2025, 2, 1),
+                    LocalDate.of(2025, 2, 27),
+                    LocalDate.of(2025, 1, 29)
+            );
+
+
+            System.out.println("-> Finalizada la carga de datos");
+            //ESPERO QUE ESO SEA TODO POR FAVOR QUE DIFICIL FUE ESTO
+        } catch (Exception e) {
+            throw new RuntimeException("Error al poblar la bdd: " + e.getMessage());
+        }
     }
 
     private void resetearTablas() {
@@ -71,7 +82,7 @@ public class PopulateBDD implements CommandLineRunner {
         estadiaRepository.deleteAll();
         huespedRepository.deleteAll();
         direccionRepository.deleteAll();
-        //habitacionRepository.deleteAll();
+        habitacionRepository.deleteAll();
     }
 
     public void poblarHabitaciones(){
@@ -218,6 +229,62 @@ public class PopulateBDD implements CommandLineRunner {
                 "Española",
                 direccionRepository.findAll().get(0)));
 
+        h.add(new Huesped(
+                "MARIO",
+                "GOMEZ",
+                "LC",
+                "1200000",
+                "20-1200000-3",
+                "Consumidor Final",
+                LocalDate.of(1955, 3, 10),
+                "+543405111111",
+                "mariogomez@gmail.com",
+                "Jubilado",
+                "Argentino",
+                direccionRepository.findAll().get(1)));
+
+        h.add(new Huesped(
+                "ELENA",
+                "CABRERA",
+                "LE",
+                "4500000",
+                "20-4500000-8",
+                "Consumidor Final",
+                LocalDate.of(1962, 8, 18),
+                "+543405222222",
+                "elenacabrera@gmail.com",
+                "Docente",
+                "Brasilera",
+                direccionRepository.findAll().get(2)));
+
+        h.add(new Huesped(
+                "JULIEN",
+                "DUPONT",
+                "Pasaporte",
+                "XK123456",
+                "NO TIENE",
+                "No Responsable",
+                LocalDate.of(1988, 2, 14),
+                "+335555555",
+                "julien.dupont@gmail.com",
+                "Ingeniero",
+                "Español",
+                direccionRepository.findAll().get(2)));
+
+        h.add(new Huesped(
+                "SOFIA",
+                "KOVAC",
+                "Otro",
+                "DOC-998877",
+                "NO TIENE",
+                "No Responsable",
+                LocalDate.of(1993, 7, 29),
+                "+54223444444",
+                "sofia.kovac@gmail.com",
+                "Artista",
+                "Español",
+                direccionRepository.findAll().get(2)));
+
         huespedRepository.saveAll(h);
         System.out.println("-> Finalizada poblacion de Huespes…");
     }
@@ -226,16 +293,33 @@ public class PopulateBDD implements CommandLineRunner {
         System.out.println("-> Poblando Tabla de Estadias…");
         List<Estadia> e =  new ArrayList<>();
 
-        Habitacion habitacion = habitacionRepository.findById("11").orElseThrow();
-        List<Huesped> huesped = huespedRepository.findAll().subList(0, 1);
+        List<Huesped> huesped = huespedRepository.findAll();
+
 
         Estadia estadia = new Estadia();
-        estadia.setFechaInicio(LocalDate.of(2025, 3, 1));
-        estadia.setFechaFin(LocalDate.of(2025, 3, 4));
-        estadia.setHabitacion(habitacion);
-        estadia.setHuespedes(huesped);
-
+        estadia.setFechaInicio(LocalDate.of(2025, 4, 10));
+        estadia.setFechaFin(LocalDate.of(2025, 4, 15));
+        estadia.setHabitacion(habitacionRepository.findById("11").orElseThrow());
+        estadia.setHuespedes(huesped.subList(0,1));
         e.add(estadia);
+
+        Estadia estadia2 = new Estadia();
+
+        estadia2.setFechaInicio(LocalDate.of(2025, 6, 20));
+        estadia2.setFechaFin(LocalDate.of(2025, 6, 23));
+        estadia2.setHabitacion(habitacionRepository.findById("2").orElseThrow());
+        estadia2.setHuespedes(huesped.subList(2,2));
+        e.add(estadia2);
+
+
+        Estadia estadia3 = new Estadia();
+        estadia3.setFechaInicio(LocalDate.of(2025, 7, 2));
+        estadia3.setFechaFin(LocalDate.of(2025, 7, 17));
+        estadia3.setHabitacion(habitacionRepository.findById("39").orElseThrow());
+        estadia3.setHuespedes(huesped.subList(2,2));
+
+        e.add(estadia3);
+
 
         estadiaRepository.saveAll(e);
         System.out.println("-> Finalizada poblacion de estadias…");
@@ -245,9 +329,9 @@ public class PopulateBDD implements CommandLineRunner {
         System.out.println("-> Poblando Tabla de Reservas…");
         List<Reserva> rlist = new ArrayList<>();
 
-        Estadia e = estadiaRepository.findById(0L).orElseThrow();
-        Huesped hu = e.getHuespedes().get(0);
-        Habitacion h = e.getHabitacion();
+        Estadia e = estadiaRepository.findAll().getFirst();
+        Huesped hu = huespedRepository.findByTipoDocAndNroDoc("DNI","28000000").get();
+        Habitacion h = habitacionRepository.getByNroHabitacion("11");
 
         Reserva r = new Reserva();
         r.setFechaInicio(LocalDate.of(2025, 3, 1));
@@ -274,7 +358,7 @@ public class PopulateBDD implements CommandLineRunner {
 
         // 2. Crear 1 huésped dummy (puede ser un solo huésped para todas)
         Direccion direccionDummy = new Direccion(
-                "Testing Street", "1", "9999", "TestCity", "TestProvince", "TestingLand"
+                "Testing Street", "2", "9999", "TestCity", "TestProvince", "TestingLand"
         );
         direccionRepository.save(direccionDummy);
 
@@ -283,7 +367,8 @@ public class PopulateBDD implements CommandLineRunner {
                 "20-00000000-0", "Consumidor Final",
                 LocalDate.of(1990,1,1),
                 "123456789", "test@test.com",
-                "Tester", "TestLand", direccionDummy
+                "Tester", "TestLand",
+                direccionRepository.findByPaisAndCodigoPostalAndDomicilioAndDepto(direccionDummy.getPais(), direccionDummy.getCodigoPostal(), direccionDummy.getDomicilio(), direccionDummy.getDepto()).get()
         );
         huespedRepository.save(huespedDummy);
 
@@ -295,7 +380,7 @@ public class PopulateBDD implements CommandLineRunner {
             e.setHabitacion(hab);
 
             // agregamos el huésped dummy
-            e.getHuespedes().add(huespedDummy);
+            e.getHuespedes().add(huespedRepository.findByTipoDocAndNroDoc(huespedDummy.getTipoDoc(), huespedDummy.getNroDoc()).get());
 
             estadiaRepository.save(e);
         }

@@ -22,7 +22,7 @@ public class Estadia {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
             name = "estadia_huesped",
             joinColumns = @JoinColumn(name = "id_estadia", referencedColumnName = "idEstadia"),

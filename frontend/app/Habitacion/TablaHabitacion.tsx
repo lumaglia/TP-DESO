@@ -5,33 +5,12 @@ import TableButton from './TableButton';
 import { ScrollArea } from '@base-ui-components/react/scroll-area';
 import './TablaHabitacion.css'
 import '../Huesped/Buscar/Buscar.css'
-import { tiposTablaHabitacion } from '../../public/constants'
+import { tiposTablaHabitacion, infoDisponibilidad } from '../../public/constants'
 import Row from "../Row";
-
-type info = {
-    habitacion: {
-        nroHabitacion: string,
-        tipo: string,
-    },
-    estadias: Array<
-        {
-            fechaInicio: string,
-            fechaFin: string,
-        }
-    >,
-    reservas: Array<
-        {
-            fechaInicio: string,
-            fechaFin: string,
-            apellido: string,
-            nombre: string,
-        }
-    >
-}
 
 export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibilidad, fechaInicio, fechaFin,
                                     seleccionadas= new Map<string, Array<Array<Date>>>(), setSeleccionadas=()=>{}}
-                                : {tipo?: tiposTablaHabitacion, infoDisponibilidad: Array<info>, fechaInicio: Date, fechaFin: Date,
+                                : {tipo?: tiposTablaHabitacion, infoDisponibilidad: Array<infoDisponibilidad>, fechaInicio: Date, fechaFin: Date,
     seleccionadas?: Map<string, Array<Array<Date>>>, setSeleccionadas?: Function}) {
 
     const habitaciones = [...infoDisponibilidad.map(e => e.habitacion.nroHabitacion)];

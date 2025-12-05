@@ -297,3 +297,24 @@ export enum tiposTablaHabitacion {
     CU05,
     CU015
 }
+
+export type infoDisponibilidad = {
+    habitacion: {
+        nroHabitacion: string,
+        tipo: string,
+    },
+    estadias: Array<
+        {
+            fechaInicio: string,
+            fechaFin: string,
+        }
+    >,
+    reservas: Array<
+        {
+            fechaInicio: string,
+            fechaFin: string,
+            apellido: string,
+            nombre: string,
+        }
+    >
+}

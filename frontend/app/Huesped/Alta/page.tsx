@@ -9,6 +9,7 @@ import Encabezado from '../../Encabezado.tsx'
 import { AlertaCancelar, AlertaDocumento } from '../../Alertas.tsx'
 import Row from '../../Row.tsx'
 import { validation, comboValues, FormValues, fieldTypes } from '../../../public/constants.ts'
+import '../../globals.css'
 import './AltaHuesped.css'
 
 function AltaHuesped() {
@@ -42,7 +43,7 @@ function AltaHuesped() {
             if (res.status === 409) {
                 setAlertaDocumentoOpen(true);
             }else if(res.ok) {
-                router.push(`/AltaHuesped/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
+                router.push(`/Huesped/Alta/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
             }
         })
     };

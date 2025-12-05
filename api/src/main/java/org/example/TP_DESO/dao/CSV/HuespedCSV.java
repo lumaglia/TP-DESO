@@ -88,6 +88,11 @@ public class HuespedCSV implements HuespedDAO {
         return huespedDTOs;
     }
 
+    @Override
+    public ArrayList<HuespedDTO> obtenerHuesped() throws FracasoOperacion {
+        return obtenerHuesped(new HuespedDTO());
+    }
+
     public void modificarHuesped(String tipoDoc, String numeroDoc, Huesped huesped) throws FracasoOperacion {
         try {
             direccionCSV.crearDireccion(huesped.getDireccion());

@@ -42,6 +42,29 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                 return
             }
         }
+        if(tipo === tiposTablaHabitacion.CU04){
+            const arr = getKey(habitacion, seleccionadas)
+            let index = arr.findIndex(x =>
+                x.length === 1);
+            if(index > -1){
+                if(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === indiceSeleccionActual)
+                    ?.reservas.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= date
+                        || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaInicio) < arr[index][0]
+                        || new Date(reserva.fechaFin) > date && new Date(reserva.fechaFin) < arr[index][0]
+                        || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaFin) < arr[index][0]
+                        || new Date(reserva.fechaFin) < date && new Date(reserva.fechaFin) > arr[index][0])){
+
+                    return;
+                }
+            }else{
+                console.log(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === habitacion))
+                console.log()
+                if(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === habitacion)
+                    ?.reservas.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= new Date(date.getTime() - 25*3600000))){
+                    return;
+                }
+            }
+        }
         console.log(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === indiceSeleccionActual));
         if(!indiceSeleccionActual || indiceSeleccionActual === habitacion){
             setSeleccionadas((seleccionadas: Map<string, Array<Array<Date>>>) => {

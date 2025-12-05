@@ -31,8 +31,16 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
         return map.get(key) || [[]];
     }
 
-
     function handleClick(date: Date, habitacion: string) {
+        if(tipo === tiposTablaHabitacion.CU15 && indiceSeleccionActual === null){
+            let i = 0
+            seleccionadas.forEach((value, key) => {if(value[0].length > 0) i++})
+            if (i === 0){
+                setSeleccionadas(new Map<string, Array<Array<Date>>>())
+            }else if(i > 0){
+                return
+            }
+        }
         console.log(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === indiceSeleccionActual));
         if(!indiceSeleccionActual || indiceSeleccionActual === habitacion){
             setSeleccionadas((seleccionadas: Map<string, Array<Array<Date>>>) => {
@@ -154,21 +162,21 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                                 {dates.map((date, i) => <tr key={date.toLocaleDateString("en-GB")}>
                                     <th>{date.toLocaleDateString("en-GB")}</th>
                                     {habitaciones.map((h, i) => <td key={date.toLocaleDateString("en-GB") + i}
-                                                                    className={tipo === tiposTablaHabitacion.CU04
+                                                                    className={tipo !== tiposTablaHabitacion.CU05
                                                                         ? (indiceSeleccionActual === null || h === indiceSeleccionActual)
                                                                             ? ''
                                                                             : 'invalido'
                                                                         : 'noSeleccionable'}
-                                                                    onMouseEnter={tipo === tiposTablaHabitacion.CU04
+                                                                    onMouseEnter={tipo !== tiposTablaHabitacion.CU05
                                                                         ? () => handleMouseEnter(date, h)
                                                                         : undefined}
-                                                                    onMouseLeave={tipo === tiposTablaHabitacion.CU04
+                                                                    onMouseLeave={tipo !== tiposTablaHabitacion.CU05
                                                                         ? () => handleMouseLeave()
                                                                         : undefined}
-                                                                    onClick={tipo === tiposTablaHabitacion.CU04
+                                                                    onClick={tipo !== tiposTablaHabitacion.CU05
                                                                         ? () => handleClick(date, h)
                                                                         : undefined}
-                                                                    onContextMenu={tipo === tiposTablaHabitacion.CU04
+                                                                    onContextMenu={tipo !== tiposTablaHabitacion.CU05
                                                                         ? (e) => {
                                                                             e.preventDefault();
                                                                             e.stopPropagation();

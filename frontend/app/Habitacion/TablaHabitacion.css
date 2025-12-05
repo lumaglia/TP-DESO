@@ -106,3 +106,10 @@ td:hover:not(.noSeleccionable) > div > .tableButton {
 tr td.invalido {
     filter: brightness(85%);
 }
+
+.ScrollArea.TablaHabitacion {
+    margin: 20px;
+    box-sizing: border-box;
+    width: 80vw;
+    height: 60vh;
+}

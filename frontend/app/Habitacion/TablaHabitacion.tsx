@@ -6,6 +6,7 @@ import { ScrollArea } from '@base-ui-components/react/scroll-area';
 import './TablaHabitacion.css'
 import '../Huesped/Buscar/Buscar.css'
 import { tiposTablaHabitacion } from '../../public/constants'
+import Row from "../Row";
 
 export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibilidad, fechaInicio, fechaFin,
                                     seleccionadas= new Map<number, Array<Array<Date>>>(), setSeleccionadas=()=>{}}
@@ -133,7 +134,8 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
 
     return (
         <>
-            <ScrollArea.Root className='ScrollArea'>
+            <Row>
+            <ScrollArea.Root className='ScrollArea TablaHabitacion'>
                 <ScrollArea.Viewport className='Viewport'>
                     <ScrollArea.Content className='Content'>
                         <table>
@@ -197,6 +199,18 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                 </ScrollArea.Scrollbar>
                 <ScrollArea.Corner />
             </ScrollArea.Root>
+            </Row>
+            <Row>
+                <TableButton estado={"ocupado"}/><p> Ocupado </p><TableButton estado={"reservado"}/><p> Reservado </p>
+                { tipo == tiposTablaHabitacion.CU05? <></>
+                    : <><TableButton start={true} end={true} seleccionado={true}/><p> Selección </p><TableButton start={true} end={true} seleccionado={true} hovered={true}/><p> Selección Invalida </p></>
+                }
+            </Row>
+            {
+                tipo == tiposTablaHabitacion.CU05? <></>:<Row>
+                    <p>Seleccione o modifique rangos de fecha con Click Izquierdo y elimine selecciones con Click Derecho</p>
+                </Row>
+            }
 
         </>
     )

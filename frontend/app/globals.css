@@ -113,3 +113,11 @@ p {
     justify-content: center;
     width: 100%;
 }
+
+.centerObject {
+    display: flex;
+    justify-content: center;
+}
+.AlignCenter {
+    align-items: center;
+}

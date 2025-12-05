@@ -5,7 +5,7 @@ import { useForm, FieldValues } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Row from "../../Row";
 import Campo from "../../Campo";
-import {fieldTypes, DateValues, tiposTablaHabitacion} from "../../../public/constants";
+import {fieldTypes, DateValues, tiposTablaHabitacion, infoDisponibilidad } from "../../../public/constants";
 import {AlertaCancelar} from "../../Alertas";
 import {TablaHabitacion} from "../TablaHabitacion";
 
@@ -23,6 +23,7 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05} : {tip
 
     const [ fechaInicio, setFechaInicio ] = useState<Date>(new Date());
     const [ fechaFin, setFechaFin ] = useState<Date>(new Date());
+    const [disponibilidad, setDisponibilidad] = useState<Array<infoDisponibilidad> | undefined>(undefined);
 
     const validation =
         {
@@ -58,20 +59,29 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05} : {tip
         setFechaInicio(data.fechaInicio);
         setFechaFin(data.fechaFin);
         formRef.current = data
-        console.log(formRef.current);
-        // PONER EL FETCH A LA API ACA
-        setSolicitudValida(true); //Si sale bien cambia el contenido mostrado
-
+        fetch(`http://localhost:8081/Habitacion/Buscar/${data.fechaInicio.toLocaleDateString('en-CA')}/${data.fechaFin.toLocaleDateString('en-CA')}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(res => {
+            if(res.ok) {
+                res.json().then(response => {
+                    setDisponibilidad(response)
+                    setSolicitudValida(true); //Si sale bien cambia el contenido mostrado
+                })
+            }
+        })
     };
-    console.log('INICIO', fechaInicio)
-    console.log('FIN', fechaFin)
+
     return (
         <>
             {
                 solicitudValida? (
                     <>
                     <h2 style={{textAlign: 'center'}}>Disponibilidad de habitaciones entre {fechaInicio.toLocaleDateString('en-GB')} y {fechaFin.toLocaleDateString('en-GB')}</h2>
-                    <TablaHabitacion fechaInicio={fechaInicio} fechaFin={fechaFin} infoDisponibilidad={[]} tipo={tipo}/>
+                    <TablaHabitacion fechaInicio={fechaInicio} fechaFin={fechaFin} infoDisponibilidad={disponibilidad ?? []} tipo={tipo}/>
                     </>
                 ): (
                     <><h2 style={{textAlign: 'center'}}>Ingresar el periodo a revisar</h2>

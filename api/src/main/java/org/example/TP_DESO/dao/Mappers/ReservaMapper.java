@@ -21,4 +21,23 @@ public class ReservaMapper {
                 EstadiaMapper.toDTO(r.getEstadia())
         );
     }
+
+    public static Reserva toDomain(ReservaDTO r) {
+        if (r == null){
+            return null;
+        }
+        Reserva reserva = new Reserva();
+        reserva.setFechaReserva(r.getFechaReserva());
+        reserva.setFechaInicio(r.getFechaInicio());
+        reserva.setFechaFin(r.getFechaFin());
+        reserva.setApellido(r.getApellido());
+        reserva.setNombre(r.getNombre());
+        reserva.setTelefono(r.getTelefono());
+        reserva.setCancelada(r.isCancelada());
+        reserva.setIdReserva(r.getId());
+        reserva.setHabitacion(HabitacionMapper.toDomain(r.getHabitacion()));
+        reserva.setEstadia(EstadiaMapper.toDomain(r.getEstadia()));
+
+        return reserva;
+    }
 }

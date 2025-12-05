@@ -46,7 +46,7 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
 
         try {
             List<Estadia> estadias = estadiaRepository
-                    .findByFechaInicioBetween(fechaInicio, fechaFin);
+                    .findByFechaFinAfterAndFechaInicioBefore(fechaInicio, fechaFin);
 
             if (estadias.isEmpty()) {
                 throw new FracasoOperacion("No existen estadías en ese rango de fechas");
@@ -65,8 +65,22 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
         }
     }
 
+    @Override
+    public ArrayList<Estadia> obtenerEstadiaEntreFechasDomainForm(LocalDate fechaInicio, LocalDate fechaFin)
+        throws FracasoOperacion {
+        try{
+            ArrayList<Estadia> estadias = estadiaRepository.findByFechaFinAfterAndFechaInicioBefore(fechaInicio, fechaFin);
 
+            if (estadias.isEmpty()) {
+                throw new FracasoOperacion("No existen estadías en ese rango de fechas");
+            }
 
+            return estadias;
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al obtener estadías: " + e.getMessage());
+        }
+    }
 
     @Override
     public void modificarEstadia(Long idEstadia, Estadia estadia) throws FracasoOperacion {

@@ -15,9 +15,8 @@ public interface HabitacionDAO {
     void eliminarHabitacion(Long id) throws FracasoOperacion;
     HabitacionDTO obtenerHabitacion(String id) throws FracasoOperacion;
     ArrayList<HabitacionDTO> obtenerTodas() throws FracasoOperacion;
+    ArrayList<Habitacion> obtenerTodasDomainForm() throws FracasoOperacion;
     HabitacionDTO buscarPorNumero(int numero) throws FracasoOperacion;
-    ArrayList<HabitacionDTO> buscarHabitacionesDisponibles(LocalDate desde, LocalDate hasta) throws FracasoOperacion;
-    ArrayList<HabitacionDTO> buscarHabitacionesOcupadas(LocalDate desde, LocalDate hasta) throws FracasoOperacion;
     ArrayList<HabitacionDTO> buscarPorTipo(String tipoHabitacion) throws FracasoOperacion;
 }
 

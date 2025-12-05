@@ -6,7 +6,7 @@ import { ScrollArea } from '@base-ui-components/react/scroll-area';
 import Campo from '../../Campo.tsx'
 import Row from '../../Row'
 import Encabezado from '../../Encabezado.tsx'
-import { AlertaCancelar, AlertaHuespedNoEncontrado } from '../../Alertas.tsx'
+import { AlertaCancelar } from '../../Alertas.tsx'
 import '../../globals.css'
 import '../../Huesped/Alta/AltaHuesped.css'
 import { comboValues, fieldTypes } from '../../../public/constants.ts'
@@ -41,6 +41,7 @@ export default function BuscarHuesped() {
                 data[key] = null
             }
         }
+        setAlertaHuespedNoEncontradoOpen(false)
         fetch('http://localhost:8081/Huesped/Buscar', {
             method: 'POST',
             body: JSON.stringify(data),
@@ -97,6 +98,11 @@ export default function BuscarHuesped() {
                                 <button type='submit' className='Button'>Buscar</button>
                             </Row>
                         </form>
+                        {
+                            alertaHuespedNoEncontradoOpen ? <Row><p>No se han encontrado huespedes para los criterios seleccionados.</p></Row>
+                                :
+                                <></>
+                        }
                         <div style={{display: 'flex', flexDirection: 'column', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>
                             <ScrollArea.Root className='ScrollArea'>
                                 <ScrollArea.Viewport className='Viewport'>
@@ -202,8 +208,7 @@ export default function BuscarHuesped() {
                     )
             }
 
-            <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la busqueda de huespedes'/>
-            <AlertaHuespedNoEncontrado open={alertaHuespedNoEncontradoOpen} setOpen={setAlertaHuespedNoEncontradoOpen} />
+            <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la carga de estadía'/>
 
         </>
     );

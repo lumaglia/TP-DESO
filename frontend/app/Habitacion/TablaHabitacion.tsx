@@ -31,12 +31,9 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
         return map.get(key) || [[]];
     }
 
-    function parseDate(date: string) {
-        const [day, month, year] = date.split('/');
-        return new Date(Number(year), Number(month) - 1, Number(day));
-    }
 
     function handleClick(date: Date, habitacion: string) {
+        console.log(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === indiceSeleccionActual));
         if(!indiceSeleccionActual || indiceSeleccionActual === habitacion){
             setSeleccionadas((seleccionadas: Map<string, Array<Array<Date>>>) => {
                 const arr = getKey(habitacion, seleccionadas)
@@ -48,7 +45,13 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                         || selection[0] > date && selection[0] < arr[index][0]
                         || selection[1] > date && selection[1] < arr[index][0]
                         || selection[0] > date && selection[1] < arr[index][0]
-                        || selection[1] < date && selection[1] > arr[index][0])){
+                        || selection[1] < date && selection[1] > arr[index][0]) &&
+                        !infoDisponibilidad.find(h => h.habitacion.nroHabitacion === indiceSeleccionActual)
+                            ?.estadias.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= date
+                            || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaInicio) < arr[index][0]
+                            || new Date(reserva.fechaFin) > date && new Date(reserva.fechaFin) < arr[index][0]
+                            || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaFin) < arr[index][0]
+                            || new Date(reserva.fechaFin) < date && new Date(reserva.fechaFin) > arr[index][0])){
                         if(indiceSeleccionActual) {
                             setIndiceSeleccionActual(null)
                         }else setIndiceSeleccionActual(habitacion)
@@ -73,7 +76,9 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                             selection[0] > date && selection[0] < arr[arr.length - 1][0]
                             || selection[1] > date && selection[1] < arr[arr.length - 1][0]
                             || selection[0] > date && selection[1] < arr[arr.length - 1][0]
-                            || selection[1] < date && selection[1] > arr[arr.length - 1][0]))) {
+                            || selection[1] < date && selection[1] > arr[arr.length - 1][0])) &&
+                        !infoDisponibilidad.find(h => h.habitacion.nroHabitacion === habitacion)
+                            ?.estadias.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= date)) {
                         if(indiceSeleccionActual) {
                             setIndiceSeleccionActual(null)
                         }else setIndiceSeleccionActual(habitacion)
@@ -179,13 +184,13 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                                                                  && date >= hovered))}
                                                      start={getKey(h, seleccionadas).some((arr: Array<Date>) => arr[0]?.getTime() == date.getTime())}
                                                      end={getKey(h, seleccionadas).some((arr: Array<Date>) => arr[1]?.getTime() == date.getTime())}
-                                                     estado={infoDisponibilidad[parseInt(h)]?.estadias.some((arr: {
+                                                     estado={infoDisponibilidad[parseInt(h)-1]?.estadias.some((arr: {
                                                          fechaInicio: string,
                                                          fechaFin: string,
                                                      }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= date)
                                                          ? 'ocupado'
 
-                                                         : infoDisponibilidad[parseInt(h)]?.reservas.some((arr: {
+                                                         : infoDisponibilidad[parseInt(h)-1]?.reservas.some((arr: {
                                                              fechaInicio: string,
                                                              fechaFin: string,
                                                          }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= date)

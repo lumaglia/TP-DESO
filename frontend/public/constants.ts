@@ -234,9 +234,7 @@ export const validation = {
             value: /^[a-zA-Z0-9\s-_]+$/,
             message: 'Ingrese caracteres válidos',
         }
-    }
-
-
+    },
 }
 
 export const MapNameToApi : {[key: string]: string} = {
@@ -257,6 +255,8 @@ export const MapNameToApi : {[key: string]: string} = {
     'Localidad': 'direccion.localidad',
     'Provincia': 'direccion.provincia',
     'Pais': 'direccion.pais',
+    'Desde Fecha': 'fechaInicio',
+    'Hasta Fecha': 'fechaFin'
 };
 
 export type FormValues = {
@@ -286,3 +286,14 @@ export type FormValues = {
         pais: string;
     };
 };
+
+export type DateValues = {
+    fechaInicio: Date;
+    fechaFin: Date;
+}
+
+export enum tiposTablaHabitacion {
+    CU04,
+    CU05,
+    CU015
+}

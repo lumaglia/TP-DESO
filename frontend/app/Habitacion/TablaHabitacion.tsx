@@ -204,9 +204,9 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                 <TableButton estado={"ocupado"}/><p style={{alignSelf:'flex-end', marginBottom:'2px', marginRight:'4px'}}> Ocupado </p>
                 <TableButton estado={"reservado"}/><p style={{alignSelf:'flex-end', marginBottom:'2px', marginRight:'4px'}}> Reservado </p>
                 { tipo == tiposTablaHabitacion.CU05? <></>
-                    : <><TableButton start={true} end={true} seleccionado={true}/>
+                    : <><TableButton start={true} end={true} seleccionado={true} estado={'leyenda'}/>
                         <p style={{alignSelf:'flex-end', marginBottom:'2px', marginRight:'4px'}}> Selección </p>
-                        <TableButton start={true} end={true} seleccionado={true} hovered={true}/>
+                        <TableButton start={true} end={true} seleccionado={true} hovered={true} estado={'leyenda'}/>
                         <p style={{alignSelf:'flex-end', marginBottom:'2px', marginRight:'4px'}}> Selección Invalida </p></>
                 }
             </Row>

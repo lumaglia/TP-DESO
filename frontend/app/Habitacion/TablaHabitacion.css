@@ -46,7 +46,7 @@
             border-radius: 4px 4px 4px 4px;
         }
 
-        &:hover {
+        &:hover:not([data-estado='leyenda']) {
             outline-color: #4586fc;
             border-color: #4586fc;
             background-color: white;
@@ -54,6 +54,10 @@
                 outline-color: #4586fc;
                 border-color: #4586fc;
             }
+        }
+
+        &[data-estado='leyenda'] {
+            background-color: white;
         }
 
     }
@@ -80,6 +84,10 @@
             /*background-color: #FF6C64;*/
             outline-color: #FF6C64;
             border-color: #FF6C64;
+        }
+
+        &[data-estado='leyenda'] {
+            background-color: #f69691;
         }
     }
 

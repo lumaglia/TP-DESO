@@ -149,7 +149,7 @@ export default function ReservarHabitacion() {
                                                 </thead>
                                                 <tbody>
                                                 {reservas.map((reserva: any) => (
-                                                    <tr>
+                                                    <tr key={reserva.nroHabitacion + reserva.fechaInicio.toString() + reserva.fechaFin.toString()}>
                                                         <td>{reserva.nroHabitacion}</td>
                                                         <td>{reserva.tipoHabitacion}</td>
                                                         <td>{`${reserva.fechaInicio.toLocaleDateString('es-ES', {

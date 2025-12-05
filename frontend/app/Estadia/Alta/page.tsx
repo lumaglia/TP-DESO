@@ -156,6 +156,7 @@ export default function BuscarHuesped() {
                 res.json().then(data => {
                     console.log(data)
                 })
+                setSeleccionadas(new Map<string, Array<Array<Date>>>());
                 if(cargarOtra){
                     setSelectedHuespedes([]);
                     setPantalla(EstadoPantalla.Habitacion);

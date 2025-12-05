@@ -195,13 +195,13 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                                                      estado={infoDisponibilidad[parseInt(h)-1]?.estadias.some((arr: {
                                                          fechaInicio: string,
                                                          fechaFin: string,
-                                                     }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= date)
+                                                     }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= new Date(date.getTime() - 24*3600000))
                                                          ? 'ocupado'
 
                                                          : infoDisponibilidad[parseInt(h)-1]?.reservas.some((arr: {
                                                              fechaInicio: string,
                                                              fechaFin: string,
-                                                         }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= date)
+                                                         }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= new Date(date.getTime() - 24*3600000))
                                                              ? 'reservado'
                                                              :'disponible'}/>
                                     </td>)}

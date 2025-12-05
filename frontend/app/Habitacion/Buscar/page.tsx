@@ -14,7 +14,7 @@ import {TablaHabitacion} from "../TablaHabitacion";
 export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, seleccionadas,
                                              setSeleccionadas, onNext}
                                          : {tipo?: tiposTablaHabitacion, seleccionadas?: Map<string, Array<Array<Date>>>,
-                                            setSeleccionadas?: Function, onNext?: React.MouseEventHandler<HTMLButtonElement>}) {
+                                            setSeleccionadas?: Function, onNext?: Function}) {
 
     const form = useForm<DateValues>();
     const { register, control, handleSubmit, formState, watch, clearErrors, trigger, getValues } = form;
@@ -88,10 +88,10 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
                     <TablaHabitacion fechaInicio={fechaInicio} fechaFin={fechaFin} infoDisponibilidad={disponibilidad ?? []} tipo={tipo}
                                      {...(seleccionadas != undefined && setSeleccionadas != undefined
                                          &&{seleccionadas: seleccionadas, setSeleccionadas: setSeleccionadas})} />
-                        {seleccionadas != undefined && setSeleccionadas != undefined &&
+                        {seleccionadas != undefined && setSeleccionadas != undefined && onNext !== undefined &&
                                 <Row>
                                     <button style={{marginLeft: 'auto', marginRight:'100px'}}
-                                            className='Button' onClick={onNext}>Siguiente</button>
+                                            className='Button' onClick={() => onNext(disponibilidad)}>Siguiente</button>
                                 </Row>}
                     </>
 

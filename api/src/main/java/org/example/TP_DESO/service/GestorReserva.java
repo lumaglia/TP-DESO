@@ -39,7 +39,6 @@ public class GestorReserva {
             Reserva nuevaReserva = new Reserva();
 
             nuevaReserva.setFechaReserva(reservaDTO.getFechaReserva());
-            nuevaReserva.setIdReserva(reservaDTO.getId());
             nuevaReserva.setApellido(reservaDTO.getApellido());
             nuevaReserva.setNombre(reservaDTO.getNombre());
             nuevaReserva.setTelefono(reservaDTO.getTelefono());

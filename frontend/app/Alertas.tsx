@@ -92,3 +92,4 @@ export function AlertaHuespedNoEncontrado({open, setOpen} : {open: boolean, setO
         </AlertDialog.Root>
     );
 }
+

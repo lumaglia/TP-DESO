@@ -96,11 +96,15 @@ export default function ReservarHabitacion() {
             seleccionadas.forEach((value, key) =>{
                 if(value[0].length > 0){
                     value.forEach((val) => {
+                        let fechaInicioVal = val[0];
+                        let fechaFinVal = val[1];
+                        fechaInicioVal.setTime(fechaInicioVal.getTime()+11*3600000);
+                        fechaFinVal.setTime(fechaFinVal.getTime()+9*3600000);
                         res.push({
                             nroHabitacion: key,
                             tipoHabitacion: infoDisponibilidad.find(d => d.habitacion.nroHabitacion === key)?.habitacion.tipo,
-                            fechaInicio: val[0],
-                            fechaFin: val[1],
+                            fechaInicio: fechaInicioVal,
+                            fechaFin: fechaFinVal,
                         })
                     })
                 }

@@ -34,10 +34,12 @@ export default function BuscarHuesped() {
     const [ huespedes , setHuespedes ] = useState<Array<HuespedValues>>([])
     const [ errorNoSeleccionado, setErrorNoSeleccionado] = useState(false)
     const [ selectedHuespedes, setSelectedHuespedes ] = useState<Array<HuespedValues>>([]);
-    const [ pantalla, setPantalla ] = useState(EstadoPantalla.Habitacion); //USAR HABITACION CUANDO ESTE CONECTADO AL CU05
+    const [ pantalla, setPantalla ] = useState(EstadoPantalla.Habitacion);
     const [seleccionadas, setSeleccionadas] = useState(new Map<string, Array<Array<Date>>>());
     const [tipoHabitacion, setTipoHabitacion] = useState("Simple Estandar")
-    const idHabitacion = "5", fechaInicio = "Jueves 04-12-2025 12:00:00", fechaFin = "Martes 09-12-2025 10:00:00";
+    const [idHabitacion, setIdHabitacion] = useState("5");
+    const [fechaInicio, setFechaInicio] = useState<string>("Jueves 04-12-2025 12:00:00");
+    const [fechaFin, setFechaFin] = useState<string>("Martes 09-12-2025 10:00:00");
 
     function onSubmit(data: any) {
         for (let key in data) {
@@ -97,6 +99,29 @@ export default function BuscarHuesped() {
             seleccionadas.forEach((value, key) =>{
                 if(value[0].length > 0){
                     setTipoHabitacion(infoDisponibilidad.find(d => d.habitacion.nroHabitacion === key)?.habitacion.tipo ?? '')
+                    setIdHabitacion(key);
+                    setFechaInicio(`${value[0][0].toLocaleDateString('es-ES', {
+                        weekday: 'long',
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                    })} ${new Date(value[0][0].getTime() + 11*3600000).toLocaleTimeString('es-ES', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false,
+                    })}`);
+                    setFechaFin(`${value[0][1].toLocaleDateString('es-ES', {
+                        weekday: 'long',
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                    })} ${new Date(value[0][1].getTime() + 9*3600000).toLocaleTimeString('es-ES', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false,
+                    })}`);
                 }
             })
             setPantalla(EstadoPantalla.Huesped)
@@ -104,16 +129,43 @@ export default function BuscarHuesped() {
     }
 
     function cargarEstadia(cargarOtra:boolean){
-        //POST PARA ESTADIA
-
-        //SI SALE BIEN:
-        if(cargarOtra){
-            setSelectedHuespedes([]);
-            setPantalla(EstadoPantalla.Habitacion);
-        }else{
-            router.push("/");
-        }
-
+        let body: any = null
+        seleccionadas.forEach((value, key) =>{
+            if(value[0].length > 0){
+                value.forEach((val) => {
+                    body = {
+                        habitacion:{
+                            nroHabitacion: key
+                        },
+                        fechaInicio: val[0],
+                        fechaFin: val[1],
+                        huespedes: selectedHuespedes
+                    }
+                })
+            }
+        })
+        console.log(body)
+        fetch('http://localhost:8081/Habitacion/Ocupar/', {
+            method: 'POST',
+            body: JSON.stringify(body),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        }).then(res => {
+            if(res.ok) {
+                console.log("EXITO")
+                res.json().then(data => {
+                    console.log(data)
+                })
+                if(cargarOtra){
+                    setSelectedHuespedes([]);
+                    setPantalla(EstadoPantalla.Habitacion);
+                }else{
+                    router.push("/");
+                }
+            }
+        })
     }
     return(
         <>
@@ -196,39 +248,7 @@ export default function BuscarHuesped() {
                                 </p>
                                 <button className='Button' onClick={() => {
                                     if (selectedHuespedes.length > 0) {
-                                        let body: any = null
-                                        seleccionadas.forEach((value, key) =>{
-                                            if(value[0].length > 0){
-                                                value.forEach((val) => {
-                                                    body = {
-                                                        habitacion:{
-                                                            nroHabitacion: key
-                                                        },
-                                                        fechaInicio: val[0],
-                                                        fechaFin: val[1],
-                                                        huespedes: selectedHuespedes
-                                                    }
-                                                })
-                                            }
-                                        })
-                                        console.log(body)
-                                        fetch('http://localhost:8081/Habitacion/Ocupar/', {
-                                            method: 'POST',
-                                            body: JSON.stringify(body),
-                                            headers: {
-                                                'Accept': 'application/json',
-                                                'Content-Type': 'application/json'
-                                            }
-                                        }).then(res => {
-                                            if(res.ok) {
-                                                console.log("EXITO")
-                                                res.json().then(data => {
-                                                    console.log(data)
-                                                })
-                                                // setPantalla(EstadoPantalla.MenuFin)
-                                            }
-                                        })
-
+                                        setPantalla(EstadoPantalla.MenuFin);
                                     }else{
                                         setErrorNoSeleccionado(true)
                                     }

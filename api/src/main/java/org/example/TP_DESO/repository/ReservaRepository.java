@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @Repository
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
-    ArrayList<Reserva> findByFechaFinAfterAndFechaInicioBefore(LocalDate desde, LocalDate hasta);
+    ArrayList<Reserva> findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(LocalDate desde, LocalDate hasta);
     ArrayList<Reserva> findByApellido(String apellido);
     ArrayList<Reserva> findByApellidoAndNombre(String apellido, String nombre);
 

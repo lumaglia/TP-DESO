@@ -46,7 +46,7 @@ public class ReservaDAOMySQL implements ReservaDAO{
         try {
 
             ArrayList<Reserva> reservas =
-                    reservaRepository.findByFechaFinAfterAndFechaInicioBefore(fechaInicio, fechaFin);
+                    reservaRepository.findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(fechaInicio, fechaFin);
 
             if (reservas.isEmpty()) {
                 throw new FracasoOperacion("No hay reservas en ese rango de fechas");
@@ -91,7 +91,7 @@ public class ReservaDAOMySQL implements ReservaDAO{
             throws FracasoOperacion{
         try{
             ArrayList<Reserva> reservas =
-                    reservaRepository.findByFechaFinAfterAndFechaInicioBefore(fechaInicio, fechaFin);
+                    reservaRepository.findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(fechaInicio, fechaFin);
 
             if (reservas.isEmpty()) throw new FracasoOperacion("No hay reservas en ese rango de fechas");
 

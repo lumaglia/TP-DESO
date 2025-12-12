@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { useForm, FieldValues } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import React, {useRef, useState} from 'react';
+import {FieldValues, useForm} from 'react-hook-form';
+import {useRouter} from 'next/navigation';
 import Row from "../../Row";
 import Campo from "../../Campo";
-import {fieldTypes, DateValues, tiposTablaHabitacion, infoDisponibilidad } from "../../../public/constants";
+import {DateValues, fieldTypes, infoDisponibilidad, tiposTablaHabitacion} from "../../../public/constants";
 import {AlertaCancelar} from "../../Alertas";
 import {TablaHabitacion} from "../TablaHabitacion";
-
 
 
 export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, seleccionadas,
@@ -27,6 +26,7 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
     const [ fechaInicio, setFechaInicio ] = useState<Date>(new Date());
     const [ fechaFin, setFechaFin ] = useState<Date>(new Date());
     const [disponibilidad, setDisponibilidad] = useState<Array<infoDisponibilidad> | undefined>(undefined);
+    const [hayDisponibles, setHayDisponibles] = useState(true);
 
     const validation =
         {
@@ -62,6 +62,8 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
         setFechaInicio(data.fechaInicio);
         setFechaFin(data.fechaFin);
         formRef.current = data
+        setSolicitudValida(false);
+        setHayDisponibles(true);
         fetch(`http://localhost:8081/Habitacion/Buscar/${data.fechaInicio.toLocaleDateString('en-CA')}/${data.fechaFin.toLocaleDateString('en-CA')}`, {
             method: 'GET',
             headers: {
@@ -74,6 +76,68 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
                     response.sort((a:any, b:any) => parseInt(a.habitacion.nroHabitacion) > parseInt(b.habitacion.nroHabitacion) ? 1 : -1);
                     setDisponibilidad(response)
                     setSolicitudValida(true); //Si sale bien cambia el contenido mostrado
+                    if(tipo != tiposTablaHabitacion.CU05){
+                        let disponibilidad = false;
+                        let fechaApertura = new Date(data.fechaInicio.toLocaleDateString('en-CA')).getTime();
+                        let fechaCierre = new Date(data.fechaFin.toLocaleDateString('en-CA')).getTime();
+                        response.forEach((i:any)=>{
+                            if(disponibilidad)return;
+                            let inicio = Array();
+                            let fin = Array();
+                            i.estadias.forEach((r: { fechaInicio: any; fechaFin: any; }) => {
+                                inicio.push(new Date(r.fechaInicio).getTime()-8*3600000);
+                                fin.push(new Date(r.fechaFin).getTime()+8*3600000);});
+
+                            if(tipo == tiposTablaHabitacion.CU04)i.reservas.forEach((r: { fechaInicio: any; fechaFin: any; }) => {
+                                inicio.push(new Date(r.fechaInicio).getTime()-8*3600000);
+                                fin.push(new Date(r.fechaFin).getTime()+8*3600000);});
+
+                            if(inicio.length == 0){
+                                disponibilidad = true;
+                            }
+                            inicio.sort();
+                            fin.sort();
+                            let j = 0;
+                            let stack = 0;
+                            let fueInicio = false;
+                            while(inicio.length > 0 || fin.length > 0) {
+                                if(inicio.length == 0) {
+                                    j = fin[0];
+                                    fin = fin.slice(1);
+                                    stack--;
+                                    fueInicio = true;
+                                }else if(fin.length == 0) {
+                                    j = inicio[0];
+                                    inicio = inicio.slice(1);
+                                    stack++;
+                                    fueInicio = false;
+                                }else{
+                                    if(inicio[0]<fin[0]){
+                                        j = inicio[0];
+                                        inicio = inicio.slice(1);
+                                        stack++;
+                                        fueInicio = true;
+                                    }else{
+                                        j = fin[0];
+                                        fin = fin.slice(1);
+                                        stack--;
+                                        fueInicio = false;
+                                    }
+                                }
+                                if(fechaApertura < j && j < fechaCierre){
+                                    if(fueInicio && stack == 1){
+                                        disponibilidad = true;
+                                        break;
+                                    }
+                                    if(stack == 0){
+                                        disponibilidad = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        });
+                        setHayDisponibles(disponibilidad);
+                    }
                 })
             }
         })
@@ -82,7 +146,7 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
     return (
         <>
             {
-                solicitudValida? (
+                (solicitudValida && hayDisponibles)? (
                     <>
                     <h2 style={{textAlign: 'center'}}>Disponibilidad de habitaciones entre {fechaInicio.toLocaleDateString('en-GB')} y {fechaFin.toLocaleDateString('en-GB')}</h2>
                     <TablaHabitacion fechaInicio={fechaInicio} fechaFin={fechaFin} infoDisponibilidad={disponibilidad ?? []} tipo={tipo}
@@ -94,7 +158,6 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
                                             className='Button' onClick={() => onNext(disponibilidad)}>Siguiente</button>
                                 </Row>}
                     </>
-
                 ): (
                     <><h2 style={{textAlign: 'center'}}>Ingresar el periodo a revisar</h2>
                         <form method='post' onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -122,6 +185,12 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
                                     </Row>
                                 </div>
                             </div>
+                            {
+                                hayDisponibles?
+                                    <></>:
+                                    <><p style={{textAlign: 'center'}}>No existen habitaciones disponibles con las comodidades deseadas para el rango de fechas solicitado.</p></>
+
+                            }
                         </form>
                         <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen}
                                         text='la busqueda de habitaciones'/></>

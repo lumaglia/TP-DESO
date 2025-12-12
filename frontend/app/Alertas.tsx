@@ -110,7 +110,7 @@ export function AlertaReserva({open, setOpen, data, setPantalla} : {open: boolea
                         Se ha seleccionado un rango de fechas sobre las reservas:
                         {data.map(c => {
                             return <>
-                                <p>{new Date(c.reserva.fechaInicio).toLocaleDateString('en-GB')} - {new Date(c.reserva.fechaFin).toLocaleDateString('en-GB')} a nombre de {c.reserva.nombre} {c.reserva.apellido}</p>
+                                <p>{new Date(new Date(c.reserva.fechaInicio).getTime() + 24*3600000).toLocaleDateString('en-GB')} - {new Date(new Date(c.reserva.fechaFin).getTime() + 24*3600000).toLocaleDateString('en-GB')} a nombre de {c.reserva.nombre} {c.reserva.apellido}</p>
                                 <br />
                             </>
                         })}

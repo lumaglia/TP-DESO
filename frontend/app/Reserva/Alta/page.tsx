@@ -101,7 +101,7 @@ export default function ReservarHabitacion() {
                         let fechaInicioVal = val[0];
                         let fechaFinVal = val[1];
                         fechaInicioVal.setTime(fechaInicioVal.getTime()+11*3600000);
-                        fechaFinVal.setTime(fechaFinVal.getTime()+9*3600000);
+                        fechaFinVal.setTime(fechaFinVal.getTime()+33*3600000);
                         res.push({
                             nroHabitacion: key,
                             tipoHabitacion: infoDisponibilidad.find(d => d.habitacion.nroHabitacion === key)?.habitacion.tipo,

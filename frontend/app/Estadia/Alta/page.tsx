@@ -99,37 +99,39 @@ export default function BuscarHuesped() {
             });
         });
         setConflict(conflictos);
+        seleccionadas.forEach((value, key) =>{
+            if(value[0].length > 0){
+                setTipoHabitacion(infoDisponibilidad.find(d => d.habitacion.nroHabitacion === key)?.habitacion.tipo ?? '')
+                setIdHabitacion(key);
+                setFechaInicio(`${value[0][0].toLocaleDateString('es-ES', {
+                    weekday: 'long',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                })} ${new Date(value[0][0].getTime() + 11*3600000).toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false,
+                })}`);
+                setFechaFin(`${new Date(value[0][1].getTime() + 33*3600000).toLocaleDateString('es-ES', {
+                    weekday: 'long',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                })} ${new Date(value[0][1].getTime() + 33*3600000).toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false,
+                })}`);
+
+            }
+        })
         if(conflictos.length > 0){
             setAlertaReservaOpen(true)
         }else{
-            seleccionadas.forEach((value, key) =>{
-                if(value[0].length > 0){
-                    setTipoHabitacion(infoDisponibilidad.find(d => d.habitacion.nroHabitacion === key)?.habitacion.tipo ?? '')
-                    setIdHabitacion(key);
-                    setFechaInicio(`${value[0][0].toLocaleDateString('es-ES', {
-                        weekday: 'long',
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                    })} ${new Date(value[0][0].getTime() + 11*3600000).toLocaleTimeString('es-ES', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false,
-                    })}`);
-                    setFechaFin(`${value[0][1].toLocaleDateString('es-ES', {
-                        weekday: 'long',
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                    })} ${new Date(value[0][1].getTime() + 9*3600000).toLocaleTimeString('es-ES', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false,
-                    })}`);
-                }
-            })
+            setPantalla(EstadoPantalla.Huesped);
         }
     }
 

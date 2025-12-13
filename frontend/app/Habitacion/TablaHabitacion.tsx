@@ -33,6 +33,7 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
     }
 
     function handleClick(date: Date, habitacion: string) {
+        let shiftedDate = new Date(date.getTime() - 25*3600000);
         if(tipo === tiposTablaHabitacion.CU15 && indiceSeleccionActual === null){
             let i = 0
             seleccionadas.forEach((value, key) => {if(value[0].length > 0) i++})
@@ -48,9 +49,9 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                 x.length === 1);
             if(index > -1){
                 if(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === indiceSeleccionActual)
-                    ?.reservas.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= date
+                    ?.reservas.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= shiftedDate
                         || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaInicio) < arr[index][0]
-                        || new Date(reserva.fechaFin) > date && new Date(reserva.fechaFin) < arr[index][0]
+                        || new Date(reserva.fechaFin) > shiftedDate && new Date(reserva.fechaFin) < arr[index][0]
                         || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaFin) < arr[index][0]
                         || new Date(reserva.fechaFin) < date && new Date(reserva.fechaFin) > arr[index][0])){
 
@@ -60,7 +61,7 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                 console.log(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === habitacion))
                 console.log()
                 if(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === habitacion)
-                    ?.reservas.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= new Date(date.getTime() - 25*3600000))){
+                    ?.reservas.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= shiftedDate)){
                     return;
                 }
             }
@@ -79,9 +80,9 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                         || selection[0] > date && selection[1] < arr[index][0]
                         || selection[1] < date && selection[1] > arr[index][0]) &&
                         !infoDisponibilidad.find(h => h.habitacion.nroHabitacion === indiceSeleccionActual)
-                            ?.estadias.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= date
+                            ?.estadias.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= shiftedDate
                             || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaInicio) < arr[index][0]
-                            || new Date(reserva.fechaFin) > date && new Date(reserva.fechaFin) < arr[index][0]
+                            || new Date(reserva.fechaFin) > shiftedDate && new Date(reserva.fechaFin) < arr[index][0]
                             || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaFin) < arr[index][0]
                             || new Date(reserva.fechaFin) < date && new Date(reserva.fechaFin) > arr[index][0])){
                         if(indiceSeleccionActual) {
@@ -110,7 +111,7 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                             || selection[0] > date && selection[1] < arr[arr.length - 1][0]
                             || selection[1] < date && selection[1] > arr[arr.length - 1][0])) &&
                         !infoDisponibilidad.find(h => h.habitacion.nroHabitacion === habitacion)
-                            ?.estadias.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= date)) {
+                            ?.estadias.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= shiftedDate)) {
                         if(indiceSeleccionActual) {
                             setIndiceSeleccionActual(null)
                         }else setIndiceSeleccionActual(habitacion)

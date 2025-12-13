@@ -101,7 +101,7 @@ export default function ReservarHabitacion() {
                         let fechaInicioVal = val[0];
                         let fechaFinVal = val[1];
                         fechaInicioVal.setTime(fechaInicioVal.getTime()+11*3600000);
-                        fechaFinVal.setTime(fechaFinVal.getTime()+33*3600000);
+                        fechaFinVal.setTime(fechaFinVal.getTime()+9*3600000);
                         res.push({
                             nroHabitacion: key,
                             tipoHabitacion: infoDisponibilidad.find(d => d.habitacion.nroHabitacion === key)?.habitacion.tipo,
@@ -169,7 +169,7 @@ export default function ReservarHabitacion() {
                                                             second: '2-digit',
                                                             hour12: false,
                                                         })}`}</td>
-                                                        <td>{`${reserva.fechaFin.toLocaleDateString('es-ES', {
+                                                        <td>{`${new Date(reserva.fechaFin.getTime()+24*3600000).toLocaleDateString('es-ES', {
                                                             weekday: 'long',
                                                             day: '2-digit',
                                                             month: '2-digit',

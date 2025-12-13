@@ -67,6 +67,7 @@ public class ReservaDAOMySQL implements ReservaDAO{
                 }
 
                 resultado.add(new ReservaDTO(
+                        r.getIdReserva(),
                         r.getFechaReserva(),
                         r.getFechaInicio(),
                         r.getFechaFin(),

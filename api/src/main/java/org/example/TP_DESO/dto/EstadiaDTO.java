@@ -17,7 +17,7 @@ import java.util.ArrayList;
 @Builder
 @AllArgsConstructor
 public class EstadiaDTO {
-    private Long id;
+    private Long idEstadia;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private ArrayList<HuespedDTO> huespedes;

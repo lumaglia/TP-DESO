@@ -1,6 +1,7 @@
 package org.example.TP_DESO.service;
 
 import org.example.TP_DESO.dao.*;
+import org.example.TP_DESO.dao.Mappers.EstadiaMapper;
 import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
 import org.example.TP_DESO.dao.Mappers.HuespedMapper;
 import org.example.TP_DESO.dao.Mappers.ReservaMapper;
@@ -74,14 +75,25 @@ public class GestorReserva {
 
             Habitacion habitacion = HabitacionMapper.toDomain(gestorHabitacion.obtenerHabitacion(estadiaDTO.getHabitacion().getNroHabitacion()));
 
-            ArrayList<ReservaDTO> reservaDTOS = daoReserva.obtenerReservasEntreFechas(estadiaDTO.getFechaInicio(), estadiaDTO.getFechaFin());
+            /*List<ReservaDTO> reservaDTOS = daoReserva.obtenerReservasEntreFechas(estadiaDTO.getFechaInicio(), estadiaDTO.getFechaFin());
             Stream<ReservaDTO> reservaDTOStream = reservaDTOS.stream();
-            ArrayList<Reserva> reservaList = reservaDTOStream
+            List<Reserva> reservaList = reservaDTOStream
                     .filter(p -> Objects.equals(p.getHabitacion().getNroHabitacion(), habitacion.getNroHabitacion()) && !p.isCancelada()
                             && Objects.equals(p.getFechaInicio(),estadiaDTO.getFechaInicio())
                             && Objects.equals(p.getFechaFin(),estadiaDTO.getFechaFin())
                     )
-                    .map(ReservaMapper::toDomain).collect(Collectors.toCollection(ArrayList::new));
+                    .map(ReservaMapper::toDomain).collect(Collectors.toCollection(ArrayList::new));*/
+
+            ArrayList<ReservaDTO> reservaDTOS = daoReserva.obtenerReservasEntreFechas(estadiaDTO.getFechaInicio(), estadiaDTO.getFechaFin());
+
+            List<Reserva> reservaList = reservaDTOS.stream()
+                    .filter(p -> Objects.equals(p.getHabitacion().getNroHabitacion(), habitacion.getNroHabitacion())
+                            && !p.isCancelada()
+                            && Objects.equals(p.getFechaInicio(), estadiaDTO.getFechaInicio())
+                            && Objects.equals(p.getFechaFin(), estadiaDTO.getFechaFin()))
+                    .map(ReservaMapper::toDomain)
+                    .toList();
+
 
             Estadia estadia = new Estadia();
             estadia.setHabitacion(habitacion);
@@ -92,8 +104,10 @@ public class GestorReserva {
             daoEstadia.crearEstadia(estadia);
 
             if(!reservaList.isEmpty()){
+                EstadiaDTO estadiaDTO1 = daoEstadia.buscarEstadiaPorHabitacionYFechaFin(habitacion.getNroHabitacion(), estadia.getFechaFin());
+                Estadia estadia1 = EstadiaMapper.toDomain(estadiaDTO1);
                 Reserva reserva = reservaList.getFirst();
-                reserva.setEstadia(estadia);
+                reserva.setEstadia(estadia1);
                 daoReserva.modificarReserva(reserva.getIdReserva(),reserva);
             }
 

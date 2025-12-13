@@ -167,6 +167,7 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
             }
 
             return new EstadiaDTO(
+                    e.getIdEstadia(),
                     e.getFechaInicio(),
                     e.getFechaFin(),
                     huespedDTO,

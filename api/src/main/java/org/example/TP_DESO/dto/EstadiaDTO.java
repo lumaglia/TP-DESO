@@ -1,6 +1,8 @@
 package org.example.TP_DESO.dto;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.TP_DESO.domain.Habitacion;
@@ -12,8 +14,10 @@ import java.util.ArrayList;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class EstadiaDTO {
-    private Long id;
+    private Long idEstadia;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private ArrayList<HuespedDTO> huespedes;

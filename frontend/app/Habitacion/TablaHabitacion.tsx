@@ -5,37 +5,17 @@ import TableButton from './TableButton';
 import { ScrollArea } from '@base-ui-components/react/scroll-area';
 import './TablaHabitacion.css'
 import '../Huesped/Buscar/Buscar.css'
-import { tiposTablaHabitacion } from '../../public/constants'
+import { tiposTablaHabitacion, infoDisponibilidad } from '../../public/constants'
 import Row from "../Row";
-
-type info = {
-    habitacion: {
-        nroHabitacion: string,
-        tipo: string,
-    },
-    estadias: Array<
-        {
-            fechaInicio: string,
-            fechaFin: string,
-        }
-    >,
-    reservas: Array<
-        {
-            fechaInicio: string,
-            fechaFin: string,
-            apellido: string,
-            nombre: string,
-        }
-    >
-}
+import { useRouter } from 'next/navigation'
 
 export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibilidad, fechaInicio, fechaFin,
                                     seleccionadas= new Map<string, Array<Array<Date>>>(), setSeleccionadas=()=>{}}
-                                : {tipo?: tiposTablaHabitacion, infoDisponibilidad: Array<info>, fechaInicio: Date, fechaFin: Date,
+                                : {tipo?: tiposTablaHabitacion, infoDisponibilidad: Array<infoDisponibilidad>, fechaInicio: Date, fechaFin: Date,
     seleccionadas?: Map<string, Array<Array<Date>>>, setSeleccionadas?: Function}) {
 
     const habitaciones = [...infoDisponibilidad.map(e => e.habitacion.nroHabitacion)];
-
+    const router = useRouter();
     const dates = [];
     const date = new Date(fechaInicio)
     while (date <= fechaFin) {
@@ -52,12 +32,41 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
         return map.get(key) || [[]];
     }
 
-    function parseDate(date: string) {
-        const [day, month, year] = date.split('/');
-        return new Date(Number(year), Number(month) - 1, Number(day));
-    }
-
     function handleClick(date: Date, habitacion: string) {
+        let shiftedDate = new Date(date.getTime() - 25*3600000);
+        if(tipo === tiposTablaHabitacion.CU15 && indiceSeleccionActual === null){
+            let i = 0
+            seleccionadas.forEach((value, key) => {if(value[0].length > 0) i++})
+            if (i === 0){
+                setSeleccionadas(new Map<string, Array<Array<Date>>>())
+            }else if(i > 0){
+                return
+            }
+        }
+        if(tipo === tiposTablaHabitacion.CU04){
+            const arr = getKey(habitacion, seleccionadas)
+            let index = arr.findIndex(x =>
+                x.length === 1);
+            if(index > -1){
+                if(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === indiceSeleccionActual)
+                    ?.reservas.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= shiftedDate
+                        || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaInicio) < arr[index][0]
+                        || new Date(reserva.fechaFin) > shiftedDate && new Date(reserva.fechaFin) < arr[index][0]
+                        || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaFin) < arr[index][0]
+                        || new Date(reserva.fechaFin) < date && new Date(reserva.fechaFin) > arr[index][0])){
+
+                    return;
+                }
+            }else{
+                console.log(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === habitacion))
+                console.log()
+                if(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === habitacion)
+                    ?.reservas.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= shiftedDate)){
+                    return;
+                }
+            }
+        }
+        console.log(infoDisponibilidad.find(h => h.habitacion.nroHabitacion === indiceSeleccionActual));
         if(!indiceSeleccionActual || indiceSeleccionActual === habitacion){
             setSeleccionadas((seleccionadas: Map<string, Array<Array<Date>>>) => {
                 const arr = getKey(habitacion, seleccionadas)
@@ -69,7 +78,13 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                         || selection[0] > date && selection[0] < arr[index][0]
                         || selection[1] > date && selection[1] < arr[index][0]
                         || selection[0] > date && selection[1] < arr[index][0]
-                        || selection[1] < date && selection[1] > arr[index][0])){
+                        || selection[1] < date && selection[1] > arr[index][0]) &&
+                        !infoDisponibilidad.find(h => h.habitacion.nroHabitacion === indiceSeleccionActual)
+                            ?.estadias.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= shiftedDate
+                            || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaInicio) < arr[index][0]
+                            || new Date(reserva.fechaFin) > shiftedDate && new Date(reserva.fechaFin) < arr[index][0]
+                            || new Date(reserva.fechaInicio) > date && new Date(reserva.fechaFin) < arr[index][0]
+                            || new Date(reserva.fechaFin) < date && new Date(reserva.fechaFin) > arr[index][0])){
                         if(indiceSeleccionActual) {
                             setIndiceSeleccionActual(null)
                         }else setIndiceSeleccionActual(habitacion)
@@ -94,7 +109,9 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                             selection[0] > date && selection[0] < arr[arr.length - 1][0]
                             || selection[1] > date && selection[1] < arr[arr.length - 1][0]
                             || selection[0] > date && selection[1] < arr[arr.length - 1][0]
-                            || selection[1] < date && selection[1] > arr[arr.length - 1][0]))) {
+                            || selection[1] < date && selection[1] > arr[arr.length - 1][0])) &&
+                        !infoDisponibilidad.find(h => h.habitacion.nroHabitacion === habitacion)
+                            ?.estadias.some(reserva => new Date(reserva.fechaInicio) <= date && new Date(reserva.fechaFin) >= shiftedDate)) {
                         if(indiceSeleccionActual) {
                             setIndiceSeleccionActual(null)
                         }else setIndiceSeleccionActual(habitacion)
@@ -170,21 +187,21 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                                 {dates.map((date, i) => <tr key={date.toLocaleDateString("en-GB")}>
                                     <th>{date.toLocaleDateString("en-GB")}</th>
                                     {habitaciones.map((h, i) => <td key={date.toLocaleDateString("en-GB") + i}
-                                                                    className={tipo === tiposTablaHabitacion.CU04
+                                                                    className={tipo !== tiposTablaHabitacion.CU05
                                                                         ? (indiceSeleccionActual === null || h === indiceSeleccionActual)
                                                                             ? ''
                                                                             : 'invalido'
                                                                         : 'noSeleccionable'}
-                                                                    onMouseEnter={tipo === tiposTablaHabitacion.CU04
+                                                                    onMouseEnter={tipo !== tiposTablaHabitacion.CU05
                                                                         ? () => handleMouseEnter(date, h)
                                                                         : undefined}
-                                                                    onMouseLeave={tipo === tiposTablaHabitacion.CU04
+                                                                    onMouseLeave={tipo !== tiposTablaHabitacion.CU05
                                                                         ? () => handleMouseLeave()
                                                                         : undefined}
-                                                                    onClick={tipo === tiposTablaHabitacion.CU04
+                                                                    onClick={tipo !== tiposTablaHabitacion.CU05
                                                                         ? () => handleClick(date, h)
                                                                         : undefined}
-                                                                    onContextMenu={tipo === tiposTablaHabitacion.CU04
+                                                                    onContextMenu={tipo !== tiposTablaHabitacion.CU05
                                                                         ? (e) => {
                                                                             e.preventDefault();
                                                                             e.stopPropagation();
@@ -200,16 +217,16 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                                                                  && date >= hovered))}
                                                      start={getKey(h, seleccionadas).some((arr: Array<Date>) => arr[0]?.getTime() == date.getTime())}
                                                      end={getKey(h, seleccionadas).some((arr: Array<Date>) => arr[1]?.getTime() == date.getTime())}
-                                                     estado={infoDisponibilidad[parseInt(h)]?.estadias.some((arr: {
+                                                     estado={infoDisponibilidad[parseInt(h)-1]?.estadias.some((arr: {
                                                          fechaInicio: string,
                                                          fechaFin: string,
-                                                     }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= date)
+                                                     }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= new Date(date.getTime() - 24*3600000))
                                                          ? 'ocupado'
 
-                                                         : infoDisponibilidad[parseInt(h)]?.reservas.some((arr: {
+                                                         : infoDisponibilidad[parseInt(h)-1]?.reservas.some((arr: {
                                                              fechaInicio: string,
                                                              fechaFin: string,
-                                                         }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= date)
+                                                         }) => new Date(arr.fechaInicio) <= date && new Date(arr.fechaFin) >= new Date(date.getTime() - 24*3600000))
                                                              ? 'reservado'
                                                              :'disponible'}/>
                                     </td>)}
@@ -239,7 +256,9 @@ export function TablaHabitacion({tipo=tiposTablaHabitacion.CU05, infoDisponibili
                 }
             </Row>
             {
-                tipo == tiposTablaHabitacion.CU05? <></>:<Row>
+                tipo == tiposTablaHabitacion.CU05? <Row>
+                    <button className='Button' onClick={() => router.push('/')} style={{marginLeft: 'auto', marginRight:'100px'}}>Volver al menú principal </button>
+                </Row>:<Row>
                     <p>Seleccione o modifique rangos de fecha con Click Izquierdo y elimine selecciones con Click Derecho</p>
                 </Row>
             }

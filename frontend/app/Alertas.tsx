@@ -92,3 +92,40 @@ export function AlertaHuespedNoEncontrado({open, setOpen} : {open: boolean, setO
         </AlertDialog.Root>
     );
 }
+
+export function AlertaReserva({open, setOpen, data, setPantalla} : {open: boolean, setOpen: (open: boolean, e: any) => void, data: Array<any>, setPantalla: Function}) {
+    const router = useRouter();
+    return (
+        <AlertDialog.Root open={open} onOpenChange={setOpen}>
+            <AlertDialog.Portal>
+                <AlertDialog.Backdrop className={'Backdrop'} />
+                <AlertDialog.Popup className={'Popup'} outline-color='yellow'>
+                    <div style={{display: 'flex', alignItems: 'flex-start', margin: '0', padding: '0'}}>
+                        <Image src={warningIcon} width={28} height={28} alt="warning" />
+                        <AlertDialog.Title className={'Title'}>
+                            Cuidado
+                        </AlertDialog.Title>
+                    </div>
+                    <AlertDialog.Description className={'Description'}>
+                        Se ha seleccionado un rango de fechas sobre las reservas:
+                        {data.map(c => {
+                            return <>
+                                <p>{new Date(new Date(c.reserva.fechaInicio).getTime() + 24*3600000).toLocaleDateString('en-GB')} - {new Date(new Date(c.reserva.fechaFin).getTime() + 24*3600000).toLocaleDateString('en-GB')} a nombre de {c.reserva.nombre} {c.reserva.apellido}</p>
+                                <br />
+                            </>
+                        })}
+                    </AlertDialog.Description>
+                    <div className={'Actions'}>
+                        <AlertDialog.Close className={'PopupButton'} data-color='white' onClick={() => {
+                        }}>Volver y Cambiar</AlertDialog.Close>
+                        <AlertDialog.Close className={'PopupButton'} onClick={() => {
+                            setPantalla(1)
+                        }}>
+                            Ocupar Igualmente
+                        </AlertDialog.Close>
+                    </div>
+                </AlertDialog.Popup>
+            </AlertDialog.Portal>
+        </AlertDialog.Root>
+    );
+}

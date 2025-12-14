@@ -16,6 +16,9 @@ export default function Home() {
             <Link href='/Habitacion/Buscar'>
                 <button>Mostrar Estado Habitaciones</button>
             </Link>
+            <Link href='/Factura/Crear'>
+                <button>Crea una nueva factura</button>
+            </Link>
         </>
     );
 }

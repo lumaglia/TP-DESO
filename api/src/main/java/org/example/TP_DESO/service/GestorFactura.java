@@ -33,8 +33,10 @@ public class GestorFactura {
 
     }
 
-    public void altaResponsablePago(){
+    public void altaResponsablePago(ResponsablePagoDTO responsablePagoDTO){
+        try{
 
+        }
     }
 
     public void modificarResponsablePago(){

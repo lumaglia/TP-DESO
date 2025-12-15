@@ -5,6 +5,7 @@ export enum fieldTypes {
     'COMBOBOX',
     'DATE',
     'EMAIL',
+    'TIME'
 
 }
 
@@ -235,6 +236,17 @@ export const validation = {
             message: 'Ingrese caracteres válidos',
         }
     },
+    'razonSocial': {
+        required: 'Debe ingresar una razon social',
+        maxLength: {
+            value: 100,
+            message: 'Longitud máxima 100 caracteres',
+        },
+        pattern: {
+            value: /^[a-zA-Z0-9\s-_]+$/,
+            message: 'Ingrese caracteres válidos',
+        }
+    },
 }
 
 export const MapNameToApi : {[key: string]: string} = {
@@ -256,7 +268,11 @@ export const MapNameToApi : {[key: string]: string} = {
     'Provincia': 'direccion.provincia',
     'Pais': 'direccion.pais',
     'Desde Fecha': 'fechaInicio',
-    'Hasta Fecha': 'fechaFin'
+    'Hasta Fecha': 'fechaFin',
+    'Numero de habitación' : "idHabitacion",
+    "Hora de salida" : "horaSalida",
+    "Razon Social": "razonSocial",
+    "CUIT": "cuit"
 };
 
 export type FormValues = {
@@ -296,4 +312,31 @@ export enum tiposTablaHabitacion {
     CU04,
     CU05,
     CU015
+}
+
+// ACA LO QUE ES DEL CU07 SOLAMENTE SOY UN HUMANO
+export type FormFactura = {
+    idHabitacion : string;
+    horaSalida : string;
+}
+
+export type HuespedCheckout = {
+    nombre: string,
+    apellido: string,
+    cuit: string
+}
+
+// ACA LO DEL CU12 TAMPOCO SOY UNA IA
+export type FormResponsablePago = {
+    razonSocial: string;
+    cuit: string;
+    direccion: {
+        domicilio: string;
+        depto: string;
+        codigoPostal: string;
+        localidad: string;
+        provincia: string;
+        pais: string;
+    };
+    telefono: string
 }

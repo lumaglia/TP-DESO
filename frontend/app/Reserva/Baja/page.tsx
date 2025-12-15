@@ -91,7 +91,7 @@ export default function CancelarReservas() {
     }
     function cancelarReservas() {
         let status = true;
-        reservasSeleccionadas.map(r =>
+        Promise.all(reservasSeleccionadas.map(r =>
             fetch('http://localhost:8081/Habitacion/Reserva/Cancelar/', {
                 method: 'PATCH',
                 body: JSON.stringify(r),
@@ -106,10 +106,12 @@ export default function CancelarReservas() {
                     status = false;
                 }
             })
-        )
-        if(status){
-            router.push('/Reserva/Baja/Success');
-        }
+        )).finally(() => {
+            if(status){
+                router.push('/Reserva/Baja/Success');
+            }
+        })
+
     }
     return(
         <>
@@ -192,7 +194,7 @@ export default function CancelarReservas() {
                 </div>
             </div>
 
-            <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la eliminación de reservas'/>
+            <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la cancelación de reservas'/>
 
         </>
     );

@@ -2,6 +2,14 @@ package org.example.TP_DESO.domain;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+
 public class TarjetaCredito extends MetodoPago {
     private String nroTarjeta;
     private String codigo;

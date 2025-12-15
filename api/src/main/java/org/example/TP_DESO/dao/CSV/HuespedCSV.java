@@ -1,5 +1,6 @@
-package org.example.TP_DESO.dao;
+package org.example.TP_DESO.dao.CSV;
 
+import org.example.TP_DESO.dao.HuespedDAO;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.DireccionDTO;
 import org.example.TP_DESO.dto.HuespedDTO;
@@ -85,6 +86,11 @@ public class HuespedCSV implements HuespedDAO {
             throw new FracasoOperacion(e.getMessage());
         }
         return huespedDTOs;
+    }
+
+    @Override
+    public ArrayList<HuespedDTO> obtenerHuesped() throws FracasoOperacion {
+        return obtenerHuesped(new HuespedDTO());
     }
 
     public void modificarHuesped(String tipoDoc, String numeroDoc, Huesped huesped) throws FracasoOperacion {

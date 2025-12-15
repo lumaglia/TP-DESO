@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Primary
 @Service
@@ -28,7 +30,6 @@ public class HuespedDAOMySQL implements HuespedDAO {
     @Override
     public void crearHuesped(Huesped huesped) throws FracasoOperacion {
         try {
-            // Primero persistir la dirección
             Direccion direccionPersistida = direccionDAO.crearDireccion(huesped.getDireccion());
             huesped.setDireccion(direccionPersistida);
             huespedRepository.save(huesped);
@@ -41,8 +42,7 @@ public class HuespedDAOMySQL implements HuespedDAO {
     public ArrayList<HuespedDTO> obtenerHuesped(HuespedDTO filtro) throws FracasoOperacion {
         ArrayList<HuespedDTO> resultado = new ArrayList<>();
         try {
-            // En JPA podés usar Specification o Query Methods.
-            // Para simplificar, traemos todos y filtramos en memoria.
+
             List<Huesped> huespedes = huespedRepository.findAll();
 
             for (Huesped h : huespedes) {
@@ -99,6 +99,39 @@ public class HuespedDAOMySQL implements HuespedDAO {
             throw new FracasoOperacion("Error al obtener huéspedes: " + e.getMessage());
         }
         return resultado;
+    }
+
+    @Override
+    public ArrayList<HuespedDTO> obtenerHuesped() throws FracasoOperacion {
+        try{
+            return huespedRepository.findAll().stream().map(h -> {
+                DireccionDTO direccionDTO = new DireccionDTO(
+                        h.getDireccion().getDomicilio(),
+                        h.getDireccion().getDepto(),
+                        h.getDireccion().getCodigoPostal(),
+                        h.getDireccion().getLocalidad(),
+                        h.getDireccion().getProvincia(),
+                        h.getDireccion().getPais()
+                );
+
+                return new HuespedDTO(
+                        h.getTipoDoc(),
+                        h.getNroDoc(),
+                        h.getApellido(),
+                        h.getNombre(),
+                        h.getCuil(),
+                        h.getPosicionIva(),
+                        h.getFechaNac(),
+                        h.getTelefono(),
+                        h.getEmail(),
+                        h.getOcupacion(),
+                        h.getNacionalidad(),
+                        direccionDTO
+                );
+            }).collect(Collectors.toCollection(ArrayList::new));
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al obtener huesped: " + e.getMessage());
+        }
     }
 
     @Override

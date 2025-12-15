@@ -1,0 +1,123 @@
+.tableButton {
+    padding: 12px;
+    text-decoration: none;
+    border: 0;
+    border-radius: 5px;
+    position: relative;
+    margin: 0 5px;
+
+    &[data-estado='reservado'] {
+        background-color: #F6BE2C;
+    }
+
+    &[data-estado='ocupado'] {
+        background-color: #9BA5B7;
+    }
+
+    &[data-seleccionado=true] {
+        outline: 4px solid #99C0FF;
+        outline-offset: -1px;
+
+        &:after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 4px solid #99C0FF;
+
+        }
+
+
+        &[data-start=true], &[data-end=true] {
+            outline-color: #77ABFF;
+            &:after {
+                border-color: #77ABFF;
+            }
+        }
+        &[data-start=true]:after {
+            border-radius: 4px 4px 0 0;
+        }
+        &[data-end=true]:after {
+            border-radius: 0 0 4px 4px;
+        }
+        &[data-start=true][data-end=true]:after {
+            border-radius: 4px 4px 4px 4px;
+        }
+
+        &:hover:not([data-estado='leyenda']) {
+            outline-color: #4586fc;
+            border-color: #4586fc;
+            background-color: white;
+            &:after {
+                outline-color: #4586fc;
+                border-color: #4586fc;
+            }
+        }
+
+        &[data-estado='leyenda'] {
+            background-color: white;
+        }
+
+    }
+
+    &[data-hovered=true] {
+        filter: opacity(75%);
+        &[data-estado='disponible'] {
+            background-color: #99C0FF;
+        }
+    }
+
+    &[data-hovered=true][data-seleccionado=true] {
+        background-color: #f69691;
+        outline-color: #FF6C64;
+
+        &[data-start=true], &[data-end=true] {
+            outline-color: #ff3b30;
+            &:after {
+                border-color: #ff3b30;
+            }
+        }
+
+        &:after {
+            /*background-color: #FF6C64;*/
+            outline-color: #FF6C64;
+            border-color: #FF6C64;
+        }
+
+        &[data-estado='leyenda'] {
+            background-color: #f69691;
+        }
+    }
+
+}
+
+td {
+    font-family: serif;
+    line-height: normal;
+    font-weight: normal;
+}
+
+td:hover:not(.noSeleccionable) > div > .tableButton {
+    &:not(&[data-start=true]):not([data-end=true]) {
+        filter: opacity(60%);
+        &[data-estado='disponible'] {
+            background-color: #99C0FF;
+            &[data-seleccionado=true] {
+                background-color: #f69691;
+            }
+        }
+    }
+}
+
+tr td.invalido {
+    filter: brightness(85%);
+}
+
+.ScrollArea.TablaHabitacion {
+    margin: 20px;
+    box-sizing: border-box;
+    width: 80vw;
+    height: 60vh;
+}

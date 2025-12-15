@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -72,4 +73,63 @@ public class HuespedController {
 
     }
 
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/Huesped/Obtener")
+    public ResponseEntity<HuespedDTO> obtenerHuespedCompleto(@RequestBody BuscarHuespedDTO filtro) {
+        HuespedDTO huespedFilter = new HuespedDTOBuilder()
+                .setTipoDoc(filtro.getTipoDoc())
+                .setNroDoc(filtro.getNroDoc())
+                .createHuespedDTO();
+
+        try {
+            var resultados = gestorHuesped.buscarHuesped(huespedFilter);
+
+            if(resultados.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                return ResponseEntity.ok(resultados.get(0));
+            }
+        } catch (FracasoOperacion e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    /*@CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/Huesped/Obtener")
+    public ResponseEntity<HuespedDTO> getHuesped(@RequestBody HuespedDTO filtro) {
+        HuespedDTO huesped = new HuespedDTOBuilder()
+                .setTipoDoc(filtro.getTipoDoc())
+                .setNroDoc(filtro.getNroDoc())
+                .createHuespedDTO();
+
+        ArrayList<HuespedDTO> huespedes;
+        try {
+            huespedes = gestorHuesped.buscarHuesped(huesped);
+            if (huespedes.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(huespedes.get(0));
+        } catch (FracasoOperacion e) {
+            throw new RuntimeException(e);
+        }
+    }
+*/
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @DeleteMapping("/Huesped/Eliminar")
+    public ResponseEntity<?> eliminarHuesped(@RequestBody HuespedDTO huespedDTO) {
+        try {
+            gestorHuesped.bajaHuesped(huespedDTO);
+            return ResponseEntity.ok().build();
+        } catch (FracasoOperacion e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar");
+        }
+    }
+
+
 }
+

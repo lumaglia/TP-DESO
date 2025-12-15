@@ -1,81 +1,126 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation';
 import Campo from '../../Campo.tsx'
 import Encabezado from '../../Encabezado.tsx'
-import { AlertaCancelar, AlertaDocumento } from '../../Alertas.tsx'
+import { AlertaCancelar } from '../../Alertas.tsx'
 import Row from '../../Row.tsx'
 import { validation, comboValues, FormValues, fieldTypes } from '../../../public/constants.ts'
 import '../Alta/AltaHuesped.css'
 
-const Huesped = {
-    'nombre': 'AGUSTIN',
-    'apellido': 'WEISS',
-    'tipoDoc': 'dni',
-    'nroDoc': '12345678',
-    'cuil': '11123456789',
-    'posicionIva': 'Consumidor Final',
-    'fechaNac': '26/07/2004',
-    'telefono': '3426151979',
-    'email': 'gusgus826@gmail.com',
-    'ocupacion': 'laburador',
-    'nacionalidad': 'Argentina',
-    'domicilio': 'Sta Rosa',
-    'depto': 'garay',
-    'codigoPostal': '3022',
-    'localidad': 'Santa Rosa de Calchines',
-    'provincia': 'Santa fe',
-    'pais': 'Argentina',
-    'direccion': {
-        'domicilio': 'Dr de jorge',
-        'depto': 'S/N',
-        'codigoPostal': '3022',
-        'localidad': 'Santa Rosa',
-        'provincia': 'Santa Fe',
-        'pais': 'Argentina',
-    }
-}
 export default function ModificarHuesped() {
 
-    const form = useForm<FormValues>({defaultValues: {
-            'nombre': 'juan',
-            'apellido': 'pascal',
-        }});
-    const { register, control, handleSubmit, formState, watch, clearErrors, trigger } = form;
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const tipoDocParam = searchParams.get('tipo');
+    const nroDocParam = searchParams.get('nro');
+
+    const form = useForm<FormValues>();
+    const { register, handleSubmit, formState, watch, trigger, reset } = form;
     const { errors } = formState;
     const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
     const [ alertaDocumentoOpen, setAlertaDocumentoOpen] = useState(false);
-    const formRef = useRef<FieldValues>(null);
-    const router = useRouter();
 
     const posicionIVA = watch('posicionIva');
     if(validation['cuil'].required.value && posicionIVA !== 'Responsable Inscripto'){
         validation['cuil'].required.value = posicionIVA === 'Responsable Inscripto'
         trigger('cuil')
-        // clearErrors('CUIL');
     }else validation['cuil'].required.value = posicionIVA === 'Responsable Inscripto'
 
+    useEffect(() => {
+        if (tipoDocParam && nroDocParam) {
+            const filtro = {
+                tipoDoc: tipoDocParam,
+                nroDoc: nroDocParam
+            };
+
+            fetch('http://localhost:8081/Huesped/Obtener', {
+                method: 'POST',
+                body: JSON.stringify(filtro),
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(res => {
+                    if (res.status === 204) throw new Error("No encontrado");
+                    return res.json();
+                })
+                .then(huespedBackend => {
+                    if (huespedBackend) {
+                        console.log("Datos COMPLETOS recibidos:", huespedBackend);
+
+                        const datosParaForm = {
+                            ...huespedBackend,
+                            cuil: huespedBackend.cuil || '',
+                            telefono: huespedBackend.telefono || '',
+                            email: huespedBackend.email || '',
+                            ocupacion: huespedBackend.ocupacion || '',
+                            fechaNac: huespedBackend.fechaNac,
+                            domicilio: huespedBackend.direccion?.domicilio || '',
+                            departamento: huespedBackend.direccion?.depto || '',
+                            codigoPostal: huespedBackend.direccion?.codigoPostal || '',
+                            localidad: huespedBackend.direccion?.localidad || '',
+                            provincia: huespedBackend.direccion?.provincia || '',
+                            pais: huespedBackend.direccion?.pais || ''
+                        };
+
+                        reset(datosParaForm);
+                    }
+                })
+                .catch(err => console.error("Error cargando huesped", err));
+        }
+    }, [tipoDocParam, nroDocParam, reset]);
+
+
     const onSubmit = (data: FieldValues) => {
-        data.fechaNac = data.fechaNac.toLocaleDateString('en-CA');
-        formRef.current = data
-        fetch('http://localhost:8081/Huesped/Alta', {
+        console.log(data);
+        if (data.fechaNac) data.fechaNac = new Date(data.fechaNac).toISOString().split('T')[0];
+        for (let key in data) {
+            if (data[key] === '') {
+                data[key] = null;
+            }
+        }
+
+        fetch('http://localhost:8081/Huesped/Alta?modify=true', {
             method: 'POST',
             body: JSON.stringify(data),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        }).then(res => {
+            headers: { 'Content-Type': 'application/json' }
+        }).then(async res => {
             if (res.status === 409) {
                 setAlertaDocumentoOpen(true);
-            }else if(res.ok) {
-                router.push(`/AltaHuesped/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
+            } else if(res.ok) {
+                const nombreCompleto = `${data.nombre} ${data.apellido}`;
+                router.push(`/Huesped/Modificar/success?huesped=${encodeURIComponent(nombreCompleto)}`)
+            } else {
+                alert("Error al modificar el huésped");
             }
         })
     };
+
+
+    const handleDelete = () => {
+        if(!confirm("¿Está seguro de eliminar este huésped?")) return;
+
+        const datosBorrar = {
+            tipoDoc: tipoDocParam,
+            nroDoc: nroDocParam
+        };
+
+        fetch('http://localhost:8081/Huesped/Baja', {
+            method: 'DELETE',
+            body: JSON.stringify(datosBorrar),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(async res => {
+            if (res.ok) {
+                alert("Huésped eliminado con éxito");
+                router.push('/');
+            } else {
+                const errorTexto = await res.text();
+                alert("No se puede eliminar: " + errorTexto);
+            }
+        });
+    }
 
     return(
         <>
@@ -134,18 +179,24 @@ export default function ModificarHuesped() {
                             <Campo field='Localidad' placeholder='Ej. Villa Clara' isRequired={true}
                                    validation={validation['localidad']} register={register} errors={errors}/>
                         </Row>
-                        <Row>
-                                <button type='button' className='Button'
-                                        onClick={() => setAlertaCancelarOpen(true)}>Cancelar
-                                </button>
-                                <button type='button' className='Button' data-backcolor='red'>Eliminar</button>
 
-                                <Campo field='Provincia' placeholder='Ej. Entre Ríos' isRequired={true}
-                                       validation={validation['provincia']} register={register} errors={errors}/>
-                                <Campo field='Pais' placeholder='Ej. Argentina' isRequired={true}
-                                       validation={validation['pais']} register={register} errors={errors}/>
-                                <button type='submit' className='Button'>Enviar</button>
+                        <Row>
+                        <Campo field='Provincia' placeholder='Ej. Entre Ríos' isRequired={true}
+                               validation={validation['provincia']} register={register} errors={errors}/>
+                        <Campo field='Pais' placeholder='Ej. Argentina' isRequired={true}
+                               validation={validation['pais']} register={register} errors={errors}/>
                         </Row>
+
+                        <Row>
+                             <button type='button' className='Button'
+                            onClick={() => setAlertaCancelarOpen(true)}>Cancelar
+                             </button>
+                            <button type='button' className='Button' data-backcolor='red' onClick={handleDelete}>
+                             Eliminar
+                            </button>
+
+                             <button type='submit' className='Button'>Guardar Cambios</button>
+                         </Row>
                     </div>
                 </div>
             </form>

@@ -113,8 +113,9 @@ export default function BuscarHuesped() {
                     </p>
                     <button className='Button' onClick={() => {
                         if (selectedHuesped) {
-                            router.push('/Huesped/Modificar')
-                        }else{
+                            const url = `/Huesped/Modificar?tipo=${encodeURIComponent(selectedHuesped.tipoDoc)}&nro=${encodeURIComponent(selectedHuesped.nroDoc)}`;
+                            router.push(url);
+                        } else {
                             setErrorNoSeleccionado(true)
                         }
                     }}>

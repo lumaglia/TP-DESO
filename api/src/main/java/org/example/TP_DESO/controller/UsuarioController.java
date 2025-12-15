@@ -1,5 +1,6 @@
 package org.example.TP_DESO.controller;
 
+import org.example.TP_DESO.domain.RefreshToken;
 import org.example.TP_DESO.dto.UsuarioDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.service.GestorUsuario;
@@ -22,13 +23,11 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class UsuarioController {
 
-    private final JwtEncoder jwtEncoder;
     private final AuthenticationManager authenticationManager;
     private final GestorUsuario gestorUsuario;
 
     @Autowired
-    public UsuarioController(JwtEncoder jwtEncoder, AuthenticationManager authenticationManager,  GestorUsuario gestorUsuario) {
-        this.jwtEncoder = jwtEncoder;
+    public UsuarioController(AuthenticationManager authenticationManager,  GestorUsuario gestorUsuario) {
         this.authenticationManager = authenticationManager;
         this.gestorUsuario = gestorUsuario;
     }
@@ -39,45 +38,51 @@ public class UsuarioController {
                 new UsernamePasswordAuthenticationToken(usuarioDTO.getUsuario(), usuarioDTO.getContrasenna())
         );
 
-        String jwt = generarJWT(usuarioDTO.getUsuario());
-
-        // 4. RESPUESTA
-        Map<String, String> response = new HashMap<>();
-        response.put("token", jwt);
-        return ResponseEntity.ok(response);
+        try {
+            String acessToken = gestorUsuario.generarAcessToken(usuarioDTO.getUsuario());
+            RefreshToken refreshToken = gestorUsuario.generarRefreshToken(usuarioDTO.getUsuario());
+            Map<String, String> response = new HashMap<>();
+            response.put("accessToken", acessToken);
+            response.put("refreshToken", refreshToken.getToken());
+            return ResponseEntity.ok(response);
+        } catch (FracasoOperacion e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> regisrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
         try {
             gestorUsuario.altaUsuario(usuarioDTO.getUsuario(), usuarioDTO.getContrasenna());
-            String jwt = generarJWT(usuarioDTO.getUsuario());
 
+            String acessToken = gestorUsuario.generarAcessToken(usuarioDTO.getUsuario());
+            RefreshToken refreshToken = gestorUsuario.generarRefreshToken(usuarioDTO.getUsuario());
             Map<String, String> response = new HashMap<>();
-            response.put("token", jwt);
-            return ResponseEntity.status(201).body(response);
+            response.put("accessToken", acessToken);
+            response.put("refreshToken", refreshToken.getToken());
+            return ResponseEntity.ok(response);
         } catch (FracasoOperacion e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
 
-    private String generarJWT(String usuario){
-        Instant now = Instant.now();
-
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.HOURS))
-                .subject(usuario)
-                .claim("scope", "ROLE_USER")
-                .build();
-
-        var encoderParameters = JwtEncoderParameters.from(
-                JwsHeader.with(MacAlgorithm.HS256).build(),
-                claims
-        );
-
-        return jwtEncoder.encode(encoderParameters).getTokenValue();
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, String>> refreshToken(@RequestBody TokenRefreshRequest refreshToken) {
+        try {
+            Map<String, String> response = new HashMap<>();
+            response.put("accessToken", gestorUsuario.refreshToken(refreshToken.refreshToken));
+            return ResponseEntity.ok(response);
+        } catch (FracasoOperacion e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
 
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(@RequestBody TokenRefreshRequest refreshToken) {
+        gestorUsuario.logout(refreshToken.refreshToken);
+        return ResponseEntity.ok(new HashMap<>());
+    }
+
+    public record TokenRefreshRequest(String refreshToken) {}
 }

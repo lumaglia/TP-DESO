@@ -95,7 +95,7 @@ public class PopulateBDD implements CommandLineRunner {
             h.setPrecioNoche(50800.0F);
             h.setCapacidad(1);
             h.setTamanno(String.valueOf(30));
-            h.setCamasInd(10);
+            h.setCamasInd(1);
 
             habitacionRepository.save(h);
         }
@@ -107,7 +107,8 @@ public class PopulateBDD implements CommandLineRunner {
             h.setNroHabitacion(String.valueOf(i));
             h.setCapacidad(2);
             h.setPrecioNoche(70230.0F);
-            h.setCamasInd(2);
+            h.setCamasInd(i%2==0?2:0);
+            h.setCamasDob(i%2==0?0:1);
             h.setCapacidad(2);
             h.setTamanno("10 m^2");
 
@@ -121,7 +122,8 @@ public class PopulateBDD implements CommandLineRunner {
             h.setCapacidad(2);
             h.setTamanno("15 m^2");
             h.setPrecioNoche(90560.0F);
-            h.setCamasKingDob(1);
+            h.setCamasKingInd(i%2==0?2:0);
+            h.setCamasKingDob(i%2==0?0:1);
             h.setCapacidad(0);
 
             habitacionRepository.save(h);
@@ -135,8 +137,8 @@ public class PopulateBDD implements CommandLineRunner {
             h.setCapacidad(5);
             h.setTamanno("40 m^2");
             h.setPrecioNoche(110500.0F);
-            h.setCamasInd(1);
-            h.setCamasDob(1);
+            h.setCamasInd(i%2==0?3:1);
+            h.setCamasDob(i%2==0?1:2);
 
             habitacionRepository.save(h);
         }
@@ -363,7 +365,7 @@ public class PopulateBDD implements CommandLineRunner {
         direccionRepository.save(direccionDummy);
 
         Huesped huespedDummy = new Huesped(
-                "Test", "Dummy", "DNI", "00000000",
+                "TEST", "DUMMY", "DNI", "00000000",
                 "20-00000000-0", "Consumidor Final",
                 LocalDate.of(1990,1,1),
                 "123456789", "test@test.com",
@@ -406,7 +408,7 @@ public class PopulateBDD implements CommandLineRunner {
         direccionRepository.save(dummyDir);
 
         Huesped dummy = new Huesped(
-                "Juan", "Prueba", "DNI", "00000000",
+                "JUAN", "PRUEBA", "DNI", "00000000",
                 "20-00000000-0", "Consumidor Final",
                 LocalDate.of(1990,1,1),
                 "123456789", "dummy@test.com",

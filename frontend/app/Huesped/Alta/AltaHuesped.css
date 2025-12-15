@@ -22,6 +22,7 @@ body {
     min-height: 100vh;
 }
 
+
 .Button {
     border-radius: 8px;
     border: 1px solid transparent;
@@ -37,6 +38,10 @@ body {
     min-width: 100px;
     max-height: 41px;
     align-self: flex-end;
+
+    &[data-backcolor='red'] {
+        background-color: red;
+    }
 }
 .Button:hover {
     background-color: #6f7c97;
@@ -45,6 +50,8 @@ body {
 .Button:focus-visible {
     background-color: #3d4555;
 }
+
+
 
 input:focus {
     outline: 2px solid #80c7ea; /* Change to your desired color */

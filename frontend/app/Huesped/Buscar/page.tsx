@@ -7,6 +7,7 @@ import Campo from '../../Campo.tsx'
 import Row from '../../Row'
 import Encabezado from '../../Encabezado.tsx'
 import { AlertaCancelar, AlertaHuespedNoEncontrado } from '../../Alertas.tsx'
+import '../../globals.css'
 import '../Alta/AltaHuesped.css'
 import { comboValues, fieldTypes } from '../../../public/constants.ts'
 import './Buscar.css'
@@ -74,8 +75,8 @@ export default function BuscarHuesped() {
                 <ScrollArea.Root className='ScrollArea'>
                 <ScrollArea.Viewport className='Viewport'>
                     <ScrollArea.Content className='Content'>
-                        <table>
-                            <thead style={{position: 'sticky', top: '0'}}>
+                        <table className='TablaBuscar'>
+                            <thead>
                             <tr>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
@@ -98,7 +99,7 @@ export default function BuscarHuesped() {
 
                     </ScrollArea.Content>
                 </ScrollArea.Viewport>
-                <ScrollArea.Scrollbar className='Scrollbar'>
+                <ScrollArea.Scrollbar className='Scrollbar' orientation='vertical'>
                     <ScrollArea.Thumb className='Thumb'/>
                 </ScrollArea.Scrollbar>
             </ScrollArea.Root>
@@ -112,8 +113,9 @@ export default function BuscarHuesped() {
                     </p>
                     <button className='Button' onClick={() => {
                         if (selectedHuesped) {
-                            router.push('/Huesped/Modificar')
-                        }else{
+                            const url = `/Huesped/Modificar?tipo=${encodeURIComponent(selectedHuesped.tipoDoc)}&nro=${encodeURIComponent(selectedHuesped.nroDoc)}`;
+                            router.push(url);
+                        } else {
                             setErrorNoSeleccionado(true)
                         }
                     }}>

@@ -1,6 +1,5 @@
 package org.example.TP_DESO.service;
 
-import org.example.TP_DESO.dao.UsuarioCSV;
 import org.example.TP_DESO.dao.UsuarioDAO;
 import org.example.TP_DESO.dao.UsuarioDAOMySQL;
 import org.example.TP_DESO.dto.UsuarioDTO;
@@ -11,14 +10,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GestorUsuario {
-
     private static GestorUsuario singleton_instance;
-    UsuarioDAO dao;
 
+    @Autowired
+    private UsuarioDAOMySQL dao;
 
     public GestorUsuario() throws FracasoOperacion {
-        super();
-        dao = new UsuarioDAOMySQL();
     }
 
     private synchronized static GestorUsuario getInstance() throws FracasoOperacion {

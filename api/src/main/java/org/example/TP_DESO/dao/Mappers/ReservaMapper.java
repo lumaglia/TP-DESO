@@ -10,6 +10,7 @@ public class ReservaMapper {
         if (r == null) return null;
 
         return new ReservaDTO(
+                r.getIdReserva(),
                 r.getFechaReserva(),
                 r.getFechaInicio(),
                 r.getFechaFin(),

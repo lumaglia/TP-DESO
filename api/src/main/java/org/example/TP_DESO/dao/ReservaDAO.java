@@ -1,5 +1,6 @@
 package org.example.TP_DESO.dao;
 
+import org.example.TP_DESO.domain.Habitacion;
 import org.example.TP_DESO.domain.Reserva;
 import org.example.TP_DESO.dto.ReservaDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
@@ -18,4 +19,5 @@ public interface ReservaDAO {
     void eliminarReserva(Long idReserva) throws FracasoOperacion;
     ArrayList<ReservaDTO> buscarReservasPorApellidoYNombre(String apellido, String nombre) throws FracasoOperacion;
 
+    ArrayList<ReservaDTO> buscarReservasPorHabitacionFechaInicio(Habitacion habitacion, LocalDate fechaInicio) throws FracasoOperacion;
 }

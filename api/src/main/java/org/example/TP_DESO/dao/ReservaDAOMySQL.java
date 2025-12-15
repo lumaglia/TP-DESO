@@ -1,5 +1,6 @@
 package org.example.TP_DESO.dao;
 
+import org.example.TP_DESO.domain.Habitacion;
 import org.example.TP_DESO.domain.Reserva;
 import org.example.TP_DESO.dto.EstadiaDTO;
 import org.example.TP_DESO.dto.HabitacionDTO;
@@ -163,10 +164,6 @@ public class ReservaDAOMySQL implements ReservaDAO{
                 reservas = reservaRepository.findByApellidoAndNombre(apellido, nombre);
             }
 
-            if (reservas.isEmpty()) {
-                throw new FracasoOperacion("No se encontraron reservas para los datos ingresados");
-            }
-
             ArrayList<ReservaDTO> resultado = new ArrayList<>();
 
             for (Reserva r : reservas) {
@@ -180,6 +177,25 @@ public class ReservaDAOMySQL implements ReservaDAO{
         }
     }
 
+    @Override
+    public ArrayList<ReservaDTO> buscarReservasPorHabitacionFechaInicio(Habitacion habitacion, LocalDate fechaInicio) throws FracasoOperacion{
+        try {
+            ArrayList<Reserva> reservas;
+
+            reservas = reservaRepository.findByHabitacionAndFechaInicioAndCancelada(habitacion,fechaInicio,false);
+
+            ArrayList<ReservaDTO> resultado = new ArrayList<>();
+
+            for (Reserva r : reservas) {
+                resultado.add(ReservaMapper.toDTO(r));
+            }
+
+            return resultado;
+
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al buscar reservas: " + e.getMessage());
+        }
+    }
 
 
 

@@ -74,6 +74,10 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
             if(res.ok) {
                 res.json().then(response => {
                     response.sort((a:any, b:any) => parseInt(a.habitacion.nroHabitacion) > parseInt(b.habitacion.nroHabitacion) ? 1 : -1);
+                    response = response.map((i:any) => {
+                        i.reservas = i.reservas.filter((r: any) => r.cancelada == false)
+                        return i;
+                    })
                     setDisponibilidad(response)
                     setSolicitudValida(true); //Si sale bien cambia el contenido mostrado
                     if(tipo != tiposTablaHabitacion.CU05){

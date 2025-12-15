@@ -57,12 +57,21 @@ public class GestorReserva {
         }
     }
 
-    public void mostrarReserva(){
-
+    public ArrayList<ReservaDTO> buscarReserva(ReservaDTO reservaDTO) throws FracasoOperacion {
+        return daoReserva.buscarReservasPorApellidoYNombre(reservaDTO.getApellido(), reservaDTO.getNombre());
     }
 
-    public boolean cancelarReserva() throws  FracasoOperacion {
-        return false;
+    public void cancelarReserva(ResponseReservaDTO responseReservaDTO) throws  FracasoOperacion {
+        ArrayList<ReservaDTO> reservas = daoReserva.buscarReservasPorHabitacionFechaInicio(
+                HabitacionMapper.toDomain(gestorHabitacion.obtenerHabitacion(responseReservaDTO.getNroHabitacion())),
+                responseReservaDTO.getFechaInicio());
+        if(reservas.isEmpty()){
+            throw new FracasoOperacion("Error al cancelar reserva: No hay reservas pendientes de cancelar con los argumentos enviados");
+        }else{
+            Reserva reserva = ReservaMapper.toDomain(reservas.getFirst());
+            reserva.setCancelada(true);
+            daoReserva.modificarReserva(reserva.getIdReserva(),reserva);
+        }
     }
 
     public boolean checkIn(EstadiaDTO estadiaDTO) throws FracasoOperacion{

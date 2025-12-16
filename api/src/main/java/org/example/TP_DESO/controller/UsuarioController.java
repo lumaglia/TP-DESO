@@ -51,7 +51,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> regisrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
+    public ResponseEntity<Map<String, String>> registrarUsuario(@RequestBody UsuarioDTO usuarioDTO) {
         try {
             gestorUsuario.altaUsuario(usuarioDTO.getUsuario(), usuarioDTO.getContrasenna());
 

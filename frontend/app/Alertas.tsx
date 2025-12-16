@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import warningIcon from '../public/warning.png'
 import './AlertaCancelar.css';
+import { useFetch } from '@/hooks/useFetch'
 
 export function AlertaCancelar({open, setOpen, text} : {open: boolean, setOpen: (open: boolean, e: any) => void, text: string}) {
     return (
@@ -29,6 +30,7 @@ export function AlertaCancelar({open, setOpen, text} : {open: boolean, setOpen: 
 
 export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen: (open: boolean, e: any) => void, data: any}) {
     const router = useRouter();
+    const fetchApi = useFetch();
     return (
         <AlertDialog.Root open={open} onOpenChange={setOpen}>
             {/*<AlertDialog.Trigger data-color="red" className={'Button'}>*/}
@@ -51,7 +53,7 @@ export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen:
                         <AlertDialog.Close className={'PopupButton'} onClick={() => {
                             data.tipoDocViejo = data.tipoDoc;
                             data.nroDocViejo = data.nroDoc;
-                            fetch('http://localhost:8081/Huesped/Modificar', {
+                            fetchApi('/Huesped/Modificar', {
                                 method: 'PUT',
                                 body: JSON.stringify(data),
                                 headers: {
@@ -59,7 +61,7 @@ export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen:
                                     'Content-Type': 'application/json'
                                 }
                             }).then(res => {
-                                if(res.ok){
+                                if(res?.ok){
                                     router.push(`/Huesped/Alta/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
                                 }
                             })
@@ -75,6 +77,7 @@ export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen:
 
 export function AlertaDocumentoModificar({open, setOpen, data, tipoDoc, nroDoc, setErrorOpen} : {open: boolean, setOpen: (open: boolean, e: any) => void, data: any, tipoDoc: string, nroDoc: string, setErrorOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
     const router = useRouter();
+    const fetchApi = useFetch();
     return (
         <AlertDialog.Root open={open} onOpenChange={setOpen}>
             {/*<AlertDialog.Trigger data-color="red" className={'Button'}>*/}
@@ -100,7 +103,7 @@ export function AlertaDocumentoModificar({open, setOpen, data, tipoDoc, nroDoc, 
                             console.log(data);
                             data.tipoDocViejo = tipoDoc;
                             data.nroDocViejo = nroDoc;
-                            fetch('http://localhost:8081/Huesped/Modificar/Override', {
+                            fetchApi('/Huesped/Modificar/Override', {
                                 method: 'PUT',
                                 body: JSON.stringify(data),
                                 headers: {
@@ -108,7 +111,7 @@ export function AlertaDocumentoModificar({open, setOpen, data, tipoDoc, nroDoc, 
                                     'Content-Type': 'application/json'
                                 }
                             }).then(res => {
-                                if(res.ok){
+                                if(res?.ok){
                                     router.push(`/Huesped/Modificar/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
                                 }else{
                                     setErrorOpen(true);

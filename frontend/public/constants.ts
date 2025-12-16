@@ -5,6 +5,7 @@ export enum fieldTypes {
     'COMBOBOX',
     'DATE',
     'EMAIL',
+    'PASSWORD',
 
 }
 
@@ -231,6 +232,33 @@ export const validation = {
             message: 'Ingrese caracteres válidos',
         }
     },
+    'requerido': {
+        required: true,
+    },
+    'usuario': {
+        required: true,
+        minLength: {
+            value: 3,
+        },
+        maxLength: {
+            value: 30,
+        },
+        pattern: {
+            value: /^[a-zA-Z0-9_-]+$/,
+            message: "Solo letras, números, guiones."
+        },
+    },
+    'contrasenna': {
+        required: true,
+        minLength: {
+            value: 8,
+            message: 'Minimo de 8 caracteres',
+        },
+        maxLength: {
+            value: 30,
+            message: 'Contraseña demasiado larga',
+        }
+    },
 }
 
 export const MapNameToApi : {[key: string]: string} = {
@@ -252,7 +280,10 @@ export const MapNameToApi : {[key: string]: string} = {
     'Provincia': 'direccion.provincia',
     'Pais': 'direccion.pais',
     'Desde Fecha': 'fechaInicio',
-    'Hasta Fecha': 'fechaFin'
+    'Hasta Fecha': 'fechaFin',
+    'Usuario': 'usuario',
+    'Contraseña': 'contrasenna',
+    'Introduzca de nuevo la contraseña': 'verificarContrasenna',
 };
 
 export type FormValues = {

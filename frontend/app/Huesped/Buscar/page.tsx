@@ -11,9 +11,11 @@ import '../../globals.css'
 import '../Alta/AltaHuesped.css'
 import { comboValues, fieldTypes } from '../../../public/constants.ts'
 import './Buscar.css'
+import { useFetch } from '@/hooks/useFetch.ts'
 
 export default function BuscarHuesped() {
     const { register, formState, handleSubmit } = useForm();
+    const fetchApi = useFetch();
     const router = useRouter();
     const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
     const [ alertaHuespedNoEncontradoOpen, setAlertaHuespedNoEncontradoOpen] = useState(false);
@@ -31,7 +33,7 @@ export default function BuscarHuesped() {
                 data[key] = null
             }
         }
-        fetch('http://localhost:8081/Huesped/Buscar', {
+        fetchApi('/Huesped/Buscar', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
@@ -39,15 +41,17 @@ export default function BuscarHuesped() {
                 'Content-Type': 'application/json'
             }
         }).then(res => {
-            if (res.status === 204) {
-                setHuespedes([])
-                setSelectedHuesped(null)
-                setAlertaHuespedNoEncontradoOpen(true)
-            }else if(res.ok) {
-                res.json().then(data => {
-                    setHuespedes(data)
+            if(res != null){
+                if (res.status === 204) {
+                    setHuespedes([])
                     setSelectedHuesped(null)
-                })
+                    setAlertaHuespedNoEncontradoOpen(true)
+                }else if(res.ok) {
+                    res.json().then(data => {
+                        setHuespedes(data)
+                        setSelectedHuesped(null)
+                    })
+                }
             }
         })
     }

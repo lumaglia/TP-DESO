@@ -9,6 +9,7 @@ import {AlertaCancelar, AlertaDocumentoModificar, ErrorSobreescritoHospedado, Er
 import Row from '../../Row.tsx'
 import { validation, comboValues, FormValues, fieldTypes } from '../../../public/constants.ts'
 import '../Alta/AltaHuesped.css'
+import { useFetch } from '@/hooks/useFetch'
 
 export default function ModificarHuesped() {
 
@@ -29,6 +30,7 @@ export default function ModificarHuesped() {
     const [ buscando, setBuscando] = useState(true);
     const [ tipoDocc, setTipoDocc ] = useState<string>('');
     const [ nroDocc, setNroDocc ] = useState<string>('');
+    const fetchApi = useFetch();
 
     const posicionIVA = watch('posicionIva');
     if(validation['cuil'].required.value && posicionIVA !== 'Responsable Inscripto'){
@@ -43,14 +45,16 @@ export default function ModificarHuesped() {
                 nroDoc: nroDocParam
             };
 
-            fetch('http://localhost:8081/Huesped/Obtener', {
+            fetchApi('/Huesped/Obtener', {
                 method: 'POST',
                 body: JSON.stringify(filtro),
-                headers: { 'Content-Type': 'application/json' }
-            })
-                .then(res => {
-                    if (res.status === 204) throw new Error("No encontrado");
-                    return res.json();
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }).then(res => {
+                    if (res?.status === 204) throw new Error("No encontrado");
+                    return res?.json();
                 })
                 .then(huespedBackend => {
                     if (huespedBackend) {
@@ -98,15 +102,18 @@ export default function ModificarHuesped() {
             setNroDocc(nroDocParam);
         }
         console.log(JSON.stringify(dataCopy));
-        fetch('http://localhost:8081/Huesped/Modificar', {
+        fetchApi('/Huesped/Modificar', {
             method: 'PUT',
             body: JSON.stringify(dataCopy),
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
         }).then(async res => {
-            if (res.status === 409) {
+            if (res?.status === 409) {
                 setAlertaDocumentoOpen(true);
-            } else if(res.ok) {
-                res.json().then(t => console.log(t));
+            } else if(res?.ok) {
+                res?.json().then(t => console.log(t));
                 const nombreCompleto = `${data.nombre} ${data.apellido}`;
                 router.push(`/Huesped/Modificar/success?huesped=${encodeURIComponent(nombreCompleto)}`)
             } else {

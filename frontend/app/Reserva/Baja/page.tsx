@@ -9,6 +9,7 @@ import Encabezado from '../../Encabezado.tsx'
 import { AlertaCancelar } from '../../Alertas.tsx'
 import '../../globals.css'
 import '../../Huesped/Buscar/Buscar.css'
+import { useFetch } from '@/hooks/useFetch'
 
 type ReservaValues = {
     nombre: string;
@@ -28,6 +29,7 @@ export default function CancelarReservas() {
     const [ reservas , setReservas ] = useState<Array<ReservaValues>>([])
     const [ reservasSeleccionadas, setReservasSeleccionadas ] = useState<Array<ReservaValues>>([]);
     const [ errorNoSeleccionado, setErrorNoSeleccionado] = useState(false)
+    const fetchApi = useFetch();
 
     const validation = {
         'nombre': {
@@ -71,7 +73,7 @@ export default function CancelarReservas() {
             }
         }
         setAlertaReservasNoEncontradasOpen(false)
-        fetch('http://localhost:8081/Habitacion/Reserva/Buscar', {
+        fetchApi('/Habitacion/Reserva/Buscar', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
@@ -79,12 +81,12 @@ export default function CancelarReservas() {
                 'Content-Type': 'application/json'
             }
         }).then(res => {
-            if (res.status === 204) {
+            if (res?.status === 204) {
                 setReservas([])
                 setAlertaReservasNoEncontradasOpen(true)
-            }else if(res.ok) {
-                res.json().then(data => {
-                    setReservas(data)
+            }else if(res?.ok) {
+                res?.json().then(data => {
+                    if(data)setReservas(data)
                 })
             }
         })
@@ -92,15 +94,15 @@ export default function CancelarReservas() {
     function cancelarReservas() {
         let status = true;
         Promise.all(reservasSeleccionadas.map(r =>
-            fetch('http://localhost:8081/Habitacion/Reserva/Cancelar/', {
-                method: 'PATCH',
+            fetchApi('/Habitacion/Reserva/Cancelar', {
+                method: 'DELETE',
                 body: JSON.stringify(r),
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 }
             }).then(res => {
-                if(res.ok) {
+                if(res?.ok) {
                     console.log("EXITO "+r.nroHabitacion+" "+r.fechaInicio)
                 }else{
                     status = false;

@@ -67,7 +67,7 @@ public class ReservaController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PatchMapping("/Habitacion/Reserva/Cancelar/")
+    @DeleteMapping("/Habitacion/Reserva/Cancelar")
     public ResponseEntity<ResponseReservaDTO> cancelarReserva(@RequestBody ResponseReservaDTO responseReservaDTO) {
         try {
             gestorReserva.cancelarReserva(responseReservaDTO);
@@ -78,7 +78,7 @@ public class ReservaController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/Habitacion/Reservar/")
+    @PostMapping("/Habitacion/Reservar")
     public ResponseEntity<ArrayList<ReservaDTO>> hacerReserva(@RequestBody ArrayList<RequestReservaDTO> reservasDTO) {
         ArrayList<ReservaDTO> response = new ArrayList<>();
         reservasDTO.forEach(requestReservaDTO -> {
@@ -106,7 +106,7 @@ public class ReservaController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/Habitacion/Ocupar/")
+    @PostMapping("/Habitacion/Ocupar")
     public ResponseEntity<EstadiaDTO> hacerReserva(@RequestBody RequestEstadiaDTO estadiaDTO) {
         System.out.print(estadiaDTO.toString());
 

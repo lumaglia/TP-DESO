@@ -50,7 +50,7 @@ export default function ReservarHabitacion() {
         }));
 
         console.log(JSON.stringify(reservasDTO))
-        fetchApi('/Habitacion/Reservar/', {
+        fetchApi('/Habitacion/Reservar', {
            method: 'POST',
            body: JSON.stringify(reservasDTO),
            headers: {
@@ -60,9 +60,9 @@ export default function ReservarHabitacion() {
        }).then(res => {
            if(res?.ok) {
                console.log("EXITO")
+               router.push('/Reserva/Alta/Success');
            }
        })
-        router.push('/Reserva/Alta/Success');
     }
 
     function onNext(infoDisponibilidad: Array<infoDisponibilidad>) {

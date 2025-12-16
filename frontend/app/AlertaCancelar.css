@@ -122,6 +122,9 @@
     &[outline-color='yellow'] {
         outline: 3px solid #D4A244;
     }
+    &[outline-color='red'] {
+        outline: 3px solid #ff3b30;
+    }
 }
 
 .Title {

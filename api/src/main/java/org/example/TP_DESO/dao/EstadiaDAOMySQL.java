@@ -243,6 +243,9 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
             throw new FracasoOperacion("Error al buscar estadías del huésped: " + e.getMessage());
         }
     }
+    public boolean existeEstadiaDeHuesped(String tipoDoc, String nroDoc) {
+        return estadiaRepository.existsByHuespedes_TipoDocAndHuespedes_NroDoc(tipoDoc, nroDoc);
+    }
 
 
 

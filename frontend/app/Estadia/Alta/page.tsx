@@ -181,7 +181,6 @@ export default function BuscarHuesped() {
                     <BuscarHabitacion tipo={tiposTablaHabitacion.CU15} seleccionadas={seleccionadas}
                                       setSeleccionadas={setSeleccionadas} onNext={onNext}/>
                 </>)
-                //USAR AlertaReserva SI SELECCION ES SOBRE UNA O MAS RESERVAS Y EN DATA PASARLE TODAS LAS RESERVAS
                 : pantalla == EstadoPantalla.Huesped ? (
                     <>
                         <h3 style={{textAlign:'center'}}>Ingrese datos en los campos por los que desea filtrar</h3>

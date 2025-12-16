@@ -74,6 +74,10 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
             if(res.ok) {
                 res.json().then(response => {
                     response.sort((a:any, b:any) => parseInt(a.habitacion.nroHabitacion) > parseInt(b.habitacion.nroHabitacion) ? 1 : -1);
+                    response = response.map((i:any) => {
+                        i.reservas = i.reservas.filter((r: any) => r.cancelada == false)
+                        return i;
+                    })
                     setDisponibilidad(response)
                     setSolicitudValida(true); //Si sale bien cambia el contenido mostrado
                     if(tipo != tiposTablaHabitacion.CU05){
@@ -85,12 +89,12 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
                             let inicio = Array();
                             let fin = Array();
                             i.estadias.forEach((r: { fechaInicio: any; fechaFin: any; }) => {
-                                inicio.push(new Date(r.fechaInicio).getTime()-8*3600000);
-                                fin.push(new Date(r.fechaFin).getTime()+8*3600000);});
+                                inicio.push(new Date(r.fechaInicio).getTime()-13*3600000);
+                                fin.push(new Date(r.fechaFin).getTime()+13*3600000);});
 
                             if(tipo == tiposTablaHabitacion.CU04)i.reservas.forEach((r: { fechaInicio: any; fechaFin: any; }) => {
-                                inicio.push(new Date(r.fechaInicio).getTime()-8*3600000);
-                                fin.push(new Date(r.fechaFin).getTime()+8*3600000);});
+                                inicio.push(new Date(r.fechaInicio).getTime()-13*3600000);
+                                fin.push(new Date(r.fechaFin).getTime()+13*3600000);});
 
                             if(inicio.length == 0){
                                 disponibilidad = true;
@@ -105,12 +109,12 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
                                     j = fin[0];
                                     fin = fin.slice(1);
                                     stack--;
-                                    fueInicio = true;
+                                    fueInicio = false;
                                 }else if(fin.length == 0) {
                                     j = inicio[0];
                                     inicio = inicio.slice(1);
                                     stack++;
-                                    fueInicio = false;
+                                    fueInicio = true;
                                 }else{
                                     if(inicio[0]<fin[0]){
                                         j = inicio[0];

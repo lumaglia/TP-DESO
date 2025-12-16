@@ -2,6 +2,11 @@ package org.example.TP_DESO.controller;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
+import org.example.TP_DESO.domain.DobleEstandar;
+import org.example.TP_DESO.domain.IndividualEstandar;
+import org.example.TP_DESO.domain.SuiteDoble;
+import org.example.TP_DESO.domain.SuperiorFamilyPlan;
 import org.example.TP_DESO.dto.*;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,6 +47,34 @@ public class ReservaController {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/Habitacion/Reserva/Buscar")
+    public ResponseEntity<ArrayList<ResponseReservaDTO>> buscarReserva(@RequestBody ReservaBusquedaDTO reservaBusquedaDTO) {
+        ReservaDTO reservaDTO = new ReservaDTO(reservaBusquedaDTO.apellido, reservaBusquedaDTO.nombre);
+        try {
+            ArrayList<ResponseReservaDTO> reservas = gestorReserva.buscarReserva(reservaDTO)
+                    .stream().filter(r -> !r.isCancelada() && r.getEstadia() == null).map(ResponseReservaDTO::new).collect(Collectors.toCollection(ArrayList::new));
+            if(reservas.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }else {
+                return ResponseEntity.ok(reservas);
+            }
+        } catch (FracasoOperacion e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PatchMapping("/Habitacion/Reserva/Cancelar/")
+    public ResponseEntity<ResponseReservaDTO> cancelarReserva(@RequestBody ResponseReservaDTO responseReservaDTO) {
+        try {
+            gestorReserva.cancelarReserva(responseReservaDTO);
+            return ResponseEntity.ok(responseReservaDTO);
+        } catch (FracasoOperacion e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -129,5 +163,12 @@ public class ReservaController {
         LocalDate fechaInicio;
         LocalDate fechaFin;
         ArrayList<BuscarHuespedDTO> huespedes;
+    }
+
+    @Getter
+    @Setter
+    private static class ReservaBusquedaDTO {
+        String apellido;
+        String nombre;
     }
 }

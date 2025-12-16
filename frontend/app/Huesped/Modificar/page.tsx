@@ -98,28 +98,9 @@ export default function ModificarHuesped() {
         })
     };
 
-
-    const handleDelete = () => {
-        if(!confirm("¿Está seguro de eliminar este huésped?")) return;
-
-        const datosBorrar = {
-            tipoDoc: tipoDocParam,
-            nroDoc: nroDocParam
-        };
-
-        fetch('http://localhost:8081/Huesped/Baja', {
-            method: 'DELETE',
-            body: JSON.stringify(datosBorrar),
-            headers: { 'Content-Type': 'application/json' }
-        }).then(async res => {
-            if (res.ok) {
-                alert("Huésped eliminado con éxito");
-                router.push('/');
-            } else {
-                const errorTexto = await res.text();
-                alert("No se puede eliminar: " + errorTexto);
-            }
-        });
+    const irALaBaja = () => {
+        const url = `/Huesped/Baja?tipo=${encodeURIComponent(tipoDocParam || '')}&nro=${encodeURIComponent(nroDocParam || '')}`;
+        router.push(url);
     }
 
     return(
@@ -191,7 +172,7 @@ export default function ModificarHuesped() {
                              <button type='button' className='Button'
                             onClick={() => setAlertaCancelarOpen(true)}>Cancelar
                              </button>
-                            <button type='button' className='Button' data-backcolor='red' onClick={handleDelete}>
+                            <button type='button' className='Button' data-backcolor='red' onClick={irALaBaja}>
                              Eliminar
                             </button>
 

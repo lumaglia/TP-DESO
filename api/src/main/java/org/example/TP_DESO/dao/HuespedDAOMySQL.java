@@ -140,9 +140,6 @@ public class HuespedDAOMySQL implements HuespedDAO {
             Optional<Huesped> existente = huespedRepository.findByTipoDocAndNroDoc(tipoDoc, numeroDoc);
             if (existente.isPresent()) {
                 Huesped h = existente.get();
-                // Actualizar campos
-                h.setTipoDoc(huesped.getTipoDoc());
-                h.setNroDoc(huesped.getNroDoc());
                 h.setApellido(huesped.getApellido());
                 h.setNombre(huesped.getNombre());
                 h.setCuil(huesped.getCuil());
@@ -153,8 +150,11 @@ public class HuespedDAOMySQL implements HuespedDAO {
                 h.setOcupacion(huesped.getOcupacion());
                 h.setNacionalidad(huesped.getNacionalidad());
                 h.setDireccion(huesped.getDireccion());
+                if (huesped.getDireccion() != null) {
+                    Direccion direccionProcesada = direccionDAO.crearDireccion(huesped.getDireccion());
+                    h.setDireccion(direccionProcesada);
+                }
 
-                direccionDAO.crearDireccion(huesped.getDireccion());
                 huespedRepository.save(h);
             } else {
                 throw new FracasoOperacion("Huésped no encontrado con tipoDoc: " + tipoDoc + " y nroDoc: " + numeroDoc);

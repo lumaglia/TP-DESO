@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class HuespedController {
 
     GestorHuesped gestorHuesped;
@@ -38,12 +39,9 @@ public class HuespedController {
             }
         }else{
             try {
-                gestorHuesped.bajaHuesped(huespedDTO);
-                gestorHuesped.altaHuesped(huespedDTO);
-            } catch (DocumentoYaExistente e) {
-                return new ResponseEntity<>(HttpStatus.CONFLICT);
+                gestorHuesped.modificarHuesped(huespedDTO);
             } catch (FracasoOperacion e) {
-                throw new RuntimeException(e);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -96,29 +94,8 @@ public class HuespedController {
     }
 
 
-    /*@CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/Huesped/Obtener")
-    public ResponseEntity<HuespedDTO> getHuesped(@RequestBody HuespedDTO filtro) {
-        HuespedDTO huesped = new HuespedDTOBuilder()
-                .setTipoDoc(filtro.getTipoDoc())
-                .setNroDoc(filtro.getNroDoc())
-                .createHuespedDTO();
-
-        ArrayList<HuespedDTO> huespedes;
-        try {
-            huespedes = gestorHuesped.buscarHuesped(huesped);
-            if (huespedes.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-            return ResponseEntity.ok(huespedes.get(0));
-        } catch (FracasoOperacion e) {
-            throw new RuntimeException(e);
-        }
-    }
-*/
-
     @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping("/Huesped/Eliminar")
+    @DeleteMapping("/Huesped/Baja")
     public ResponseEntity<?> eliminarHuesped(@RequestBody HuespedDTO huespedDTO) {
         try {
             gestorHuesped.bajaHuesped(huespedDTO);

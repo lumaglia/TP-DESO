@@ -47,7 +47,7 @@ enum EstadosCU07 {
     ConfirmarFactura,
 }
 
-export function CrearFactura() {
+export default function CrearFactura() {
     const router = useRouter();
     const form = useForm<FormFactura>()
     const {register, handleSubmit, formState: {errors}} = form;

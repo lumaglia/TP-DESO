@@ -18,7 +18,7 @@ import java.util.ArrayList;
 @Service
 public class GestorHuesped {
     @Autowired
-    private HuespedDAOMySQL huespedDAO;
+    private HuespedDAO huespedDAO;
 
     private GestorHuesped(HuespedDAO huespedDAO) throws FracasoOperacion {
 

@@ -87,7 +87,12 @@ body {
 .Button:focus-visible {
     background-color: #3d4555;
 }
-
+.Button.Cancelar {
+    background-color: #ff3b30;
+}
+.Button.Cancelar:hover {
+    background-color: #ff7f6e;
+}
 input:focus {
     outline: 2px solid #80c7ea; /* Change to your desired color */
 }

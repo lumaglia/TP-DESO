@@ -22,6 +22,7 @@ export default function ModificarHuesped() {
     const { errors } = formState;
     const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
     const [ alertaDocumentoOpen, setAlertaDocumentoOpen] = useState(false);
+    const [ noEncontrado, setNoEncontrado] = useState(false);
 
     const posicionIVA = watch('posicionIva');
     if(validation['cuil'].required.value && posicionIVA !== 'Responsable Inscripto'){
@@ -63,11 +64,10 @@ export default function ModificarHuesped() {
                             provincia: huespedBackend.direccion?.provincia || '',
                             pais: huespedBackend.direccion?.pais || ''
                         };
-
                         reset(datosParaForm);
                     }
                 })
-                .catch(err => console.error("Error cargando huesped", err));
+                .catch(err => {console.error("Error cargando huesped", err); setNoEncontrado(true)});
         }
     }, [tipoDocParam, nroDocParam, reset]);
 
@@ -108,84 +108,94 @@ export default function ModificarHuesped() {
     return(
         <>
             <Encabezado titulo='Modificar Huésped' />
-            <h2 style={{textAlign:'center'}}>Datos del huésped</h2>
-            <form method='post' onSubmit={handleSubmit(onSubmit)} noValidate>
-                <div style={{display:'flex', justifyContent:'center', alignItems:'flex-start'}}>
-                    <div style={{display: 'inline-flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'start'}}>
-                        <Row>
-                            <Campo field='Nombre' placeholder='Ej: Juan' isRequired={true} register={register}
-                                   errors={errors} validation={validation['nombre']} />
-                            <Campo field='Apellido' placeholder='Ej: Martinez' isRequired={true} register={register}
-                                   errors={errors} validation={validation['apellido']} />
-                        </Row>
-                        <Row>
-                            <Campo field='Tipo de documento' isRequired={true} type={fieldTypes.COMBOBOX}
-                                   register={register} errors={errors} comboValues={comboValues['tipoDocumento']} validation={validation['tipoDocumento']} />
-                            <Campo field='Número de documento' placeholder='Ej. 11222333' isRequired={true}
-                                   register={register} errors={errors} validation={validation['numeroDocumento']} />
-                        </Row>
-                        <Row>
-                            <Campo field='CUIL' placeholder='11 - 11222333 - 2' register={register} errors={errors}
-                                   validation={validation['cuil']}
-                                   isRequired={posicionIVA === 'Responsable Inscripto'} />
-                            <Campo field='Posición frente al IVA' placeholder='Consumidor Final' type={fieldTypes.COMBOBOX}
-                                   comboValues={comboValues['posicionIva']} register={register} errors={errors} validation={validation['posicionIva']} />
-                        </Row>
-                        <Row>
-                            <Campo field='Fecha de Nacimiento' placeholder='DD / MM / YYYY' isRequired={true}
-                                   type={fieldTypes.DATE} validation={validation['fechaNacimiento']} register={register} errors={errors}/>
-                            <Campo field='Telefono' placeholder='+54 9 xxxx xxxx' isRequired={true}
-                                   validation={validation['numeroTelefono']} register={register} errors={errors}/>
-                        </Row>
-                        <Row>
-                            <Campo field='Email' placeholder='Ej. jaimitohernandez@gmail.com' type={fieldTypes.EMAIL}
-                                   validation={validation['email']} register={register} errors={errors}/>
-                            <Campo field='Ocupación' placeholder='Trabajo / Estudio' isRequired={true}
-                                   validation={validation['ocupacion']} register={register} errors={errors}/>
-                        </Row>
-                        <Row>
-                            <Campo field='Nacionalidad' placeholder={undefined} isRequired={true} comboValues={comboValues['nacionalidad']}
-                                   type={fieldTypes.COMBOBOX} validation={validation['nacionalidad']} register={register} errors={errors}/>
-                            <Campo field='Nacionalidad' placeholder={undefined} isRequired={true} comboValues={comboValues['nacionalidad']}
-                                   type={fieldTypes.COMBOBOX} validation={validation['nacionalidad']}
-                                   hidden={true} register={register} errors={errors}/>
-                        </Row>
-                        <Row>
-                            <Campo field='Domicilio' placeholder='Calle y Numero' isRequired={true}
-                                   validation={validation['domicilio']} register={register} errors={errors}/>
-                            <Campo field='Departamento' placeholder='Depto y/o Nro de piso'
-                                   validation={validation['departamento']} register={register} errors={errors}/>
-                        </Row>
-                        <Row>
-                            <Campo field='Código Postal' placeholder='Ej. 3252' isRequired={true}
-                                   validation={validation['codigoPostal']} register={register} errors={errors}/>
-                            <Campo field='Localidad' placeholder='Ej. Villa Clara' isRequired={true}
-                                   validation={validation['localidad']} register={register} errors={errors}/>
-                        </Row>
-
+            {
+                noEncontrado?
+                    <>
+                        <h2 style={{textAlign:'center'}}>Error al obtener el huesped</h2>
                         <Row>
                             <button type='button' className='Button'
-                                    onClick={() => setAlertaCancelarOpen(true)}>Cancelar
+                                    onClick={() => router.push('/')}>Volver
                             </button>
-                            <button type='button' className='Button' data-backcolor='red' onClick={irALaBaja}>
-                                Eliminar
-                            </button>
-                            <Campo field='Provincia' placeholder='Ej. Entre Ríos' isRequired={true}
-                               validation={validation['provincia']} register={register} errors={errors}/>
-                             <Campo field='Pais' placeholder='Ej. Argentina' isRequired={true}
-                               validation={validation['pais']} register={register} errors={errors}/>
-                            <button type='submit' className='Button'>Siguiente</button>
                         </Row>
+                    </> :
+                    <>
+                        <h2 style={{textAlign:'center'}}>Datos del huésped</h2>
+                        <form method='post' onSubmit={handleSubmit(onSubmit)} noValidate>
+                            <div style={{display:'flex', justifyContent:'center', alignItems:'flex-start'}}>
+                                <div style={{display: 'inline-flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'start'}}>
+                                    <Row>
+                                        <Campo field='Nombre' placeholder='Ej: Juan' isRequired={true} register={register}
+                                               errors={errors} validation={validation['nombre']} />
+                                        <Campo field='Apellido' placeholder='Ej: Martinez' isRequired={true} register={register}
+                                               errors={errors} validation={validation['apellido']} />
+                                    </Row>
+                                    <Row>
+                                        <Campo field='Tipo de documento' isRequired={true} type={fieldTypes.COMBOBOX}
+                                               register={register} errors={errors} comboValues={comboValues['tipoDocumento']} validation={validation['tipoDocumento']} />
+                                        <Campo field='Número de documento' placeholder='Ej. 11222333' isRequired={true}
+                                               register={register} errors={errors} validation={validation['numeroDocumento']} />
+                                    </Row>
+                                    <Row>
+                                        <Campo field='CUIL' placeholder='11 - 11222333 - 2' register={register} errors={errors}
+                                               validation={validation['cuil']}
+                                               isRequired={posicionIVA === 'Responsable Inscripto'} />
+                                        <Campo field='Posición frente al IVA' placeholder='Consumidor Final' type={fieldTypes.COMBOBOX}
+                                               comboValues={comboValues['posicionIva']} register={register} errors={errors} validation={validation['posicionIva']} />
+                                    </Row>
+                                    <Row>
+                                        <Campo field='Fecha de Nacimiento' placeholder='DD / MM / YYYY' isRequired={true}
+                                               type={fieldTypes.DATE} validation={validation['fechaNacimiento']} register={register} errors={errors}/>
+                                        <Campo field='Telefono' placeholder='+54 9 xxxx xxxx' isRequired={true}
+                                               validation={validation['numeroTelefono']} register={register} errors={errors}/>
+                                    </Row>
+                                    <Row>
+                                        <Campo field='Email' placeholder='Ej. jaimitohernandez@gmail.com' type={fieldTypes.EMAIL}
+                                               validation={validation['email']} register={register} errors={errors}/>
+                                        <Campo field='Ocupación' placeholder='Trabajo / Estudio' isRequired={true}
+                                               validation={validation['ocupacion']} register={register} errors={errors}/>
+                                    </Row>
+                                    <Row>
+                                        <Campo field='Nacionalidad' placeholder={undefined} isRequired={true} comboValues={comboValues['nacionalidad']}
+                                               type={fieldTypes.COMBOBOX} validation={validation['nacionalidad']} register={register} errors={errors}/>
+                                        <Campo field='Nacionalidad' placeholder={undefined} isRequired={true} comboValues={comboValues['nacionalidad']}
+                                               type={fieldTypes.COMBOBOX} validation={validation['nacionalidad']}
+                                               hidden={true} register={register} errors={errors}/>
+                                    </Row>
+                                    <Row>
+                                        <Campo field='Domicilio' placeholder='Calle y Numero' isRequired={true}
+                                               validation={validation['domicilio']} register={register} errors={errors}/>
+                                        <Campo field='Departamento' placeholder='Depto y/o Nro de piso'
+                                               validation={validation['departamento']} register={register} errors={errors}/>
+                                    </Row>
+                                    <Row>
+                                        <Campo field='Código Postal' placeholder='Ej. 3252' isRequired={true}
+                                               validation={validation['codigoPostal']} register={register} errors={errors}/>
+                                        <Campo field='Localidad' placeholder='Ej. Villa Clara' isRequired={true}
+                                               validation={validation['localidad']} register={register} errors={errors}/>
+                                    </Row>
 
+                                    <Row>
+                                        <Campo field='Provincia' placeholder='Ej. Entre Ríos' isRequired={true}
+                                               validation={validation['provincia']} register={register} errors={errors}/>
+                                        <Campo field='Pais' placeholder='Ej. Argentina' isRequired={true}
+                                               validation={validation['pais']} register={register} errors={errors}/>
+                                    </Row>
 
-
-
-
-
-                    </div>
-                </div>
-            </form>
-            <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la Modificacion del Huesped'/>
+                                    <Row>
+                                        <button type='button' className='Button'
+                                                onClick={() => setAlertaCancelarOpen(true)}>Cancelar
+                                        </button>
+                                        <button type='button' className='Button Cancelar' onClick={irALaBaja}>
+                                            Eliminar
+                                        </button>
+                                        <button type='submit' className='Button'>Siguiente</button>
+                                    </Row>
+                                </div>
+                            </div>
+                        </form>
+                        <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la Modificacion del Huesped'/>
+                    </>
+            }
         </>
     );
 }

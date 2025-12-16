@@ -1,6 +1,9 @@
 package org.example.TP_DESO.controller;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.example.TP_DESO.dto.BuscarHuespedDTO;
+import org.example.TP_DESO.dto.DireccionDTO;
 import org.example.TP_DESO.dto.HuespedDTO;
 import org.example.TP_DESO.dto.HuespedDTOBuilder;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
@@ -28,25 +31,45 @@ public class HuespedController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/Huesped/Alta")
-    public ResponseEntity<HuespedDTO> altaHuesped(@RequestBody HuespedDTO huespedDTO, @RequestParam(required = false, defaultValue = "false") boolean modify) {
-        if(!modify) {
-            try {
-                gestorHuesped.altaHuesped(huespedDTO);
-            } catch (DocumentoYaExistente e) {
-                return new ResponseEntity<>(HttpStatus.CONFLICT);
-            } catch (FracasoOperacion e) {
-                throw new RuntimeException(e);
-            }
-        }else{
-            try {
-                gestorHuesped.modificarHuesped(huespedDTO);
-            } catch (FracasoOperacion e) {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public ResponseEntity<HuespedDTO> altaHuesped(@RequestBody HuespedDTO huespedDTO) {
+        try {
+            gestorHuesped.altaHuesped(huespedDTO);
+        } catch (DocumentoYaExistente e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (FracasoOperacion e) {
+            throw new RuntimeException(e);
         }
-
         return ResponseEntity.ok(huespedDTO);
     }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PutMapping("/Huesped/Modificar")
+    public ResponseEntity<ModificarHuespedDTO> modificarHuesped(@RequestBody ModificarHuespedDTO modificarHuespedDTO) {
+
+        try {
+            HuespedDTO huespedDTO = new HuespedDTOBuilder()
+                    .setNombre(modificarHuespedDTO.getNombre())
+                    .setApellido(modificarHuespedDTO.getApellido())
+                    .setTipoDoc(modificarHuespedDTO.getTipoDoc())
+                    .setNroDoc(modificarHuespedDTO.getNroDoc())
+                    .setCuil(modificarHuespedDTO.getCuil())
+                    .setPosicionIva(modificarHuespedDTO.getPosicionIva())
+                    .setFechaNac(modificarHuespedDTO.getFechaNac())
+                    .setTelefono(modificarHuespedDTO.getTelefono())
+                    .setEmail(modificarHuespedDTO.getEmail())
+                    .setOcupacion(modificarHuespedDTO.getOcupacion())
+                    .setNacionalidad(modificarHuespedDTO.getNacionalidad())
+                    .setDireccion(modificarHuespedDTO.getDireccion())
+                    .createHuespedDTO();
+            gestorHuesped.modificarHuesped(modificarHuespedDTO.tipoDocViejo,modificarHuespedDTO.nroDocViejo,huespedDTO);
+        } catch (FracasoOperacion e) {
+            throw new RuntimeException(e);
+        } catch (DocumentoYaExistente e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
+        return ResponseEntity.ok(modificarHuespedDTO);
+}
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/Huesped/Buscar")
@@ -107,6 +130,23 @@ public class HuespedController {
         }
     }
 
-
+    @Getter
+    @Setter
+    private static class ModificarHuespedDTO{
+        String tipoDocViejo;
+        String nroDocViejo;
+        String nombre;
+        String apellido;
+        String tipoDoc;
+        String nroDoc;
+        String cuil;
+        String posicionIva;
+        LocalDate fechaNac;
+        String telefono;
+        String email;
+        String ocupacion;
+        String nacionalidad;
+        DireccionDTO direccion;
+    }
 }
 

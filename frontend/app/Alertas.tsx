@@ -49,8 +49,10 @@ export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen:
                     <div className={'Actions'}>
                         <AlertDialog.Close className={'PopupButton'} data-color='white'>Volver y Corregir</AlertDialog.Close>
                         <AlertDialog.Close className={'PopupButton'} onClick={() => {
-                            fetch('http://localhost:8081/Huesped/Alta?modify=true', {
-                                method: 'POST',
+                            data.tipoDocViejo = data.tipoDoc;
+                            data.nroDocViejo = data.nroDoc;
+                            fetch('http://localhost:8081/Huesped/Modificar', {
+                                method: 'PUT',
                                 body: JSON.stringify(data),
                                 headers: {
                                     'Accept': 'application/json',

@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Campo from '../../Campo.tsx'
 import Encabezado from '../../Encabezado.tsx'
-import { AlertaCancelar } from '../../Alertas.tsx'
+import {AlertaCancelar, AlertaDocumento} from '../../Alertas.tsx'
 import Row from '../../Row.tsx'
 import { validation, comboValues, FormValues, fieldTypes } from '../../../public/constants.ts'
 import '../Alta/AltaHuesped.css'
@@ -20,6 +20,7 @@ export default function ModificarHuesped() {
     const form = useForm<FormValues>();
     const { register, handleSubmit, formState, watch, trigger, reset, getValues } = form;
     const { errors } = formState;
+    const formRef = useRef<FieldValues>(null);
     const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
     const [ alertaDocumentoOpen, setAlertaDocumentoOpen] = useState(false);
     const [ noEncontrado, setNoEncontrado] = useState(false);
@@ -80,15 +81,19 @@ export default function ModificarHuesped() {
                 data[key] = null;
             }
         }
-
-        fetch('http://localhost:8081/Huesped/Alta?modify=true', {
-            method: 'POST',
-            body: JSON.stringify(data),
+        let dataCopy = structuredClone(data);
+        dataCopy.tipoDocViejo = tipoDocParam;
+        dataCopy.nroDocViejo = nroDocParam;
+        console.log(JSON.stringify(dataCopy));
+        fetch('http://localhost:8081/Huesped/Modificar', {
+            method: 'PUT',
+            body: JSON.stringify(dataCopy),
             headers: { 'Content-Type': 'application/json' }
         }).then(async res => {
             if (res.status === 409) {
                 setAlertaDocumentoOpen(true);
             } else if(res.ok) {
+                res.json().then(t => console.log(t));
                 const nombreCompleto = `${data.nombre} ${data.apellido}`;
                 router.push(`/Huesped/Modificar/success?huesped=${encodeURIComponent(nombreCompleto)}`)
             } else {
@@ -194,6 +199,7 @@ export default function ModificarHuesped() {
                             </div>
                         </form>
                         <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la Modificacion del Huesped'/>
+                        <AlertaDocumento open={alertaDocumentoOpen} setOpen={setAlertaDocumentoOpen} data={formRef.current}/>
                     </>
             }
         </>

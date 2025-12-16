@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Service
 public class GestorHuesped {
@@ -90,7 +91,8 @@ public class GestorHuesped {
 
     public void modificarHuesped(String tipoDoc, String numeroDoc, HuespedDTO huespedDTO) throws DocumentoYaExistente, FracasoOperacion {
 
-        if (!huespedDAO.obtenerHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTO.getTipoDoc()).setNroDoc(huespedDTO.getNroDoc()).createHuespedDTO()).isEmpty()) {
+        if (!huespedDAO.obtenerHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTO.getTipoDoc()).setNroDoc(huespedDTO.getNroDoc()).createHuespedDTO()).isEmpty() &&
+                !(Objects.equals(tipoDoc, huespedDTO.getTipoDoc()) && Objects.equals(numeroDoc, huespedDTO.getNroDoc()))) {
             throw new DocumentoYaExistente("El tipo y numero de documento ya existen en el sistema");
         }
 

@@ -13,7 +13,7 @@ public class GestorUsuario {
     private static GestorUsuario singleton_instance;
 
     @Autowired
-    private UsuarioDAOMySQL dao;
+    private UsuarioDAO dao;
 
     public GestorUsuario() throws FracasoOperacion {
     }

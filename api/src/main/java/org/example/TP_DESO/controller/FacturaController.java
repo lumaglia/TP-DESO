@@ -9,6 +9,7 @@ import org.example.TP_DESO.dto.CU07.RequestCheckoutDTO;
 import org.example.TP_DESO.dto.CU07.RequestDeItemsDTO;
 import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
 import org.example.TP_DESO.dto.EstadiaDTO;
+import org.example.TP_DESO.dto.CU07.EstadiaFacturacionDTO;
 import org.example.TP_DESO.dto.FacturaDTO;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
@@ -21,8 +22,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 public class FacturaController {
     GestorFactura gestorFactura;
@@ -32,10 +31,11 @@ public class FacturaController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/Factura/Checkout")
-    public ResponseEntity<EstadiaDTO> obtenerHuespedesCheckot(
+    public ResponseEntity<EstadiaFacturacionDTO> obtenerHuespedesCheckot(
             @RequestBody RequestCheckoutDTO request) throws FracasoOperacion{
         try{
-            EstadiaDTO resultado = gestorFactura.obtenerEstadia(request.getNumHabitacion());
+            EstadiaDTO estadia = gestorFactura.obtenerEstadia(request.getNumHabitacion());
+            EstadiaFacturacionDTO resultado = new EstadiaFacturacionDTO(estadia);
             return ResponseEntity.ok().body(resultado);
         } catch (Exception e) {
             throw new FracasoOperacion("Error : " + e.getMessage());

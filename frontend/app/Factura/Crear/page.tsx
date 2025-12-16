@@ -30,6 +30,7 @@ type ConsumoFactura = {
 type Estadia = {
     id: number
     nroHabitacion: string,
+    montoEstadia: number,
     huespedes: HuespedCheckout[],
     consumos: ConsumoFactura[]
 }
@@ -142,14 +143,13 @@ export function CrearFactura() {
             .then((data: Estadia) => {
                 setEstadia(data)
 
-                const montoEstadia = 100; //COMO RE JORACAS CALCULO EL PRECIO
                 const itemsFactura = [
                     {
                         id: data.id,
                         tipo: 'Estadia',
                         descripcion: 'Costo de la estadia',
-                        monto: montoEstadia,
-                        iva: Math.round(montoEstadia * 0.21),
+                        monto: data.montoEstadia,
+                        iva: Math.round(data.montoEstadia * 0.21),
                         seleccionado: true,
                         procesado: false
                     },

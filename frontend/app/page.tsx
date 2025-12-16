@@ -27,7 +27,7 @@ export default function Home() {
                     </Link></Row>
                 <Row>
                     <Link href='/Reserva/Baja'>
-                        <button>Cancelar Reserva</button>
+                        <button className={'Button'}>Cancelar Reserva</button>
                     </Link>
                     <Link href='/Habitacion/Buscar'>
                         <button className='Button'>Mostrar Estado Habitaciones</button>

@@ -61,15 +61,42 @@ public class HuespedController {
                     .setNacionalidad(modificarHuespedDTO.getNacionalidad())
                     .setDireccion(modificarHuespedDTO.getDireccion())
                     .createHuespedDTO();
-            gestorHuesped.modificarHuesped(modificarHuespedDTO.tipoDocViejo,modificarHuespedDTO.nroDocViejo,huespedDTO);
+            gestorHuesped.modificarHuesped(modificarHuespedDTO.tipoDocViejo,modificarHuespedDTO.nroDocViejo,huespedDTO, false);
         } catch (FracasoOperacion e) {
             throw new RuntimeException(e);
         } catch (DocumentoYaExistente e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
-
         return ResponseEntity.ok(modificarHuespedDTO);
-}
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PutMapping("/Huesped/Modificar/Override")
+    public ResponseEntity<ModificarHuespedDTO> modificarHuespedOverride(@RequestBody ModificarHuespedDTO modificarHuespedDTO) {
+
+        try {
+            HuespedDTO huespedDTO = new HuespedDTOBuilder()
+                    .setNombre(modificarHuespedDTO.getNombre())
+                    .setApellido(modificarHuespedDTO.getApellido())
+                    .setTipoDoc(modificarHuespedDTO.getTipoDoc())
+                    .setNroDoc(modificarHuespedDTO.getNroDoc())
+                    .setCuil(modificarHuespedDTO.getCuil())
+                    .setPosicionIva(modificarHuespedDTO.getPosicionIva())
+                    .setFechaNac(modificarHuespedDTO.getFechaNac())
+                    .setTelefono(modificarHuespedDTO.getTelefono())
+                    .setEmail(modificarHuespedDTO.getEmail())
+                    .setOcupacion(modificarHuespedDTO.getOcupacion())
+                    .setNacionalidad(modificarHuespedDTO.getNacionalidad())
+                    .setDireccion(modificarHuespedDTO.getDireccion())
+                    .createHuespedDTO();
+            gestorHuesped.modificarHuesped(modificarHuespedDTO.tipoDocViejo,modificarHuespedDTO.nroDocViejo,huespedDTO, true);
+        } catch (FracasoOperacion e) {
+            throw new RuntimeException(e);
+        } catch (DocumentoYaExistente e) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return ResponseEntity.ok(modificarHuespedDTO);
+    }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/Huesped/Buscar")

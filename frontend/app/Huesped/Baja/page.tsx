@@ -63,13 +63,13 @@ export default function BajaHuesped() {
 
                     <div style={{marginTop: '30px'}}>
 
-                        <button className='Button'
-                                style={{backgroundColor: 'red', color: 'white', marginRight: '20px'}}
+                        <button className='Button Cancelar'
+                                style={{marginRight: '20px'}}
                                 onClick={confirmarEliminacion}>
                             Eliminar
                         </button>
 
-                        <button className='Button' onClick={() => setOpenAlertaCancelar(true)}>
+                        <button className='Button' onClick={() => router.push('/')}>
                             Cancelar
                         </button>
                     </div>

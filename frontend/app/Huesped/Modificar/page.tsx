@@ -5,7 +5,7 @@ import { useForm, FieldValues } from 'react-hook-form';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Campo from '../../Campo.tsx'
 import Encabezado from '../../Encabezado.tsx'
-import {AlertaCancelar, AlertaDocumento} from '../../Alertas.tsx'
+import {AlertaCancelar, AlertaDocumentoModificar, ErrorSobreescritoHospedado, ErrorModificadoHospedado} from '../../Alertas.tsx'
 import Row from '../../Row.tsx'
 import { validation, comboValues, FormValues, fieldTypes } from '../../../public/constants.ts'
 import '../Alta/AltaHuesped.css'
@@ -23,7 +23,11 @@ export default function ModificarHuesped() {
     const formRef = useRef<FieldValues>(null);
     const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
     const [ alertaDocumentoOpen, setAlertaDocumentoOpen] = useState(false);
+    const [ errorModificado, setErrorModificado ] = useState(false);
+    const [ errorSobreescrito, setErrorSobreescrito ] = useState(false);
     const [ noEncontrado, setNoEncontrado] = useState(false);
+    const [ tipoDocc, setTipoDocc ] = useState<string>('');
+    const [ nroDocc, setNroDocc ] = useState<string>('');
 
     const posicionIVA = watch('posicionIva');
     if(validation['cuil'].required.value && posicionIVA !== 'Responsable Inscripto'){
@@ -81,9 +85,16 @@ export default function ModificarHuesped() {
                 data[key] = null;
             }
         }
+        formRef.current = data
         let dataCopy = structuredClone(data);
         dataCopy.tipoDocViejo = tipoDocParam;
         dataCopy.nroDocViejo = nroDocParam;
+        if(tipoDocParam){
+            setTipoDocc(tipoDocParam);
+        }
+        if(nroDocParam){
+            setNroDocc(nroDocParam);
+        }
         console.log(JSON.stringify(dataCopy));
         fetch('http://localhost:8081/Huesped/Modificar', {
             method: 'PUT',
@@ -97,7 +108,8 @@ export default function ModificarHuesped() {
                 const nombreCompleto = `${data.nombre} ${data.apellido}`;
                 router.push(`/Huesped/Modificar/success?huesped=${encodeURIComponent(nombreCompleto)}`)
             } else {
-                alert("Error al modificar el huésped");
+                //alert("Error al modificar el huésped");
+                setErrorModificado(true);
             }
         })
     };
@@ -199,7 +211,9 @@ export default function ModificarHuesped() {
                             </div>
                         </form>
                         <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la Modificacion del Huesped'/>
-                        <AlertaDocumento open={alertaDocumentoOpen} setOpen={setAlertaDocumentoOpen} data={formRef.current}/>
+                        <AlertaDocumentoModificar open={alertaDocumentoOpen} setOpen={setAlertaDocumentoOpen} data={formRef.current} tipoDoc={tipoDocc} nroDoc={nroDocc} setErrorOpen={setErrorSobreescrito}/>
+                        <ErrorModificadoHospedado open={errorModificado} setOpen={setErrorModificado}/>
+                        <ErrorSobreescritoHospedado open={errorSobreescrito} setOpen={setErrorSobreescrito}/>
                     </>
             }
         </>

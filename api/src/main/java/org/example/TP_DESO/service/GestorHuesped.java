@@ -89,11 +89,29 @@ public class GestorHuesped {
         }
     }
 
-    public void modificarHuesped(String tipoDoc, String numeroDoc, HuespedDTO huespedDTO) throws DocumentoYaExistente, FracasoOperacion {
+    public void modificarHuesped(String tipoDoc, String numeroDoc, HuespedDTO huespedDTO, boolean override) throws DocumentoYaExistente, FracasoOperacion {
+        if (!Objects.equals(tipoDoc, huespedDTO.getTipoDoc()) || !Objects.equals(numeroDoc, huespedDTO.getNroDoc())) {
+            if (!huespedDAO.obtenerHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTO.getTipoDoc()).setNroDoc(huespedDTO.getNroDoc()).createHuespedDTO()).isEmpty()){
+                if(override){
+                    if (estadiaDAO.existeEstadiaDeHuesped(huespedDTO.getTipoDoc(), huespedDTO.getNroDoc())) {
+                        throw new FracasoOperacion("El huésped no puede ser sobreescrito pues se ha alojado en el hotel en alguna oportunidad.");
+                    }
+                }else{
+                    throw new DocumentoYaExistente("El tipo y numero de documento ya existen en el sistema");
+                }
+            }
+            if (estadiaDAO.existeEstadiaDeHuesped(tipoDoc, numeroDoc)) {
+                throw new FracasoOperacion("El huésped no puede ser modificado pues se ha alojado en el hotel en alguna oportunidad.");
+            }
+        }
 
-        if (!huespedDAO.obtenerHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTO.getTipoDoc()).setNroDoc(huespedDTO.getNroDoc()).createHuespedDTO()).isEmpty() &&
-                !(Objects.equals(tipoDoc, huespedDTO.getTipoDoc()) && Objects.equals(numeroDoc, huespedDTO.getNroDoc()))) {
-            throw new DocumentoYaExistente("El tipo y numero de documento ya existen en el sistema");
+        if (!huespedDAO.obtenerHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTO.getTipoDoc()).setNroDoc(huespedDTO.getNroDoc()).createHuespedDTO()).isEmpty()) {
+            if((Objects.equals(tipoDoc, huespedDTO.getTipoDoc()) && Objects.equals(numeroDoc, huespedDTO.getNroDoc()))){
+
+
+            }else{
+
+            }
         }
 
         DireccionDTO direccionDTO = huespedDTO.getDireccion();

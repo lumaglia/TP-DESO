@@ -6,6 +6,7 @@ import org.example.TP_DESO.domain.ResponsablePago;
 import org.example.TP_DESO.dto.CU07.HuespedCheckoutDTO;
 import org.example.TP_DESO.dto.CU07.ItemsFacturaDTO;
 import org.example.TP_DESO.dto.CU07.RequestCheckoutDTO;
+import org.example.TP_DESO.dto.CU07.RequestDeItemsDTO;
 import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
 import org.example.TP_DESO.dto.EstadiaDTO;
 import org.example.TP_DESO.dto.FacturaDTO;
@@ -43,10 +44,15 @@ public class FacturaController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/Factura/BuscarResponsable")
-    public ResponseEntity<List<ItemsFacturaDTO>> buscarResponsablePago
-            (@RequestBody ResponsablePagoDTO responsablePagoDTO) throws FracasoOperacion{
+    public ResponseEntity<ItemsFacturaDTO> buscarResponsablePago
+            (@RequestBody RequestDeItemsDTO request) throws FracasoOperacion{
         try{
-            gestorFactura.buscarResponsablePago(responsablePagoDTO);
+            ResponsablePagoDTO responsablePago = gestorFactura.buscarResponsablePago(request.getResponsablePago().getCuil());
+
+            ItemsFacturaDTO items = new ItemsFacturaDTO(request.getEstadia(), responsablePago, request.getResponsablePago(), request.getConsumos());
+
+            return ResponseEntity.ok().body(items);
+
         } catch (Exception e) {
             throw new FracasoOperacion("Error : " + e.getMessage());
         }
@@ -54,10 +60,10 @@ public class FacturaController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/Factura/Emitir")
-    public ResponseEntity<Boolean> crearFactura(@RequestBody FacturaDTO facturaDTO) throws DocumentoYaExistente, FracasoOperacion{
+    public ResponseEntity<FacturaDTO> crearFactura(@RequestBody FacturaDTO facturaDTO) throws DocumentoYaExistente, FracasoOperacion{
         try{
             gestorFactura.generarFactura(facturaDTO);
-            return true;
+            return ResponseEntity.ok(facturaDTO);
         }
         catch (FracasoOperacion e){
             throw new FracasoOperacion("Error: " + e.getMessage());

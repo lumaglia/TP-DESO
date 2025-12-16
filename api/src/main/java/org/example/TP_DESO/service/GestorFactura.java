@@ -4,6 +4,8 @@ import org.example.TP_DESO.dao.*;
 import org.example.TP_DESO.dao.Mappers.HuespedMapper;
 import org.example.TP_DESO.domain.Factura;
 import org.example.TP_DESO.domain.Huesped;
+import org.example.TP_DESO.domain.PersonaFisica;
+import org.example.TP_DESO.domain.PersonaJuridica;
 import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
 import org.example.TP_DESO.dto.EstadiaDTO;
 import org.example.TP_DESO.dto.FacturaDTO;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class GestorFactura {
@@ -45,8 +48,25 @@ public class GestorFactura {
         return daoEstadia.buscarEstadiaPorHabitacionYFechaFin(NroHabitacion, fecha);
     }
 
-    public void buscarResponsablePago(ResponsablePagoDTO responsablePagoDTO){
+    public ResponsablePagoDTO buscarResponsablePago(String cuit) throws FracasoOperacion {
+        try{
+            PersonaFisica personaFisica = daoResponsablePago.obtenerPersonaFisica(cuit);
+            PersonaJuridica personaJuridica = daoResponsablePago.obtenerPersonaJuridica(cuit);
 
+            if(personaJuridica == null && personaFisica == null){
+                throw new FracasoOperacion("No se encontro el responsable de pago");
+            }
+            else if (personaJuridica != null && personaFisica != null){
+                throw new FracasoOperacion("El mismo cuit es tanto de una persona fisica como de una juridica");
+            }
+            else if (personaJuridica != null){
+                return new ResponsablePagoDTO(personaJuridica);
+            }
+            else {
+                return new ResponsablePagoDTO(personaFisica);
+            }
+        }
+        catch (Exception e){ throw new FracasoOperacion("Error: " + e.getMessage()); }
     }
 
     public void altaResponsablePago(ResponsablePagoDTO responsablePagoDTO){

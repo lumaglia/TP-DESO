@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 
 public class PersonaFisica extends ResponsablePago {
-
     @OneToOne(optional = false)
     @JoinColumns({
             @JoinColumn(name = "huesped_tipoDoc", referencedColumnName = "tipoDoc", nullable = false, unique = true),

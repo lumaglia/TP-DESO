@@ -5,9 +5,23 @@ import { useForm } from 'react-hook-form'
 import Encabezado from '../../Encabezado'
 import Row from '../../Row'
 import Campo from '../../Campo'
-import { FormResponsablePago, validation} from '../../../public/constants'
+import { validation} from '../../../public/constants'
 import {AlertaCancelar, AlertaDocumento} from "../../Alertas";
 import { useRouter, useSearchParams } from 'next/navigation'
+
+type FormResponsablePago = {
+    razonSocial: string;
+    cuit: string;
+    direccion: {
+        domicilio: string;
+        depto: string;
+        codigoPostal: string;
+        localidad: string;
+        provincia: string;
+        pais: string;
+    };
+    telefono: string
+}
 
 export default function AltaResponsablePago(){
     const form = useForm<FormResponsablePago>();

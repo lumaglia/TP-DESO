@@ -9,7 +9,7 @@ import java.util.List;
 public interface ResponsablePagoDAO {
     // FUNCIONES PARA LA PERSONA FISICA (NO SOY UNA IA SOY JUAN)
     void crearPersonaFisica() throws FracasoOperacion;
-    void obtenerPersonaFisica(String cuit) throws FracasoOperacion;
+    PersonaFisica obtenerPersonaFisica(String cuit) throws FracasoOperacion;
     List<PersonaFisica> obtenerTodasPersonaFisica() throws FracasoOperacion;
     void modificarPersonaFisica() throws FracasoOperacion;
     void eliminarPersonaFisica() throws FracasoOperacion;

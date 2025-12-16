@@ -6,8 +6,39 @@ import { useForm } from 'react-hook-form'
 import Encabezado from '../../Encabezado'
 import Row from '../../Row'
 import Campo from '../../Campo'
-import { fieldTypes, FormFactura, HuespedCheckout, Estadia } from '../../../public/constants'
+import { fieldTypes } from '../../../public/constants'
 import { useRouter, useSearchParams } from 'next/navigation'
+
+type FormFactura = {
+    idHabitacion : string;
+    horaSalida : string;
+}
+
+type HuespedCheckout = {
+    nombre: string,
+    apellido: string,
+    cuit: string
+    esMenor: boolean
+}
+
+type ConsumoFactura = {
+    id: number,
+    descripcion: string,
+    monto: number,
+}
+
+type Estadia = {
+    id: number
+    nroHabitacion: string,
+    huespedes: HuespedCheckout[],
+    consumos: ConsumoFactura[]
+}
+
+type FacturaPreviewDTO = {
+    nombreResponsablePago : string;
+    tipoFactura: string;
+    total: number;
+}
 
 enum EstadosCU07 {
     DatosResponsablePago,
@@ -19,7 +50,6 @@ export function CrearFactura() {
     const router = useRouter();
     const form = useForm<FormFactura>()
     const {register, handleSubmit, formState: {errors}} = form;
-
     const [estadia, setEstadia] = useState<Estadia | null>(null)
     const [items, setItems] = useState<{
         id: number,
@@ -30,9 +60,7 @@ export function CrearFactura() {
         seleccionado: boolean,
         procesado: boolean
     }[]>([])
-
     const [huespedes, setHuespedes] = useState<HuespedCheckout[]>([])
-    const [cuitIngresado, setCuitIngresado] = useState('')
     const [estado, setEstado] = useState<EstadosCU07>(EstadosCU07.DatosResponsablePago)
     const [responsableSeleccionado, setResponsableSeleccionado] = useState<HuespedCheckout | null>(null)
     const [errorResponsable, setErrorResponsable] = useState<string | null>(null)
@@ -151,7 +179,11 @@ export function CrearFactura() {
         } else {
             fetch('http://localhost:8081/Factura/Checkout', {
                 method: 'POST',
-                body: JSON.stringify(responsableSeleccionado),
+                body: JSON.stringify({
+                    estadia: estadia,
+                    responsablePago: responsableSeleccionado,
+                    consumos: estadia!.consumos,
+                }),
                 headers: {'Content-Type': 'application/json'}
             })
                 .then(res => res.json())
@@ -168,13 +200,17 @@ export function CrearFactura() {
             return
         }
         else{
+            const emitir = {
+                idFactura: null,
+                idNota: null,
+                idEstadia: estadia!.id,
+                idPago: null,
+                idResponsable: responsableSeleccionado!.cuit,
+            }
+
             fetch("http://localhost:8081/Factura/Emitir", {
                 method: 'POST',
-                body: JSON.stringify({
-                    estadiaId: estadia!.id,
-                    responsableId: responsableSeleccionado!.cuit,
-                    items: items.map(i => i.id)
-                }),
+                body: JSON.stringify(emitir),
                 headers: { 'Content-Type': 'application/json' }
             })
                 .then(res => res.json())

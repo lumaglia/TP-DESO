@@ -2,10 +2,10 @@ package org.example.TP_DESO.dto.CU07;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.TP_DESO.domain.Consumo;
-import org.example.TP_DESO.domain.Estadia;
-import org.example.TP_DESO.domain.Huesped;
+import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
 import org.example.TP_DESO.dto.ConsumoDTO;
+import org.example.TP_DESO.dto.EstadiaDTO;
+import org.example.TP_DESO.dto.HuespedDTO;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,27 +13,32 @@ import java.util.Objects;
 @Getter
 @Setter
 public class ItemsFacturaDTO {
-    private String nombreResponsablePago;
+    private Long idResponsablePago;
     private String posicionIVA;
     private Character tipoFactura;
     private Float montoTotal;
     private Float montoIVA;
     private List<ConsumoDTO> consumos;
 
-    public ItemsFacturaDTO(Estadia estadia, Huesped huesped){
-        float sum = 0;
-        for(Consumo consumo: estadia.getConsumos()){ sum += consumo.getMonto();}
-        this.montoTotal = sum;
-        this.posicionIVA = huesped.getPosicionIva();
-        if(!Objects.equals(huesped.getPosicionIva(), "Consumidor final")){
-            this.tipoFactura = 'A';
-            this.montoIVA = 0f;
-        }
-        else{
-            this.tipoFactura = 'B';
-            this.montoIVA = (float) (montoTotal * 0.21);
+    public ItemsFacturaDTO(EstadiaDTO estadiaDTO, ResponsablePagoDTO responsablePagoDTO, HuespedCheckoutDTO huespedCheckoutDTO, List<ConsumoDTO> consumos) {
+        HuespedDTO responsableHuesped = estadiaDTO.getHuespedes().stream().filter(h -> Objects.equals(h.getCuil(), huespedCheckoutDTO.getCuil())).findFirst().orElse(null);
+        assert responsableHuesped != null;
+        Float monto = (float) (0);
+        for(ConsumoDTO c : consumos) {
+            monto += c.getMonto();
         }
 
-        this.consumos = estadia.getConsumos().stream().map(ConsumoDTO::new).toList();
+        this.idResponsablePago = responsablePagoDTO.getId();
+        this.posicionIVA = responsableHuesped.getPosicionIva();
+        this.montoTotal = monto;
+        this.montoIVA = (float) (monto * 0.21);
+        this.consumos = consumos;
+
+        if(Objects.equals(responsableHuesped.getPosicionIva(), "Consumidor final")){
+            this.tipoFactura = Character.valueOf('A');
+        }
+        else {
+            this.tipoFactura = Character.valueOf('B');
+        }
     }
 }

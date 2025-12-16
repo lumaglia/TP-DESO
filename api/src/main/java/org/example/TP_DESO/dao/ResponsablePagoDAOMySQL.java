@@ -17,14 +17,22 @@ public class ResponsablePagoDAOMySQL implements ResponsablePagoDAO{
     @Autowired
     private PersonaJuridicaRepository pjRepository;
 
+    //FUNCIONES PARA OBTENER CUALQUIER RESPONSABLE PORQUE ESTOY DESESPERADO Y NO SE QUE PONER AAAAAAA
+
+
     // FUNCIONES PARA LA PERSONA FISICA (NO SOY UNA IA SOY JUAN)
     @Override
     public void crearPersonaFisica() throws FracasoOperacion{
 
     }
     @Override
-    public void obtenerPersonaFisica(String cuit) throws FracasoOperacion{
-
+    public PersonaFisica obtenerPersonaFisica(String cuit) throws FracasoOperacion{
+        try{
+            return pfRepository.findByHuesped_Cuil(cuit);
+        }
+        catch (Exception e) {
+            throw new FracasoOperacion("Error: " + e.getMessage());
+        }
     }
     @Override
     public List<PersonaFisica> obtenerTodasPersonaFisica() throws FracasoOperacion{

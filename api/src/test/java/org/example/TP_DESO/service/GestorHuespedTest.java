@@ -8,6 +8,7 @@ import org.example.TP_DESO.dto.HuespedDTO;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -80,6 +81,9 @@ public class GestorHuespedTest {
 
     @Test
     void testBuscarHuesped() throws FracasoOperacion {
+
+        //Faltan poner mensajes en los asserts
+
         // busqueda sin datos
         HuespedDTO filtroVacio = new HuespedDTO();
 
@@ -119,6 +123,72 @@ public class GestorHuespedTest {
 
         verify(huespedDAO, never()).obtenerHuesped();
         verify(huespedDAO, times(1)).obtenerHuesped(any(HuespedDTO.class));
+    }
+
+    @Test
+    void testModificarHuesped() throws FracasoOperacion {
+
+        //Faltan poner mensajes en los asserts
+
+        DireccionDTO direccion = new DireccionDTO("Calle 1", "", "1230", "CiudadA", "ProvinciaB", "PaisC");
+
+        // doc vijeo
+        String tipoDocViejo = "DNI";
+        String nroDocViejo = "111";
+
+        // doc nuevo
+        String tipoDocNuevo = "DNI";
+        String nroDocNuevo = "222";
+
+        HuespedDTO huespedModificado = new HuespedDTO(
+                tipoDocNuevo, nroDocNuevo, "PEREZ", "JUAN", "20-00000000-0", "Consumidor Final",
+                LocalDate.of(2000, 1, 2), "1234", "mail@ejemplo.com", "Estudiante", "Argentina", direccion
+        );
+
+        // caso donde ya existe el documento
+        when(huespedDAO.obtenerHuesped(argThat(dto ->
+                dto != null && tipoDocNuevo.equals(dto.getTipoDoc()) && nroDocNuevo.equals(dto.getNroDoc()) ))).thenReturn(new ArrayList<>(List.of(new HuespedDTO(tipoDocNuevo, nroDocNuevo))));
+
+        DocumentoYaExistente ex = assertThrows(
+                DocumentoYaExistente.class, () -> gestorHuesped.modificarHuesped(tipoDocViejo, nroDocViejo, huespedModificado)
+        );
+
+        assertEquals("El tipo y numero de documento ya existen en el sistema", ex.getMessage());
+        verify(huespedDAO, never()).modificarHuesped(anyString(), anyString(), any(Huesped.class));
+
+        // "camino lindo"
+        reset(huespedDAO);
+
+        when(huespedDAO.obtenerHuesped(argThat(dto ->
+                dto != null && tipoDocNuevo.equals(dto.getTipoDoc()) && nroDocNuevo.equals(dto.getNroDoc()) ))).thenReturn(new ArrayList<>());
+
+        assertDoesNotThrow(() -> gestorHuesped.modificarHuesped(tipoDocViejo, nroDocViejo, huespedModificado));
+
+        ArgumentCaptor<Huesped> captorHuesped = ArgumentCaptor.forClass(Huesped.class);
+        verify(huespedDAO, times(1)).modificarHuesped(eq(tipoDocViejo), eq(nroDocViejo), captorHuesped.capture());
+
+        Huesped enviadoAlDao = captorHuesped.getValue();
+        assertNotNull(enviadoAlDao);
+
+        assertEquals("JUAN", enviadoAlDao.getNombre());
+        assertEquals("PEREZ", enviadoAlDao.getApellido());
+        assertEquals(tipoDocNuevo, enviadoAlDao.getTipoDoc());
+        assertEquals(nroDocNuevo, enviadoAlDao.getNroDoc());
+        assertEquals("20-00000000-0", enviadoAlDao.getCuil());
+        assertEquals("Consumidor Final", enviadoAlDao.getPosicionIva());
+        assertEquals(LocalDate.of(2000, 1, 2), enviadoAlDao.getFechaNac());
+        assertEquals("1234", enviadoAlDao.getTelefono());
+        assertEquals("mail@ejemplo.com", enviadoAlDao.getEmail());
+        assertEquals("Estudiante", enviadoAlDao.getOcupacion());
+        assertEquals("Argentina", enviadoAlDao.getNacionalidad());
+
+        assertNotNull(enviadoAlDao.getDireccion());
+        assertEquals("Calle 1", enviadoAlDao.getDireccion().getDomicilio());
+        assertEquals("", enviadoAlDao.getDireccion().getDepto());
+        assertEquals("1230", enviadoAlDao.getDireccion().getCodigoPostal());
+        assertEquals("CiudadA", enviadoAlDao.getDireccion().getLocalidad());
+        assertEquals("ProvinciaB", enviadoAlDao.getDireccion().getProvincia());
+        assertEquals("PaisC", enviadoAlDao.getDireccion().getPais());
     }
 
 }

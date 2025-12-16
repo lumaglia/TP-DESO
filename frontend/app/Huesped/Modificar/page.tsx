@@ -17,9 +17,8 @@ export default function ModificarHuesped() {
 
     const tipoDocParam = searchParams.get('tipo');
     const nroDocParam = searchParams.get('nro');
-
     const form = useForm<FormValues>();
-    const { register, handleSubmit, formState, watch, trigger, reset } = form;
+    const { register, handleSubmit, formState, watch, trigger, reset, getValues } = form;
     const { errors } = formState;
     const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
     const [ alertaDocumentoOpen, setAlertaDocumentoOpen] = useState(false);
@@ -99,7 +98,10 @@ export default function ModificarHuesped() {
     };
 
     const irALaBaja = () => {
-        const url = `/Huesped/Baja?tipo=${encodeURIComponent(tipoDocParam || '')}&nro=${encodeURIComponent(nroDocParam || '')}`;
+        const nombreActual = getValues('nombre');
+        const apellidoActual = getValues('apellido');
+
+        const url = `/Huesped/Baja?tipo=${encodeURIComponent(tipoDocParam || '')}&nro=${encodeURIComponent(nroDocParam || '')}&nombre=${encodeURIComponent(nombreActual || '')}&apellido=${encodeURIComponent(apellidoActual || '')}`;
         router.push(url);
     }
 
@@ -162,22 +164,24 @@ export default function ModificarHuesped() {
                         </Row>
 
                         <Row>
-                        <Campo field='Provincia' placeholder='Ej. Entre Ríos' isRequired={true}
+                            <button type='button' className='Button'
+                                    onClick={() => setAlertaCancelarOpen(true)}>Cancelar
+                            </button>
+                            <button type='button' className='Button' data-backcolor='red' onClick={irALaBaja}>
+                                Eliminar
+                            </button>
+                            <Campo field='Provincia' placeholder='Ej. Entre Ríos' isRequired={true}
                                validation={validation['provincia']} register={register} errors={errors}/>
-                        <Campo field='Pais' placeholder='Ej. Argentina' isRequired={true}
+                             <Campo field='Pais' placeholder='Ej. Argentina' isRequired={true}
                                validation={validation['pais']} register={register} errors={errors}/>
+                            <button type='submit' className='Button'>Siguiente</button>
                         </Row>
 
-                        <Row>
-                             <button type='button' className='Button'
-                            onClick={() => setAlertaCancelarOpen(true)}>Cancelar
-                             </button>
-                            <button type='button' className='Button' data-backcolor='red' onClick={irALaBaja}>
-                             Eliminar
-                            </button>
 
-                             <button type='submit' className='Button'>Guardar Cambios</button>
-                         </Row>
+
+
+
+
                     </div>
                 </div>
             </form>

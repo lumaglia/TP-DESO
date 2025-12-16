@@ -2,16 +2,16 @@
 import { AlertaCancelar } from '../../Alertas.tsx'
 import Encabezado from '../../Encabezado';
 import '../Alta/AltaHuesped.css'
-import { useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react'
 
 export default function BajaHuesped() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const tipoDoc = searchParams.get('tipo');
-    const nroDoc = searchParams.get('nro');
-    const nombre = searchParams.get('nombre');
-    const apellido = searchParams.get('apellido');
+    const tipoDoc = searchParams.get('tipo')|| '';
+    const nroDoc = searchParams.get('nro')|| '';
+    const nombre = searchParams.get('nombre')|| '';
+    const apellido = searchParams.get('apellido')|| '';
 
     const [openAlertaCancelar, setOpenAlertaCancelar] = useState(false);
     const [controlador, setControlador] = useState('1');
@@ -42,15 +42,24 @@ export default function BajaHuesped() {
         }
     };
 
+    useEffect(() => {
+        if (controlador === '0' || controlador === '2') {
+            const handleKeyPress = () => {
+                router.push('/');
+            };
+            window.addEventListener('keydown', handleKeyPress);
+            return () => window.removeEventListener('keydown', handleKeyPress);
+        }
+    }, [controlador, router]);
+
     if(controlador === '1') {
         return (
             <>
                 <Encabezado titulo='Dar de Baja Huesped'/>
                 <div style={{textAlign: 'center', marginTop: '50px'}}>
-                    <p style={{fontSize: '1.2rem'}}>
-                        Los datos del huesped <strong>{nombre} {apellido}</strong>,
-                        DNI <strong>{nroDoc}</strong> serán ELIMINADOS, ¿desea continuar?
-                    </p>
+                    <h3 style={{fontSize: '1.2rem'}}>
+                        Los datos del huesped {nombre} {apellido}, DNI {nroDoc} serán ELIMINADOS, ¿desea continuar?
+                    </h3>
 
                     <div style={{marginTop: '30px'}}>
 
@@ -74,12 +83,9 @@ export default function BajaHuesped() {
             <>
                 <Encabezado titulo='Dar de Baja Huesped'/>
                 <div style={{textAlign: 'center', marginTop: '50px'}}>
-                    <p>Los datos del huesped <strong>{nombre} {apellido}</strong> han sido eliminados del sistema.</p>
-                    <p style={{marginTop: '20px', color: 'gray'}}>Presione cualquier tecla para continuar</p>
+                    <h3>Los datos del huesped {nombre} {apellido} {tipoDoc} {nroDoc} han sido eliminados del sistema.</h3>
+                    <p style={{textAlign: 'center', marginTop: '20px', color: 'gray'}}>Presione cualquier tecla para continuar</p>
 
-                    <button className='Button' style={{marginTop:'20px'}} onClick={() => router.push('/')}>
-                        Volver al Inicio
-                    </button>
                 </div>
             </>
         );
@@ -91,14 +97,10 @@ export default function BajaHuesped() {
                 <Encabezado titulo='Dar de Baja Huesped'/>
                 <div style={{textAlign: 'center', marginTop: '50px', color: 'red'}}>
 
-                    <p style={{fontWeight: 'bold', fontSize: '1.2rem'}}>
-                        Error: El huesped {nombre} {apellido}, {tipoDoc} {nroDoc}
-                        no puede ser eliminado pues se ha alojado en el hotel en alguna oportunidad.
+                    <p style={{textAlign: 'center', fontWeight: 'bold', fontSize: '1.2rem'}}>
+                        Error: El huesped {nombre} {apellido}, {tipoDoc} {nroDoc} no puede ser eliminado pues se ha alojado en el hotel en alguna oportunidad.
                     </p>
-
-                    <button className='Button' style={{marginTop:'30px'}} onClick={() => router.back()}>
-                        Volver
-                    </button>
+                    <p style={{textAlign: 'center', marginTop: '20px', color: 'gray'}}>Presione cualquier tecla para continuar</p>
                 </div>
             </>
         );

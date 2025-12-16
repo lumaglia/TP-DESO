@@ -129,7 +129,7 @@ export default function CrearFactura() {
         fetch('http://localhost:8081/Factura/Checkout', {
             method: 'POST',
             body: JSON.stringify({
-                idHabitacion: data.idHabitacion,
+                numHabitacion: data.idHabitacion,
                 diaCheckout: diaCheckout
             }),
             headers: {

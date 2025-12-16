@@ -32,7 +32,7 @@ public class FacturaController {
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/Factura/Checkout")
     public ResponseEntity<EstadiaFacturacionDTO> obtenerHuespedesCheckot(
-            @RequestBody RequestCheckoutDTO request) throws FracasoOperacion{
+            @RequestBody RequestCheckoutDTO request) throws FracasoOperacion {
         try{
             EstadiaDTO estadia = gestorFactura.obtenerEstadia(request.getNumHabitacion());
             EstadiaFacturacionDTO resultado = new EstadiaFacturacionDTO(estadia);

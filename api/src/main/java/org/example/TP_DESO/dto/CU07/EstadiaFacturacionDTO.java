@@ -27,7 +27,7 @@ public class EstadiaFacturacionDTO {
 
     public EstadiaFacturacionDTO(EstadiaDTO estadiaDTO) {
         long noches = ChronoUnit.DAYS.between(estadiaDTO.getFechaInicio(), estadiaDTO.getFechaFin());
-        if(LocalDateTime.now().isAfter(ChronoLocalDateTime.from(LocalTime.of(18,0)))){
+        if (LocalDateTime.now().toLocalTime().isAfter(LocalTime.of(18, 0))){
             noches++;
         }
 

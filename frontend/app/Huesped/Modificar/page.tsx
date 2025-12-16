@@ -26,6 +26,7 @@ export default function ModificarHuesped() {
     const [ errorModificado, setErrorModificado ] = useState(false);
     const [ errorSobreescrito, setErrorSobreescrito ] = useState(false);
     const [ noEncontrado, setNoEncontrado] = useState(false);
+    const [ buscando, setBuscando] = useState(true);
     const [ tipoDocc, setTipoDocc ] = useState<string>('');
     const [ nroDocc, setNroDocc ] = useState<string>('');
 
@@ -71,8 +72,9 @@ export default function ModificarHuesped() {
                         };
                         reset(datosParaForm);
                     }
+                    setBuscando(false);
                 })
-                .catch(err => {console.error("Error cargando huesped", err); setNoEncontrado(true)});
+                .catch(err => {console.error("Error cargando huesped", err); setNoEncontrado(true); setBuscando(false);});
         }
     }, [tipoDocParam, nroDocParam, reset]);
 
@@ -126,9 +128,12 @@ export default function ModificarHuesped() {
         <>
             <Encabezado titulo='Modificar Huésped' />
             {
+                buscando?
+                    <><h2 style={{textAlign:'center'}}>Obteniendo Datos del Huesped, espere un momento...</h2></>
+                    :
                 noEncontrado?
                     <>
-                        <h2 style={{textAlign:'center'}}>Error al obtener el huesped</h2>
+                        <h2 style={{textAlign:'center'}}>El huesped no ha sido encontrado</h2>
                         <Row>
                             <button type='button' className='Button'
                                     onClick={() => router.push('/')}>Volver

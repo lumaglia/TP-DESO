@@ -2,6 +2,8 @@ package org.example.TP_DESO.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.TP_DESO.domain.Factura;
+import org.example.TP_DESO.domain.PersonaJuridica;
 
 @Getter
 @Setter
@@ -18,5 +20,12 @@ public class FacturaDTO {
         this.idEstadia = idEstadia;
         this.idPago = idPago;
         this.idResponsable = idResponsable;
+    }
+
+    public FacturaDTO(Factura factura){
+        this.idFactura = factura.getNroFactura();
+        this.idNota = factura.getNotaCredito().getNroNotaCredito();
+        this.idEstadia = factura.getEstadia().getIdEstadia();
+        this.idPago = factura.getPago().getId();
     }
 }

@@ -4,8 +4,10 @@ import org.example.TP_DESO.domain.Factura;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.domain.ResponsablePago;
 import org.example.TP_DESO.dto.CU07.HuespedCheckoutDTO;
+import org.example.TP_DESO.dto.CU07.ItemsFacturaDTO;
 import org.example.TP_DESO.dto.CU07.RequestCheckoutDTO;
 import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
+import org.example.TP_DESO.dto.EstadiaDTO;
 import org.example.TP_DESO.dto.FacturaDTO;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
@@ -28,24 +30,42 @@ public class FacturaController {
     public FacturaController(GestorFactura gestorFactura) {this.gestorFactura = gestorFactura;}
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/Factura/Crear")
-    public ResponseEntity<List<HuespedCheckoutDTO>> obtenerHuespedesCheckot(
+    @PostMapping("/Factura/Checkout")
+    public ResponseEntity<EstadiaDTO> obtenerHuespedesCheckot(
             @RequestBody RequestCheckoutDTO request) throws FracasoOperacion{
         try{
-            List<Huesped> huespedes = gestorFactura.buscarHuespedes(request.getNumHabitacion());
-
-            List<HuespedCheckoutDTO> resultado = huespedes.stream()
-                    .map(h -> new HuespedCheckoutDTO(
-                            h.getNombre(),
-                            h.getApellido(),
-                            h.getCuil()
-                    ))
-                    .toList();
-
+            EstadiaDTO resultado = gestorFactura.obtenerEstadia(request.getNumHabitacion());
             return ResponseEntity.ok().body(resultado);
         } catch (Exception e) {
             throw new FracasoOperacion("Error : " + e.getMessage());
         }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/Factura/BuscarResponsable")
+    public ResponseEntity<List<ItemsFacturaDTO>> buscarResponsablePago
+            (@RequestBody ResponsablePagoDTO responsablePagoDTO) throws FracasoOperacion{
+        try{
+            gestorFactura.buscarResponsablePago(responsablePagoDTO);
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error : " + e.getMessage());
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/Factura/Emitir")
+    public ResponseEntity<Boolean> crearFactura(@RequestBody FacturaDTO facturaDTO) throws DocumentoYaExistente, FracasoOperacion{
+        try{
+            gestorFactura.generarFactura(facturaDTO);
+            return true;
+        }
+        catch (FracasoOperacion e){
+            throw new FracasoOperacion("Error: " + e.getMessage());
+        }
+        catch (Exception e){
+            throw new DocumentoYaExistente("Error : " + e.getMessage());
+        }
+
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -61,4 +81,5 @@ public class FacturaController {
         }
 
     }
+
 }

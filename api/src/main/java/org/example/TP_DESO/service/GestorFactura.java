@@ -40,25 +40,17 @@ public class GestorFactura {
         return singleton_instance;
     }
 
-    public ArrayList<Huesped> buscarHuespedes(String NroHabitacion) throws FracasoOperacion {
+    public EstadiaDTO obtenerEstadia(String NroHabitacion) throws FracasoOperacion {
         LocalDate fecha = LocalDate.now();
-        EstadiaDTO estadiaDTO =  daoEstadia.buscarEstadiaPorHabitacionYFechaFin(NroHabitacion, fecha);
-        ArrayList<HuespedDTO> huespedes = estadiaDTO.getHuespedes();
-        ArrayList<Huesped> result = new ArrayList();
-        for(HuespedDTO h : huespedes){
-            result.add(HuespedMapper.toDomain(h));
-        }
-        return result;
+        return daoEstadia.buscarEstadiaPorHabitacionYFechaFin(NroHabitacion, fecha);
     }
 
-    public void buscarResponsablePago(){
+    public void buscarResponsablePago(ResponsablePagoDTO responsablePagoDTO){
 
     }
 
     public void altaResponsablePago(ResponsablePagoDTO responsablePagoDTO){
-        try{
 
-        }
     }
 
     public void modificarResponsablePago(){

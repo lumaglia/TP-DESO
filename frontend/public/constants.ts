@@ -314,7 +314,7 @@ export enum tiposTablaHabitacion {
     CU015
 }
 
-// ACA LO QUE ES DEL CU07 SOLAMENTE SOY UN HUMANO
+// ACA LO QUE ES DEL CU07 SOLAMENTE. SOY UN HUMANO BTW
 export type FormFactura = {
     idHabitacion : string;
     horaSalida : string;
@@ -324,7 +324,32 @@ export type HuespedCheckout = {
     nombre: string,
     apellido: string,
     cuit: string
+    esMenor: boolean
 }
+
+export type ConsumoFactura = {
+    id: number,
+    descripcion: string,
+    monto: number,
+}
+
+export type Estadia = {
+    id: number
+    nroHabitacion: string,
+    huespedes: HuespedCheckout[],
+    consumos: ConsumoFactura[]
+}
+
+export type FacturaPreviewDTO = {
+    nombreResponsablePago : string;
+    tipoFactura: string;
+    total: number;
+}
+
+export type FacturaDTO = {
+
+}
+
 
 // ACA LO DEL CU12 TAMPOCO SOY UNA IA
 export type FormResponsablePago = {

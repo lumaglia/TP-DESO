@@ -33,9 +33,11 @@ public class Estadia {
     )
     private List<Huesped> huespedes = new ArrayList<>();
 
-
-
     @ManyToOne
     @JoinColumn(name = "id_habitacion", referencedColumnName = "nroHabitacion")
     private Habitacion habitacion;
+
+    @OneToMany
+    @JoinColumn(name = "id_estadia")
+    private List<Consumo> consumos = new ArrayList<>();
 }

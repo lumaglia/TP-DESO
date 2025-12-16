@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import Encabezado from '../../Encabezado'
 import Row from '../../Row'
 import Campo from '../../Campo'
+import { AlertaCancelar } from '../../Alertas.tsx'
 import { fieldTypes } from '../../../public/constants'
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -51,6 +52,7 @@ export default function CrearFactura() {
     const router = useRouter();
     const form = useForm<FormFactura>()
     const {register, handleSubmit, formState: {errors}} = form;
+    const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
     const [estadia, setEstadia] = useState<Estadia | null>(null)
     const [items, setItems] = useState<{
         id: number,
@@ -255,7 +257,8 @@ export default function CrearFactura() {
                         />
                     </Row>
                     <Row>
-                        <button type="submit" className="Button">BUSCAR</button>
+                        <button type='button' className='Button' onClick={() => setAlertaCancelarOpen(true)}>Cancelar</button>
+                        <button type="submit" className="Button">Confirmar</button>
                     </Row>
                 </form>
             )}
@@ -359,6 +362,7 @@ export default function CrearFactura() {
                     </div>
                 </div>
             )}
+            <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la facturación de estadía'/>
         </>
     );
 }

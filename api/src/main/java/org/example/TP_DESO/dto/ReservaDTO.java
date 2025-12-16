@@ -37,6 +37,8 @@ public class ReservaDTO {
         this.habitacion = habitacion;
         this.estadia = estadia;
     }
-
-
+    public ReservaDTO(String apellido, String nombre){
+        this.apellido = apellido;
+        this.nombre = nombre;
+    }
 }

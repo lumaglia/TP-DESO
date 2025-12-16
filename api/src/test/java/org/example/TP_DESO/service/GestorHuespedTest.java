@@ -5,23 +5,20 @@ import org.example.TP_DESO.domain.Direccion;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.DireccionDTO;
 import org.example.TP_DESO.dto.HuespedDTO;
-import org.example.TP_DESO.dto.HuespedDTOBuilder;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -49,16 +46,16 @@ public class GestorHuespedTest {
         Huesped huespedRepetidoDomain = new Huesped("DNI","123","LASNAME","FIRSNAME","","Consumidor Final", LocalDate.of(2000,01,02),"1234","","Estudiante","Argentina",direccionDomain);
         Huesped huespedNuevoDomain = new Huesped("FIRSNAME","LASNAME","LC","245","","Consumidor Final", LocalDate.of(2000,01,02),"1234","","Estudiante","Argentina",direccionDomain);
 
-        List<HuespedDTO> matching = List.of(huespedRepetido);
-        ArrayList<HuespedDTO> vacio = new ArrayList<>();
+        when(huespedDAO.obtenerHuesped(argThat(dto ->
+        dto != null && "DNI".equals(dto.getTipoDoc()) && "123".equals(dto.getNroDoc()) ))).thenReturn(new ArrayList<>(List.of(huespedRepetido)));
 
-        when(huespedDAO.obtenerHuesped(dniNuevo)).thenReturn(vacio);
-        when(huespedDAO.obtenerHuesped(dniRepetido)).thenReturn(new ArrayList<>(matching));
+        when(huespedDAO.obtenerHuesped(argThat(dto ->
+        dto != null && "LC".equals(dto.getTipoDoc()) && "245".equals(dto.getNroDoc()) ))).thenReturn(new ArrayList<>());
 
-        //DocumentoYaExistente f = assertThrows(DocumentoYaExistente.class, () -> gestorHuesped.altaHuesped(huespedRepetido),"Tipo y Numero de Documento ya existentes deberían lanzar excepción.");
+        DocumentoYaExistente f = assertThrows(DocumentoYaExistente.class, () -> gestorHuesped.altaHuesped(huespedRepetido),"Tipo y Numero de Documento ya existentes deberían lanzar excepción.");
         //Revisar pq no sale este ^^^^^^^^^^ assertThrows :(
 
-        //assertEquals("El tipo y numero de documento ya existen en el sistema",f.getMessage(), "Tipo y Numero de Documento ya existentes deberían lanzar excepción.");
+        assertEquals("El tipo y numero de documento ya existen en el sistema",f.getMessage(), "Tipo y Numero de Documento ya existentes deberían lanzar excepción.");
 
 
         assertDoesNotThrow(()-> gestorHuesped.altaHuesped(huespedNuevo), "Huesped no existente en el sistema debería funcionar");
@@ -80,4 +77,48 @@ public class GestorHuespedTest {
         FracasoOperacion f = assertThrows(FracasoOperacion.class,()->gestorHuesped.bajaHuesped(huespedNoExistente), "Huesped debe no existir");
         assertEquals("Huesped no existente",f.getMessage(),"Huesped debe no existir");
     }
+
+    @Test
+    void testBuscarHuesped() throws FracasoOperacion {
+        // busqueda sin datos
+        HuespedDTO filtroVacio = new HuespedDTO();
+
+        ArrayList<HuespedDTO> listaCompleta = new ArrayList<>();
+        listaCompleta.add(new HuespedDTO("DNI", "123"));
+
+        when(huespedDAO.obtenerHuesped()).thenReturn(listaCompleta);
+
+        ArrayList<HuespedDTO> res1 = gestorHuesped.buscarHuesped(filtroVacio);
+
+        assertNotNull(res1);
+        assertEquals(1, res1.size());
+        assertEquals("DNI", res1.get(0).getTipoDoc());
+        assertEquals("123", res1.get(0).getNroDoc());
+
+        verify(huespedDAO, times(1)).obtenerHuesped();
+        verify(huespedDAO, never()).obtenerHuesped(any(HuespedDTO.class));
+
+        //busqueda con datos
+        reset(huespedDAO);
+
+        DireccionDTO direccion = new DireccionDTO("Calle 1", "", "1230", "CiudadA", "ProvinciaB", "PaisC");
+        HuespedDTO filtroConDatos = new HuespedDTO(
+                "LC", "245", "LASNAME", "FIRSNAME", "", "Consumidor Final",
+                LocalDate.of(2000, 1, 2), "1234", "", "Estudiante", "Argentina", direccion
+        );
+
+        ArrayList<HuespedDTO> filtrados = new ArrayList<>(List.of(new HuespedDTO("LC", "245")));
+        when(huespedDAO.obtenerHuesped(any(HuespedDTO.class))).thenReturn(filtrados);
+
+        ArrayList<HuespedDTO> res2 = gestorHuesped.buscarHuesped(filtroConDatos);
+
+        assertNotNull(res2);
+        assertEquals(1, res2.size());
+        assertEquals("LC", res2.get(0).getTipoDoc());
+        assertEquals("245", res2.get(0).getNroDoc());
+
+        verify(huespedDAO, never()).obtenerHuesped();
+        verify(huespedDAO, times(1)).obtenerHuesped(any(HuespedDTO.class));
+    }
+
 }

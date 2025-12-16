@@ -10,6 +10,9 @@ import org.example.TP_DESO.dto.EstadiaDTO;
 import org.example.TP_DESO.dto.HuespedDTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
@@ -23,11 +26,14 @@ public class EstadiaFacturacionDTO {
     private ArrayList<ConsumoDTO> consumos;
 
     public EstadiaFacturacionDTO(EstadiaDTO estadiaDTO) {
-        long dias = ChronoUnit.DAYS.between(estadiaDTO.getFechaInicio(), estadiaDTO.getFechaFin());
+        long noches = ChronoUnit.DAYS.between(estadiaDTO.getFechaInicio(), estadiaDTO.getFechaFin());
+        if(LocalDateTime.now().isAfter(ChronoLocalDateTime.from(LocalTime.of(18,0)))){
+            noches++;
+        }
 
         this.id = estadiaDTO.getId();
         this.nroHabitacion = estadiaDTO.getHabitacion().getNroHabitacion();
-        this.montoEstadia = dias * estadiaDTO.getHabitacion().getPrecioNoche();
+        this.montoEstadia = noches * estadiaDTO.getHabitacion().getPrecioNoche();
         this.huespedes = estadiaDTO.getHuespedes();
         this.consumos = estadiaDTO.getConsumos();
     }

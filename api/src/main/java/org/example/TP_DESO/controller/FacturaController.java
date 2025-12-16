@@ -38,6 +38,9 @@ public class FacturaController {
             EstadiaFacturacionDTO resultado = new EstadiaFacturacionDTO(estadia);
             return ResponseEntity.ok().body(resultado);
         } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("Estadía no encontrada con habitacion y fecha fin:")){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
             throw new FracasoOperacion("Error : " + e.getMessage());
         }
     }

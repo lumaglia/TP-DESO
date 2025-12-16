@@ -137,38 +137,41 @@ export default function CrearFactura() {
             }
         })
             .then(res => {
-                if (res.status === 204) {
-                    return []
-                }
-                return res.json()
-            })
-            .then((data: Estadia) => {
-                setEstadia(data)
+                if (res.ok) {
+                    res.json().then((data: Estadia) => {
+                        console.log(data)
+                        setEstadia(data)
 
-                const itemsFactura = [
-                    {
-                        id: data.id,
-                        tipo: 'Estadia',
-                        descripcion: 'Costo de la estadia',
-                        monto: data.montoEstadia,
-                        iva: Math.round(data.montoEstadia * 0.21),
-                        seleccionado: true,
-                        procesado: false
-                    },
-                    ...data.consumos.map(c => ({
-                        id: c.id,
-                        tipo: 'Consumo',
-                        descripcion: c.descripcion,
-                        monto: c.monto,
-                        iva: Math.round(c.monto * 0.21),
-                        seleccionado: true,
-                        procesado: false
-                    }))
-                ]
-                setItems(itemsFactura)
-                setHuespedes(data.huespedes)
-                setEstado(EstadosCU07.SeleccionResponsable)
+                        const itemsFactura = [
+                            {
+                                id: data.id,
+                                tipo: 'Estadia',
+                                descripcion: 'Costo de la estadia',
+                                monto: data.montoEstadia,
+                                iva: Math.round(data.montoEstadia * 0.21),
+                                seleccionado: true,
+                                procesado: false
+                            },
+                            ...data.consumos?.map(c => ({
+                                id: c.id,
+                                tipo: 'Consumo',
+                                descripcion: c.descripcion,
+                                monto: c.monto,
+                                iva: Math.round(c.monto * 0.21),
+                                seleccionado: true,
+                                procesado: false
+                            })) ?? []
+                        ]
+                        setItems(itemsFactura)
+                        setHuespedes(data.huespedes)
+                        setEstado(EstadosCU07.SeleccionResponsable)
+                    })
+                }else{
+                    console.log(res.status, "NO SE ENCONTRO RESERVA, INDICAR MENSAJE DE ERROR")
+                }
+
             })
+
     }
 
     const submitResponsable = () => {
@@ -188,10 +191,16 @@ export default function CrearFactura() {
                 }),
                 headers: {'Content-Type': 'application/json'}
             })
-                .then(res => res.json())
-                .then(() => {
-                    setEstado(EstadosCU07.ConfirmarFactura)
+                .then(res => {
+                    if (res.ok) {
+                        res.json().then(() => {
+                            setEstado(EstadosCU07.ConfirmarFactura)
+                        })
+                    }else{
+                        console.log(res.status)
+                    }
                 })
+
         }
     }
 

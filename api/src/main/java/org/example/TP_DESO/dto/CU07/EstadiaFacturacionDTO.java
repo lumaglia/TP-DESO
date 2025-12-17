@@ -16,6 +16,7 @@ import java.time.LocalTime;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -33,12 +34,16 @@ public class EstadiaFacturacionDTO {
     }
 
     private Float montoEstadia;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
     private ArrayList<HuespedCheckoutDTO> huespedes;
     private ArrayList<ConsumosEstadiaDTO> consumos;
 
     public EstadiaFacturacionDTO(EstadiaDTO estadiaDTO, float montoEstadia, ArrayList<Consumo> consumos) {
         this.montoEstadia = montoEstadia;
-        this.huespedes = (ArrayList<HuespedCheckoutDTO>) estadiaDTO.getHuespedes().stream().map(HuespedCheckoutDTO::new).toList();
-        this.consumos = (ArrayList<ConsumosEstadiaDTO>) consumos.stream().map(ConsumosEstadiaDTO::new).toList();
+        this.fechaInicio = estadiaDTO.getFechaInicio();
+        this.fechaFin = estadiaDTO.getFechaFin();
+        this.huespedes = estadiaDTO.getHuespedes().stream().map(HuespedCheckoutDTO::new).collect(Collectors.toCollection(ArrayList::new));
+        this.consumos = consumos.stream().map(ConsumosEstadiaDTO::new).collect(Collectors.toCollection(ArrayList::new));
     }
 }

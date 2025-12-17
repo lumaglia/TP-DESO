@@ -1,8 +1,11 @@
 package org.example.TP_DESO.service;
 
-import org.example.TP_DESO.dao.*;
-import org.example.TP_DESO.dao.*;
+import org.example.TP_DESO.dao.DireccionDAOMySQL;
 import org.example.TP_DESO.dao.Mappers.DireccionMapper;
+import org.example.TP_DESO.dao.ResponsablePagoDAOMySQL;
+import org.example.TP_DESO.dao.*;
+import org.example.TP_DESO.dao.FacturaDAOMySQL;
+import org.example.TP_DESO.dao.NotaCreditoDAOMySQL;
 import org.example.TP_DESO.domain.Factura;
 import org.example.TP_DESO.domain.PersonaFisica;
 import org.example.TP_DESO.domain.PersonaJuridica;
@@ -69,19 +72,23 @@ public class GestorFactura {
         catch (Exception e){ throw new FracasoOperacion("Error: " + e.getMessage()); }
     }
 
-    public void altaResponsablePago(ResponsablePagoDTO responsablePagoDTO) throws FracasoOperacion {
+    public ResponsablePagoDTO altaResponsablePago(ResponsablePagoDTO responsablePagoDTO) throws FracasoOperacion {
         try {
             if (responsablePagoDTO == null) {
                 throw new FracasoOperacion("El responsablePagoDTO no puede ser null");
             }
             if (responsablePagoDTO.getCuit() == null || responsablePagoDTO.getCuit().isBlank()) {
-                throw new FracasoOperacion("El CUIT no puede ser vacío");
+                throw new FracasoOperacion("El CUIT/CUIL no puede ser vacío");
             }
 
             PersonaFisica pf = daoResponsablePago.obtenerPersonaFisica(responsablePagoDTO.getCuit());
+            if (pf != null) {
+                return new ResponsablePagoDTO(pf);
+            }
+
             PersonaJuridica pjExistente = daoResponsablePago.obtenerPersonaJuridica(responsablePagoDTO.getCuit());
-            if (pf != null || pjExistente != null) {
-                throw new FracasoOperacion("Ya existe un responsable de pago con ese CUIT/CUIL");
+            if (pjExistente != null) {
+                return new ResponsablePagoDTO(pjExistente);
             }
 
             boolean esJuridica = responsablePagoDTO.getRazonSocial() != null
@@ -97,10 +104,15 @@ public class GestorFactura {
             pj.setCuit(responsablePagoDTO.getCuit());
             pj.setTelefono(responsablePagoDTO.getTelefono());
 
+            pj.setDireccion(
+                    direccionDAO.crearDireccion(
+                            DireccionMapper.toDomain(responsablePagoDTO.getDireccion())
+                    )
+            );
 
-            pj.setDireccion(direccionDAO.crearDireccion(DireccionMapper.toDomain(responsablePagoDTO.getDireccion())));
+            PersonaJuridica guardada = daoResponsablePago.crearPersonaJuridica(pj);
+            return new ResponsablePagoDTO(guardada);
 
-            daoResponsablePago.crearPersonaJuridica(pj);
         } catch (FracasoOperacion e) {
             throw e;
         } catch (Exception e) {

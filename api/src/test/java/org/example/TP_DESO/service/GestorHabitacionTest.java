@@ -153,4 +153,43 @@ public class GestorHabitacionTest {
         verify(dao, never()).obtenerTodas();
         verify(dao, never()).obtenerTodasDomainForm();
     }
+
+    @Test
+    void testMostrarHabitacionesDTO_error() throws FracasoOperacion {
+
+        when(dao.obtenerTodas()).thenThrow(new RuntimeException("Error fatal"));
+
+        FracasoOperacion ex = assertThrows(FracasoOperacion.class,
+            () -> gestorHabitacion.mostrarHabitacionesDTO());
+
+        assertTrue(ex.getMessage().contains("Error al obtener las habitaciones."));
+    }
+
+    @Test
+    void testObtenerHabitacion_vacia() throws FracasoOperacion {
+        when(dao.obtenerHabitacion("999")).thenReturn(null);
+
+        HabitacionDTO res = gestorHabitacion.obtenerHabitacion("999");
+        assertNull(res);
+    }
+    @Test
+    void testMostrarHabitacionDomain_error_Runtime() throws FracasoOperacion {
+        when(dao.obtenerTodasDomainForm()).thenThrow(new RuntimeException("Error inesperado en el servidor"));
+
+        FracasoOperacion ex = assertThrows(FracasoOperacion.class,
+                () -> gestorHabitacion.mostrarHabitacionDomain());
+
+        assertTrue(ex.getMessage().contains("Error al obtener las habitaciones."));
+        assertTrue(ex.getMessage().contains("Error inesperado en el servidor"));
+
+        verify(dao, times(1)).obtenerTodasDomainForm();
+    }
+
+    @Test
+    void testObtenerHabitacion_error_inesperado() throws FracasoOperacion {
+
+        when(dao.obtenerHabitacion(anyString())).thenThrow(new RuntimeException("Database down"));
+
+        assertThrows(RuntimeException.class, () -> gestorHabitacion.obtenerHabitacion("101"));
+    }
 }

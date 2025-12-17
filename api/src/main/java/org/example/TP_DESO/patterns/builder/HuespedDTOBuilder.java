@@ -1,4 +1,7 @@
-package org.example.TP_DESO.dto;
+package org.example.TP_DESO.patterns.builder;
+
+import org.example.TP_DESO.dto.DireccionDTO;
+import org.example.TP_DESO.dto.HuespedDTO;
 
 import java.time.LocalDate;
 

@@ -1,11 +1,9 @@
-package org.example.TP_DESO.dao.Mappers;
+package org.example.TP_DESO.patterns.mappers;
 
 import org.example.TP_DESO.domain.Direccion;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.DireccionDTO;
 import org.example.TP_DESO.dto.HuespedDTO;
-
-import java.time.LocalDate;
 
 public class HuespedMapper {
     static public HuespedDTO toDTO(Huesped h) {

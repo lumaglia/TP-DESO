@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class PagoParcial {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(optional = false)

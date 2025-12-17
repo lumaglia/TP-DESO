@@ -29,8 +29,18 @@ public abstract class Habitacion {
         this.capacidad = capacidad;
         this.tamanno = tamanno;
     }
-    
+
     static public void sortHabitacionesByPrice(List<Habitacion> lh){
-        lh.sort((l, r) -> Float.compare(l.getPrecioNoche(), r.getPrecioNoche()));
+        org.example.TP_DESO.patterns.strategy.HabitacionSorter.sort(
+                lh,
+                new org.example.TP_DESO.patterns.strategy.SortByPrecioNoche()
+        );
+    }
+
+    static public void sortHabitaciones(
+            List<Habitacion> lh,
+            org.example.TP_DESO.patterns.strategy.HabitacionSortingStrategy strategy
+    ) {
+        org.example.TP_DESO.patterns.strategy.HabitacionSorter.sort(lh, strategy);
     }
 }

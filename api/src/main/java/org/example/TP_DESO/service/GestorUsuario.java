@@ -1,9 +1,8 @@
 package org.example.TP_DESO.service;
 
 import jakarta.transaction.Transactional;
-import org.example.TP_DESO.dao.Mappers.UsuarioMapper;
+import org.example.TP_DESO.patterns.mappers.UsuarioMapper;
 import org.example.TP_DESO.dao.UsuarioDAO;
-import org.example.TP_DESO.dao.UsuarioDAOMySQL;
 import org.example.TP_DESO.domain.RefreshToken;
 import org.example.TP_DESO.dto.UsuarioDTO;
 import org.example.TP_DESO.domain.Usuario;

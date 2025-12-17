@@ -1,4 +1,4 @@
-package org.example.TP_DESO.dao.Mappers;
+package org.example.TP_DESO.patterns.mappers;
 
 import org.example.TP_DESO.domain.Reserva;
 import org.example.TP_DESO.dto.ReservaDTO;

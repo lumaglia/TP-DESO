@@ -1,10 +1,10 @@
 package org.example.TP_DESO.service;
 
 import org.example.TP_DESO.dao.*;
-import org.example.TP_DESO.dao.Mappers.EstadiaMapper;
-import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
-import org.example.TP_DESO.dao.Mappers.HuespedMapper;
-import org.example.TP_DESO.dao.Mappers.ReservaMapper;
+import org.example.TP_DESO.patterns.mappers.EstadiaMapper;
+import org.example.TP_DESO.patterns.mappers.HabitacionMapper;
+import org.example.TP_DESO.patterns.mappers.HuespedMapper;
+import org.example.TP_DESO.patterns.mappers.ReservaMapper;
 import org.example.TP_DESO.domain.*;
 import org.example.TP_DESO.dto.*;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class GestorReserva {
@@ -68,7 +66,7 @@ public class GestorReserva {
         if(reservas.isEmpty()){
             throw new FracasoOperacion("Error al cancelar reserva: No hay reservas pendientes de cancelar con los argumentos enviados");
         }else{
-            Reserva reserva = ReservaMapper.toDomain(reservas.getFirst());
+            Reserva reserva = ReservaMapper.toDomain(reservas.get(0));
             reserva.setCancelada(true);
             daoReserva.modificarReserva(reserva.getIdReserva(),reserva);
         }
@@ -115,7 +113,7 @@ public class GestorReserva {
             if(!reservaList.isEmpty()){
                 EstadiaDTO estadiaDTO1 = daoEstadia.buscarEstadiaPorHabitacionYFechaFin(habitacion.getNroHabitacion(), estadia.getFechaFin());
                 Estadia estadia1 = EstadiaMapper.toDomain(estadiaDTO1);
-                Reserva reserva = reservaList.getFirst();
+                Reserva reserva = reservaList.get(0);
                 reserva.setEstadia(estadia1);
                 daoReserva.modificarReserva(reserva.getIdReserva(),reserva);
             }

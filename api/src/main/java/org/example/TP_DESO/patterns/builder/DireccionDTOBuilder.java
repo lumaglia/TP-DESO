@@ -1,4 +1,6 @@
-package org.example.TP_DESO.dto;
+package org.example.TP_DESO.patterns.builder;
+
+import org.example.TP_DESO.dto.DireccionDTO;
 
 public class DireccionDTOBuilder {
     private String domicilio;

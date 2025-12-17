@@ -192,6 +192,56 @@ public class GestorReservaTest {
     }
 
     @Test
+    void testCheckIn_conReservaExistente() throws FracasoOperacion {
+
+        HabitacionDTO habDTO = new DobleEstandarDTO("101", 1000, 2, "20m2", 2, 0);
+        ArrayList<HuespedDTO> huespedes = new ArrayList<>(List.of(new HuespedDTO("DNI", "123")));
+        EstadiaDTO estadiaDTO = new EstadiaDTO(LocalDate.now(), LocalDate.now().plusDays(2), huespedes, habDTO);
+
+
+        when(gestorHabitacion.obtenerHabitacion("101")).thenReturn(habDTO);
+        
+        ReservaDTO reservaExistente = new ReservaDTO(LocalDate.now(), LocalDate.now(), LocalDate.now().plusDays(2), 
+                                                    "PEREZ", "JUAN", "123", false, habDTO, null);
+        reservaExistente.setId(99L);
+        
+        when(daoReserva.obtenerReservasEntreFechas(any(), any())).thenReturn(new ArrayList<>(List.of(reservaExistente)));
+        
+
+        EstadiaDTO estadiaCreada = new EstadiaDTO(LocalDate.now(), LocalDate.now().plusDays(2), huespedes, habDTO);
+        estadiaCreada.setIdEstadia(1L);
+        when(daoEstadia.buscarEstadiaPorHabitacionYFechaFin(eq("101"), any())).thenReturn(estadiaCreada);
+
+
+        boolean ok = gestorReserva.checkIn(estadiaDTO);
+
+
+        assertTrue(ok);
+        verify(daoEstadia).crearEstadia(any());
+        verify(daoReserva).modificarReserva(eq(99L), any()); // Verifica que se asoció la estadía a la reserva
+    }
+
+    @Test
+    void testGetReservaEstadia_conDatos() throws FracasoOperacion {
+
+        DobleEstandar h1 = new DobleEstandar();
+        h1.setNroHabitacion("101");
+        when(gestorHabitacion.mostrarHabitacionDomain()).thenReturn(new ArrayList<>(List.of(h1)));
+
+
+        Reserva r = new Reserva();
+        r.setHabitacion(h1);
+        r.setFechaInicio(LocalDate.now());
+        when(daoReserva.obtenerReservasEntreFechasDomainForm(any(), any())).thenReturn(new ArrayList<>(List.of(r)));
+
+        ArrayList<ReservasEstadiasPorHabitacionDTO> resultado = gestorReserva.getReservaEstadia(LocalDate.now(), LocalDate.now());
+
+        assertFalse(resultado.isEmpty());
+        assertEquals("101", resultado.get(0).getHabitacion().getNroHabitacion());
+        assertFalse(resultado.get(0).getReservas().isEmpty());
+    }
+
+    @Test
     void testGetReservaEstadia_ok_vacio() throws FracasoOperacion {
         ArrayList<Habitacion> habitaciones = new ArrayList<>();
         DobleEstandar h1 = new DobleEstandar();

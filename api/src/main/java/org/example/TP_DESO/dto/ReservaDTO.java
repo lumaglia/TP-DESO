@@ -2,6 +2,8 @@ package org.example.TP_DESO.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +11,8 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class ReservaDTO {
     private Long id;
     private LocalDate fechaReserva;
@@ -33,6 +37,8 @@ public class ReservaDTO {
         this.habitacion = habitacion;
         this.estadia = estadia;
     }
-
-
+    public ReservaDTO(String apellido, String nombre){
+        this.apellido = apellido;
+        this.nombre = nombre;
+    }
 }

@@ -46,7 +46,7 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
 
         try {
             List<Estadia> estadias = estadiaRepository
-                    .findByFechaFinAfterAndFechaInicioBefore(fechaInicio, fechaFin);
+                    .findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(fechaInicio, fechaFin);
 
             if (estadias.isEmpty()) {
                 throw new FracasoOperacion("No existen estadías en ese rango de fechas");
@@ -69,7 +69,7 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
     public ArrayList<Estadia> obtenerEstadiaEntreFechasDomainForm(LocalDate fechaInicio, LocalDate fechaFin)
         throws FracasoOperacion {
         try{
-            ArrayList<Estadia> estadias = estadiaRepository.findByFechaFinAfterAndFechaInicioBefore(fechaInicio, fechaFin);
+            ArrayList<Estadia> estadias = estadiaRepository.findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(fechaInicio, fechaFin);
 
             if (estadias.isEmpty()) {
                 throw new FracasoOperacion("No existen estadías en ese rango de fechas");
@@ -167,6 +167,7 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
             }
 
             return new EstadiaDTO(
+                    e.getIdEstadia(),
                     e.getFechaInicio(),
                     e.getFechaFin(),
                     huespedDTO,
@@ -241,6 +242,9 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
         } catch (Exception e) {
             throw new FracasoOperacion("Error al buscar estadías del huésped: " + e.getMessage());
         }
+    }
+    public boolean existeEstadiaDeHuesped(String tipoDoc, String nroDoc) {
+        return estadiaRepository.existsByHuespedes_TipoDocAndHuespedes_NroDoc(tipoDoc, nroDoc);
     }
 
 

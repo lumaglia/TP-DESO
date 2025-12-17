@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -140,9 +141,22 @@ public class HuespedDAOMySQL implements HuespedDAO {
             Optional<Huesped> existente = huespedRepository.findByTipoDocAndNroDoc(tipoDoc, numeroDoc);
             if (existente.isPresent()) {
                 Huesped h = existente.get();
-                // Actualizar campos
-                h.setTipoDoc(huesped.getTipoDoc());
-                h.setNroDoc(huesped.getNroDoc());
+
+                if(!(Objects.equals(h.getTipoDoc(), huesped.getTipoDoc())&&Objects.equals(h.getNroDoc(), huesped.getNroDoc()))){
+                    try{
+                        huespedRepository.delete(h);
+                    }catch(Exception e){
+                        throw new FracasoOperacion("No se puede alterar Documento:" + e.getMessage());
+                    }
+                    h.setTipoDoc(huesped.getTipoDoc());
+                    h.setNroDoc(huesped.getNroDoc());
+                }
+
+                if (huesped.getDireccion() != null) {
+                    Direccion direccionProcesada = direccionDAO.crearDireccion(huesped.getDireccion());
+                    h.setDireccion(direccionProcesada);
+                }
+
                 h.setApellido(huesped.getApellido());
                 h.setNombre(huesped.getNombre());
                 h.setCuil(huesped.getCuil());
@@ -152,9 +166,8 @@ public class HuespedDAOMySQL implements HuespedDAO {
                 h.setEmail(huesped.getEmail());
                 h.setOcupacion(huesped.getOcupacion());
                 h.setNacionalidad(huesped.getNacionalidad());
-                h.setDireccion(huesped.getDireccion());
 
-                direccionDAO.crearDireccion(huesped.getDireccion());
+
                 huespedRepository.save(h);
             } else {
                 throw new FracasoOperacion("Huésped no encontrado con tipoDoc: " + tipoDoc + " y nroDoc: " + numeroDoc);

@@ -12,8 +12,8 @@ import java.util.Optional;
 @Repository
 public interface EstadiaRepository extends JpaRepository<Estadia, Long> {
 
-    ArrayList<Estadia> findByFechaFinAfterAndFechaInicioBefore(LocalDate desde, LocalDate hasta);
+    ArrayList<Estadia> findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(LocalDate desde, LocalDate hasta);
     Optional<Estadia> findByHabitacionNroHabitacionAndFechaFin(String nroHabitacion, LocalDate fechaFin);
     ArrayList<Estadia> findByHuespedesTipoDocAndHuespedesNroDoc(String tipoDoc, String nroDoc);
-
+    boolean existsByHuespedes_TipoDocAndHuespedes_NroDoc(String tipoDoc, String nroDoc);
 }

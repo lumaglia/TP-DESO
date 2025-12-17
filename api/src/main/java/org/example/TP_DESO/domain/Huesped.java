@@ -31,7 +31,7 @@ public class Huesped {
     private String ocupacion;
     private String nacionalidad;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.MERGE})
     @JoinColumns({
         @JoinColumn(name = "direccion_domicilio", referencedColumnName = "domicilio"),
         @JoinColumn(name = "direccion_depto", referencedColumnName = "depto"),

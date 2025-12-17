@@ -8,6 +8,7 @@ import Campo from '../../Campo.tsx'
 import Encabezado from '../../Encabezado.tsx'
 import { AlertaCancelar, AlertaDocumento } from '../../Alertas.tsx'
 import Row from '../../Row.tsx'
+import { useFetch } from '@/hooks/useFetch'
 import { validation, comboValues, FormValues, fieldTypes } from '../../../public/constants.ts'
 import '../../globals.css'
 import './AltaHuesped.css'
@@ -21,6 +22,7 @@ function AltaHuesped() {
     const [ alertaDocumentoOpen, setAlertaDocumentoOpen] = useState(false);
     const formRef = useRef<FieldValues>(null);
     const router = useRouter();
+    const fetchApi = useFetch();
 
     const posicionIVA = watch('posicionIva');
     if(validation['cuil'].required.value && posicionIVA !== 'Responsable Inscripto'){
@@ -32,7 +34,7 @@ function AltaHuesped() {
     const onSubmit = (data: FieldValues) => {
         data.fechaNac = data.fechaNac.toLocaleDateString('en-CA');
         formRef.current = data
-        fetch('http://localhost:8081/Huesped/Alta', {
+        fetchApi('/Huesped/Alta', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
@@ -40,9 +42,9 @@ function AltaHuesped() {
                 'Content-Type': 'application/json'
             }
         }).then(res => {
-            if (res.status === 409) {
+            if (res?.status === 409) {
                 setAlertaDocumentoOpen(true);
-            }else if(res.ok) {
+            }else if(res?.ok) {
                 router.push(`/Huesped/Alta/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
             }
         })

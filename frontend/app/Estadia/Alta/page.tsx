@@ -8,6 +8,7 @@ import Row from '../../Row'
 import Encabezado from '../../Encabezado.tsx'
 import BuscarHabitacion from '../../Habitacion/Buscar/page.tsx'
 import { AlertaCancelar, AlertaReserva } from '../../Alertas.tsx'
+import { useFetch } from '@/hooks/useFetch'
 import '../../globals.css'
 import '../../Huesped/Alta/AltaHuesped.css'
 import {comboValues, fieldTypes, tiposTablaHabitacion, infoDisponibilidad} from '../../../public/constants.ts'
@@ -42,6 +43,7 @@ export default function BuscarHuesped() {
     const [fechaInicio, setFechaInicio] = useState<string>("Jueves 04-12-2025 12:00:00");
     const [fechaFin, setFechaFin] = useState<string>("Martes 09-12-2025 10:00:00");
     const [conflict, setConflict] = useState<Array<any>>([])
+    const fetchApi = useFetch()
 
     function onSubmit(data: any) {
         for (let key in data) {
@@ -50,7 +52,7 @@ export default function BuscarHuesped() {
             }
         }
         setAlertaHuespedNoEncontradoOpen(false)
-        fetch('http://localhost:8081/Huesped/Buscar', {
+        fetchApi('/Huesped/Buscar', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
@@ -58,10 +60,10 @@ export default function BuscarHuesped() {
                 'Content-Type': 'application/json'
             }
         }).then(res => {
-            if (res.status === 204) {
+            if (res?.status === 204) {
                 setHuespedes([])
                 setAlertaHuespedNoEncontradoOpen(true)
-            }else if(res.ok) {
+            }else if(res?.ok) {
                 res.json().then(data => {
                     setHuespedes(data)
                 })
@@ -150,7 +152,7 @@ export default function BuscarHuesped() {
             }
         })
         console.log(body)
-        fetch('http://localhost:8081/Habitacion/Ocupar/', {
+        fetchApi('/Habitacion/Ocupar/', {
             method: 'POST',
             body: JSON.stringify(body),
             headers: {
@@ -158,7 +160,7 @@ export default function BuscarHuesped() {
                 'Content-Type': 'application/json'
             }
         }).then(res => {
-            if(res.ok) {
+            if(res?.ok) {
                 console.log("EXITO")
                 res.json().then(data => {
                     console.log(data)

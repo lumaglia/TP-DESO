@@ -4,6 +4,7 @@ import Encabezado from '../../Encabezado';
 import '../Alta/AltaHuesped.css'
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react'
+import { useFetch } from '@/hooks/useFetch'
 
 export default function BajaHuesped() {
     const router = useRouter();
@@ -16,6 +17,7 @@ export default function BajaHuesped() {
     const [openAlertaCancelar, setOpenAlertaCancelar] = useState(false);
     const [controlador, setControlador] = useState('1');
     const [mensajeError, setMensajeError] = useState('');
+    const fetchApi = useFetch();
     const confirmarEliminacion = async () => {
         const datosBorrar = {
             tipoDoc: tipoDoc,
@@ -23,17 +25,20 @@ export default function BajaHuesped() {
         };
 
         try {
-            const res = await fetch('http://localhost:8081/Huesped/Baja', {
+            const res = await fetchApi('/Huesped/Baja', {
                 method: 'DELETE',
                 body: JSON.stringify(datosBorrar),
-                headers: { 'Content-Type': 'application/json' }
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
             });
 
-            if (res.ok) {
+            if (res?.ok) {
                 setControlador('0');
             } else {
-                const textoError = await res.text();
-                setMensajeError(textoError);
+                const textoError = await res?.text();
+                if(textoError)setMensajeError(textoError);
                 setControlador('2');
             }
         } catch (error) {

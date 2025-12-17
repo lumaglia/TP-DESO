@@ -79,6 +79,15 @@ body {
     min-width: 100px;
     max-height: 41px;
     align-self: flex-end;
+
+    &:disabled {
+        background-color: rgba(84, 95, 113, 0.47);
+        &:hover{
+            background-color: rgba(84, 95, 113, 0.47);
+
+        }
+    }
+
 }
 .Button:hover {
     background-color: #6f7c97;
@@ -149,4 +158,22 @@ p {
 }
 .AlignCenter {
     align-items: center;
+}
+
+.LogoutButton {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    height: fit-content;
+
+    &:hover {
+        background-color: #f0f0f0;
+    }
 }

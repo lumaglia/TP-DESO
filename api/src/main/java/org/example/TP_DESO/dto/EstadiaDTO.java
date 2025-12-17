@@ -35,11 +35,19 @@ public class EstadiaDTO {
         this.consumos = null;
     }
     public EstadiaDTO(Estadia estadia) {
-        this.id = estadia.getIdEstadia();
+        this.idEstadia = estadia.getIdEstadia();
         this.fechaInicio = estadia.getFechaInicio();
         this.fechaFin = estadia.getFechaFin();
         this.habitacion = HabitacionMapper.toDTO(estadia.getHabitacion());
         this.huespedes = (ArrayList<HuespedDTO>) estadia.getHuespedes().stream().map(HuespedMapper::toDTO).toList();
         this.consumos = (ArrayList<ConsumoDTO>) estadia.getConsumos().stream().map(ConsumoDTO::new).toList();
+    }
+
+    public EstadiaDTO(Long idEstadia, LocalDate fechaInicio, LocalDate fechaFin, ArrayList<HuespedDTO> huespedDTO, HabitacionDTO habitacionDTO) {
+        this.idEstadia = idEstadia;
+        this.fechaInicio = fechaInicio;
+        this.fechaFin = fechaFin;
+        this.huespedes = huespedDTO;
+        this.habitacion = habitacionDTO;
     }
 }

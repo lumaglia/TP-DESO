@@ -29,8 +29,11 @@ export default function Home() {
                     <Link href='/Reserva/Baja'>
                         <button className={'Button'}>Cancelar Reserva</button>
                     </Link>
-                    <Link href='/Habitacion/Buscar'>
-                        <button className='Button'>Mostrar Estado Habitaciones</button>
+                    <Link href='/Factura/Crear'>
+                        <button className='Button'>Facturar Habitación</button>
+                    </Link>
+                    <Link href='/ResponsablePago/Alta'>
+                        <button className='Button'>Dar de alta Responsable de Pago</button>
                     </Link>
                 </Row>
             </div>

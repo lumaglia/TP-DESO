@@ -297,7 +297,6 @@ export const MapNameToApi : {[key: string]: string} = {
     'Usuario': 'usuario',
     'Contraseña': 'contrasenna',
     'Introduzca de nuevo la contraseña': 'verificarContrasenna',
-    'Hasta Fecha': 'fechaFin',
     'Numero de habitación' : "idHabitacion",
     "Hora de salida" : "horaSalida",
     "Razon Social": "razonSocial",

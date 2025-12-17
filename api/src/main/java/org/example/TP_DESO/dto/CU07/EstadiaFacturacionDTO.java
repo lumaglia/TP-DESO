@@ -31,7 +31,7 @@ public class EstadiaFacturacionDTO {
             noches++;
         }
 
-        this.id = estadiaDTO.getId();
+        this.id = estadiaDTO.getIdEstadia();
         this.nroHabitacion = estadiaDTO.getHabitacion().getNroHabitacion();
         this.montoEstadia = noches * estadiaDTO.getHabitacion().getPrecioNoche();
         this.huespedes = estadiaDTO.getHuespedes();

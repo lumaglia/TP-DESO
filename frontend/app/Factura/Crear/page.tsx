@@ -9,6 +9,7 @@ import Campo from '../../Campo'
 import { AlertaCancelar } from '../../Alertas.tsx'
 import { fieldTypes } from '../../../public/constants'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useFetch } from '@/hooks/useFetch'
 
 type FormFactura = {
     idHabitacion : string;
@@ -54,6 +55,7 @@ export default function CrearFactura() {
     const {register, handleSubmit, formState: {errors}} = form;
     const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
     const [estadia, setEstadia] = useState<Estadia | null>(null)
+    const fetchApi = useFetch();
     const [items, setItems] = useState<{
         id: number,
         tipo: string,
@@ -126,19 +128,19 @@ export default function CrearFactura() {
 
     const submitCheckout = (data: FormFactura) => {
         const diaCheckout = new Date().toISOString().split('T')[0];
-        fetch('http://localhost:8081/Factura/Checkout', {
+        fetchApi('/Factura/Checkout', {
             method: 'POST',
             body: JSON.stringify({
                 numHabitacion: data.idHabitacion,
                 diaCheckout: diaCheckout
             }),
             headers: {
+                'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            }
-        })
+            }})
             .then(res => {
-                if (res.ok) {
-                    res.json().then((data: Estadia) => {
+                if (res?.ok) {
+                    res?.json().then((data: Estadia) => {
                         console.log(data)
                         setEstadia(data)
 
@@ -167,7 +169,7 @@ export default function CrearFactura() {
                         setEstado(EstadosCU07.SeleccionResponsable)
                     })
                 }else{
-                    console.log(res.status, "NO SE ENCONTRO RESERVA, INDICAR MENSAJE DE ERROR")
+                    console.log(res?.status, "NO SE ENCONTRO RESERVA, INDICAR MENSAJE DE ERROR")
                 }
 
             })
@@ -182,22 +184,24 @@ export default function CrearFactura() {
             setErrorResponsable('No se puede seleccionar a un menor de edad como responsable de pago')
             return;
         } else {
-            fetch('http://localhost:8081/Factura/Checkout', {
+            fetchApi('/Factura/Checkout', {
                 method: 'POST',
                 body: JSON.stringify({
                     estadia: estadia,
                     responsablePago: responsableSeleccionado,
                     consumos: estadia!.consumos,
                 }),
-                headers: {'Content-Type': 'application/json'}
-            })
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }})
                 .then(res => {
-                    if (res.ok) {
-                        res.json().then(() => {
+                    if (res?.ok) {
+                        res?.json().then(() => {
                             setEstado(EstadosCU07.ConfirmarFactura)
                         })
                     }else{
-                        console.log(res.status)
+                        console.log(res?.status)
                     }
                 })
 
@@ -219,12 +223,14 @@ export default function CrearFactura() {
                 idResponsable: responsableSeleccionado!.cuit,
             }
 
-            fetch("http://localhost:8081/Factura/Emitir", {
+            fetchApi('/Factura/Emitir', {
                 method: 'POST',
                 body: JSON.stringify(emitir),
-                headers: { 'Content-Type': 'application/json' }
-            })
-                .then(res => res.json())
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }})
+                .then(res => res?.json())
                 .then(() => {
                     if (items.filter(i => !i.seleccionado).length > 0) {
                         alert('Factura emitida. Quedan ítems pendientes.')

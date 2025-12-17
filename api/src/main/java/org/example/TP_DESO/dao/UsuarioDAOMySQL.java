@@ -5,6 +5,7 @@ import org.example.TP_DESO.dto.UsuarioDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +20,10 @@ public class UsuarioDAOMySQL implements UsuarioDAO {
     @Override
     public void CrearUsuario(Usuario usuario) throws FracasoOperacion {
         try {
+            Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuario.getUsuario());
+            if(usuarioOpt.isPresent()) throw new FracasoOperacion("Usuario ya existente");
             usuarioRepository.save(usuario);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new FracasoOperacion("Error al crear usuario: " + e.getMessage());
         }
     }
@@ -32,13 +34,10 @@ public class UsuarioDAOMySQL implements UsuarioDAO {
             Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioDTO.getUsuario());
             if (usuarioOpt.isPresent()) {
                 Usuario u = usuarioOpt.get();
-                if (u.getContrasenna().equals(usuarioDTO.getContrasenna())) {
-                    return new UsuarioDTO(u.getUsuario(), u.getContrasenna());
-                }
+                return new UsuarioDTO(u.getUsuario(), u.getContrasenna());
             }
             return null;
         } catch (Exception e) {
-            e.printStackTrace();
             throw new FracasoOperacion("Error al obtener usuario: " + e.getMessage());
         }
     }

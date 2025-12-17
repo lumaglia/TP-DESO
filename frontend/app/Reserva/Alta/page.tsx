@@ -11,6 +11,7 @@ import Row from "@/app/Row.tsx";
 import { AlertaCancelar } from "@/app/Alertas.tsx";
 import { ScrollArea } from "@base-ui-components/react";
 import Campo from "@/app/Campo.tsx";
+import { useFetch } from '@/hooks/useFetch'
 
 export default function ReservarHabitacion() {
     const { register, formState, handleSubmit } = useForm();
@@ -21,6 +22,7 @@ export default function ReservarHabitacion() {
     const [ aceptar, setAceptar] = useState(false);
     const [seleccionadas, setSeleccionadas] = useState(new Map<string, Array<Array<Date>>>());
     const [ solicitudValida, setSolicitudValida] = useState(false);
+    const fetchApi = useFetch();
     const [ reservas, setReservas] = useState([
             {
                 nroHabitacion : "5",
@@ -48,7 +50,7 @@ export default function ReservarHabitacion() {
         }));
 
         console.log(JSON.stringify(reservasDTO))
-        fetch('http://localhost:8081/Habitacion/Reservar/', {
+        fetchApi('/Habitacion/Reservar', {
            method: 'POST',
            body: JSON.stringify(reservasDTO),
            headers: {
@@ -56,11 +58,11 @@ export default function ReservarHabitacion() {
                'Content-Type': 'application/json'
            }
        }).then(res => {
-           if(res.ok) {
+           if(res?.ok) {
                console.log("EXITO")
+               router.push('/Reserva/Alta/Success');
            }
        })
-        router.push('/Reserva/Alta/Success');
     }
 
     function onNext(infoDisponibilidad: Array<infoDisponibilidad>) {

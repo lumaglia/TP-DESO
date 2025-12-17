@@ -6,8 +6,9 @@ import {useRouter} from 'next/navigation';
 import Row from "../../Row";
 import Campo from "../../Campo";
 import {DateValues, fieldTypes, infoDisponibilidad, tiposTablaHabitacion} from "../../../public/constants";
-import {AlertaCancelar} from "../../Alertas";
-import {TablaHabitacion} from "../TablaHabitacion";
+import { AlertaCancelar } from "../../Alertas";
+import { TablaHabitacion } from "../TablaHabitacion";
+import { useFetch } from '@/hooks/useFetch'
 
 
 export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, seleccionadas,
@@ -27,6 +28,7 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
     const [ fechaFin, setFechaFin ] = useState<Date>(new Date());
     const [disponibilidad, setDisponibilidad] = useState<Array<infoDisponibilidad> | undefined>(undefined);
     const [hayDisponibles, setHayDisponibles] = useState(true);
+    const fetchApi = useFetch();
 
     const validation =
         {
@@ -64,14 +66,14 @@ export default function BuscarHabitacion({tipo=tiposTablaHabitacion.CU05, selecc
         formRef.current = data
         setSolicitudValida(false);
         setHayDisponibles(true);
-        fetch(`http://localhost:8081/Habitacion/Buscar/${data.fechaInicio.toLocaleDateString('en-CA')}/${data.fechaFin.toLocaleDateString('en-CA')}`, {
+        fetchApi(`/Habitacion/Buscar/${data.fechaInicio.toLocaleDateString('en-CA')}/${data.fechaFin.toLocaleDateString('en-CA')}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
         }).then(res => {
-            if(res.ok) {
+            if(res?.ok) {
                 res.json().then(response => {
                     response.sort((a:any, b:any) => parseInt(a.habitacion.nroHabitacion) > parseInt(b.habitacion.nroHabitacion) ? 1 : -1);
                     response = response.map((i:any) => {

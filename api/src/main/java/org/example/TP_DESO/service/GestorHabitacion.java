@@ -29,7 +29,7 @@ public class GestorHabitacion {
     public ArrayList<Habitacion> mostrarHabitacionDomain() throws FracasoOperacion{
         try{
             return dao.obtenerTodasDomainForm();
-        } catch (FracasoOperacion e) {
+        } catch (Exception e) {
             throw new FracasoOperacion("Error al obtener las habitaciones." + e.getMessage());
         }
     }
@@ -37,7 +37,7 @@ public class GestorHabitacion {
     public ArrayList<HabitacionDTO> mostrarHabitacionesDTO() throws FracasoOperacion {
         try{
             return dao.obtenerTodas();
-        } catch (FracasoOperacion e) {
+        } catch (Exception e) {
             throw new FracasoOperacion("Error al obtener las habitaciones." + e.getMessage());
         }
     }

@@ -125,7 +125,7 @@ public class MainConsola {
                                                     case "ACEPTAR IGUALMENTE": {
                                                         try{
                                                             ArrayList<HuespedDTO> hList = gestorHuesped.buscarHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTO.getTipoDoc()).setNroDoc(huespedDTO.getNroDoc()).createHuespedDTO());
-                                                            HuespedDTO sobrescrito = hList.getFirst();
+                                                            HuespedDTO sobrescrito = hList.get(0);
                                                             gestorHuesped.bajaHuesped(sobrescrito);
                                                             gestorHuesped.altaHuesped(huespedDTO);
                                                         }catch (FracasoOperacion | DocumentoYaExistente ex){
@@ -256,14 +256,14 @@ public class MainConsola {
 
                                     } else if(!huespedesDTO.isEmpty()){
                                         System.out.println("Se encontró un unico huesped");
-                                        System.out.println(huespedesDTO.getFirst().toString());
+                                        System.out.println(huespedesDTO.get(0).toString());
                                         System.out.println("Por favor seleccione una de las siguientes opciones");
                                         System.out.print("M(Modificar huesped), V(Volver al menú): ");
                                         linea = s.nextLine();
                                         switch (linea.toUpperCase()) {
                                             case "M":{
                                                 Boolean[] deleted = {false};
-                                                HuespedDTO huespedDTONew = modificarHuesped(s, gestorHuesped, huespedesDTO.getFirst(), deleted);
+                                                HuespedDTO huespedDTONew = modificarHuesped(s, gestorHuesped, huespedesDTO.get(0), deleted);
                                                 if (huespedDTONew != null) huespedesDTO.set(0, huespedDTONew);
                                                 if (deleted[0]){
                                                     huespedesDTO.removeFirst();
@@ -360,7 +360,7 @@ public class MainConsola {
                                     case "ACEPTAR IGUALMENTE": {
                                         try {
                                             ArrayList<HuespedDTO> hList = gestorHuesped.buscarHuesped(new HuespedDTOBuilder().setTipoDoc(huespedDTONew.getTipoDoc()).setNroDoc(huespedDTONew.getNroDoc()).createHuespedDTO());
-                                            HuespedDTO sobrescrito = hList.getFirst();
+                                            HuespedDTO sobrescrito = hList.get(0);
                                             gestorHuesped.bajaHuesped(sobrescrito);
                                             gestorHuesped.modificarHuesped(huespedDTO.getTipoDoc(), huespedDTO.getNroDoc(), huespedDTONew);
                                         } catch (FracasoOperacion | DocumentoYaExistente ex) {

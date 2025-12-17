@@ -115,7 +115,7 @@ public class ReservaController {
                     .setApellido(h.getApellido())
                     .setTipoDoc(h.getTipoDoc())
                     .setNroDoc(h.getNroDoc())
-                    .createHuespedDTO()).getFirst();
+                    .createHuespedDTO()).get(0);
                 } catch (FracasoOperacion e) {
                     throw new RuntimeException(e);
                 }

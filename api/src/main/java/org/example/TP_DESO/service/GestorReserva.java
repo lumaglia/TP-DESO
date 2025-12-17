@@ -66,7 +66,7 @@ public class GestorReserva {
         if(reservas.isEmpty()){
             throw new FracasoOperacion("Error al cancelar reserva: No hay reservas pendientes de cancelar con los argumentos enviados");
         }else{
-            Reserva reserva = ReservaMapper.toDomain(reservas.getFirst());
+            Reserva reserva = ReservaMapper.toDomain(reservas.get(0));
             reserva.setCancelada(true);
             daoReserva.modificarReserva(reserva.getIdReserva(),reserva);
         }
@@ -113,7 +113,7 @@ public class GestorReserva {
             if(!reservaList.isEmpty()){
                 EstadiaDTO estadiaDTO1 = daoEstadia.buscarEstadiaPorHabitacionYFechaFin(habitacion.getNroHabitacion(), estadia.getFechaFin());
                 Estadia estadia1 = EstadiaMapper.toDomain(estadiaDTO1);
-                Reserva reserva = reservaList.getFirst();
+                Reserva reserva = reservaList.get(0);
                 reserva.setEstadia(estadia1);
                 daoReserva.modificarReserva(reserva.getIdReserva(),reserva);
             }

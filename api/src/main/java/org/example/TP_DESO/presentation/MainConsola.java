@@ -1,9 +1,9 @@
 /*
 package org.example.TP_DESO.presentation;
 
-import org.example.TP_DESO.dto.DireccionDTOBuilder;
+import org.example.TP_DESO.patterns.builder.DireccionDTOBuilder;
 import org.example.TP_DESO.dto.HuespedDTO;
-import org.example.TP_DESO.dto.HuespedDTOBuilder;
+import org.example.TP_DESO.patterns.builder.HuespedDTOBuilder;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.service.GestorHuesped;

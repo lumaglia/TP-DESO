@@ -2,7 +2,7 @@ package org.example.TP_DESO.dao;
 
 import org.example.TP_DESO.domain.*;
 import org.example.TP_DESO.dto.HabitacionDTO;
-import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
+import org.example.TP_DESO.patterns.mappers.HabitacionMapper;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.EstadiaRepository;
 import org.example.TP_DESO.repository.HabitacionRepository;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

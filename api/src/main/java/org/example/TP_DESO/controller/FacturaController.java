@@ -17,10 +17,7 @@ import org.example.TP_DESO.service.GestorFactura;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class FacturaController {
@@ -80,6 +77,20 @@ public class FacturaController {
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/ResponsablePago/Alta")
     public ResponseEntity<ResponsablePagoDTO> altaResponsablePago(
+            @RequestBody ResponsablePagoDTO responsablePagoDTO) throws FracasoOperacion{
+        try{
+            gestorFactura.altaResponsablePago(responsablePagoDTO);
+            return ResponseEntity.ok(responsablePagoDTO);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PutMapping("/ResponsablePago/Modificar")
+    public ResponseEntity<ResponsablePagoDTO> modificarResponsablePago(
             @RequestBody ResponsablePagoDTO responsablePagoDTO) throws FracasoOperacion{
         try{
             gestorFactura.altaResponsablePago(responsablePagoDTO);

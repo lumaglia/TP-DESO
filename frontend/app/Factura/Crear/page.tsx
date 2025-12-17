@@ -44,7 +44,7 @@ type FacturaPreviewDTO = {
 }
 
 enum EstadosCU07 {
-    DatosResponsablePago,
+    DatosHabitacion,
     SeleccionResponsable,
     ConfirmarFactura,
 }
@@ -61,12 +61,11 @@ export default function CrearFactura() {
         tipo: string,
         descripcion: string
         monto: number
-        iva: number
         seleccionado: boolean,
         procesado: boolean
     }[]>([])
     const [huespedes, setHuespedes] = useState<HuespedCheckout[]>([])
-    const [estado, setEstado] = useState<EstadosCU07>(EstadosCU07.DatosResponsablePago)
+    const [estado, setEstado] = useState<EstadosCU07>(EstadosCU07.DatosHabitacion)
     const [responsableSeleccionado, setResponsableSeleccionado] = useState<HuespedCheckout | null>(null)
     const [errorResponsable, setErrorResponsable] = useState<string | null>(null)
 
@@ -127,7 +126,7 @@ export default function CrearFactura() {
     }
 
     const submitCheckout = (data: FormFactura) => {
-        const diaCheckout = new Date().toISOString().split('T')[0];
+        const diaCheckout = new Date(new Date().getTime()-24*3600000).toISOString().split('T')[0];
         fetchApi('/Factura/Checkout', {
             method: 'POST',
             body: JSON.stringify({
@@ -150,7 +149,6 @@ export default function CrearFactura() {
                                 tipo: 'Estadia',
                                 descripcion: 'Costo de la estadia',
                                 monto: data.montoEstadia,
-                                iva: Math.round(data.montoEstadia * 0.21),
                                 seleccionado: true,
                                 procesado: false
                             },
@@ -159,7 +157,6 @@ export default function CrearFactura() {
                                 tipo: 'Consumo',
                                 descripcion: c.descripcion,
                                 monto: c.monto,
-                                iva: Math.round(c.monto * 0.21),
                                 seleccionado: true,
                                 procesado: false
                             })) ?? []
@@ -246,10 +243,9 @@ export default function CrearFactura() {
     return (
         <>
             <Encabezado titulo={'Crear una factura'}/>
-            <h2 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>Ingrese los
-                datos para crear una factura</h2>
+            <h2 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>Ingrese datos de la habitación</h2>
             {/* puntos 1 al 3 del flujo */}
-            {estado === EstadosCU07.DatosResponsablePago && (
+            {estado === EstadosCU07.DatosHabitacion && (
                 <form onSubmit={handleSubmit(submitCheckout)} noValidate>
                     <Row>
                         <Campo
@@ -361,7 +357,6 @@ export default function CrearFactura() {
                                     </td>
                                     <td>{i.descripcion}</td>
                                     <td>${i.monto}</td>
-                                    <td>${i.iva}</td>
                                 </tr>
                             ))}
                             </tbody>

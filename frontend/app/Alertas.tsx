@@ -75,6 +75,54 @@ export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen:
     );
 }
 
+export function AlertaDocumentoRP({open, setOpen, data} : {open: boolean, setOpen: (open: boolean, e: any) => void, data: any}) {
+    const router = useRouter();
+    const fetchApi = useFetch();
+    return (
+        <AlertDialog.Root open={open} onOpenChange={setOpen}>
+            {/*<AlertDialog.Trigger data-color="red" className={'Button'}>*/}
+            {/*    Discard draft*/}
+            {/*</AlertDialog.Trigger>*/}
+            <AlertDialog.Portal>
+                <AlertDialog.Backdrop className={'Backdrop'} />
+                <AlertDialog.Popup className={'Popup'} outline-color='yellow'>
+                    <div style={{display: 'flex', alignItems: 'flex-start', margin: '0', padding: '0'}}>
+                        <Image src={warningIcon} width={28} height={28} alt="warning" />
+                        <AlertDialog.Title className={'Title'}>
+                            Cuidado
+                        </AlertDialog.Title>
+                    </div>
+                    <AlertDialog.Description className={'Description'}>
+                        El CUIT ya existe en el sistema
+                    </AlertDialog.Description>
+                    <div className={'Actions'}>
+                        <AlertDialog.Close className={'PopupButton'} data-color='white'>Volver y Corregir</AlertDialog.Close>
+                        <AlertDialog.Close className={'PopupButton'} onClick={() => {
+                            data.tipoDocViejo = data.tipoDoc;
+                            data.nroDocViejo = data.nroDoc;
+                            fetchApi('/ResponsablePago/Modificar', {
+                                method: 'PUT',
+                                body: JSON.stringify(data),
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                }
+                            }).then(res => {
+                                if(res?.ok){
+                                    router.push(`/Huesped/Alta/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
+                                }
+                            })
+                        }}>
+                            Cargar Igualmente
+                        </AlertDialog.Close>
+                    </div>
+                </AlertDialog.Popup>
+            </AlertDialog.Portal>
+        </AlertDialog.Root>
+    );
+}
+
+
 export function AlertaDocumentoModificar({open, setOpen, data, tipoDoc, nroDoc, setErrorOpen} : {open: boolean, setOpen: (open: boolean, e: any) => void, data: any, tipoDoc: string, nroDoc: string, setErrorOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
     const router = useRouter();
     const fetchApi = useFetch();

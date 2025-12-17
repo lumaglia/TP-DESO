@@ -13,7 +13,7 @@ export default function SuccessPage() {
     useEffect(() => {
         const timer = setTimeout(() => {
             router.push(returnTo);
-        }, 2000);
+        }, 4000);
 
         return () => clearTimeout(timer);
     }, [router, returnTo]);

@@ -1,7 +1,6 @@
 package org.example.TP_DESO.service;
 
 import org.example.TP_DESO.dao.UsuarioDAO;
-import org.example.TP_DESO.dao.UsuarioDAOMySQL;
 import org.example.TP_DESO.domain.Usuario;
 import org.example.TP_DESO.dto.UsuarioDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
@@ -11,9 +10,9 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -22,25 +21,26 @@ public class GestorUsuarioTest {
     @MockBean
     private UsuarioDAO dao;
 
+    @MockBean
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     @InjectMocks
     private GestorUsuario gestorUsuario;
 
     @Test
-    void testAltaUsuario_ok_llamaDaoConUsuarioCorrecto() throws FracasoOperacion {
-        assertDoesNotThrow(() -> gestorUsuario.altaUsuario("juan", "1234"));
+    void testAltaUsuario_ok() throws FracasoOperacion {
+        when(passwordEncoder.encode("1234")).thenReturn("<HASH_PLACEHOLDER>");
+
+        gestorUsuario.altaUsuario("juan", "1234");
 
         ArgumentCaptor<Usuario> captor = ArgumentCaptor.forClass(Usuario.class);
         verify(dao, times(1)).CrearUsuario(captor.capture());
 
         Usuario enviado = captor.getValue();
-        assertNotNull(enviado, "El usuario enviado al DAO no debería ser null");
-        assertEquals("juan", enviado.getUsuario(), "El username debería coincidir");
-        assertEquals("1234", enviado.getContrasenna(), "La contraseña debería coincidir");
-
-        verify(dao, never()).ObtenerUsuario(any(UsuarioDTO.class));
-        verify(dao, never()).ModificarUsuario(anyString(), any(Usuario.class));
-        verify(dao, never()).EliminarUsuario(anyString());
+        assertEquals("juan", enviado.getUsuario(), "Usuario mal");
+        assertEquals("<HASH_PLACEHOLDER>", enviado.getContrasenna(), "Debe guardarse el hash");
+        verify(passwordEncoder, times(1)).encode("1234");
     }
 
     @Test

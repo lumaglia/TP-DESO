@@ -33,7 +33,6 @@ public class GestorUsuario implements UserDetailsService {
 
     @Autowired
     private UsuarioDAO dao;
-    private UsuarioDAOMySQL dao;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired

@@ -150,7 +150,7 @@ public class GestorHuespedTest {
                 dto != null && tipoDocNuevo.equals(dto.getTipoDoc()) && nroDocNuevo.equals(dto.getNroDoc()) ))).thenReturn(new ArrayList<>(List.of(new HuespedDTO(tipoDocNuevo, nroDocNuevo))));
 
         DocumentoYaExistente ex = assertThrows(
-                DocumentoYaExistente.class, () -> gestorHuesped.modificarHuesped(tipoDocViejo, nroDocViejo, huespedModificado)
+                DocumentoYaExistente.class, () -> gestorHuesped.modificarHuesped(tipoDocViejo, nroDocViejo, huespedModificado, false)
         );
 
         assertEquals("El tipo y numero de documento ya existen en el sistema", ex.getMessage());
@@ -162,7 +162,7 @@ public class GestorHuespedTest {
         when(huespedDAO.obtenerHuesped(argThat(dto ->
                 dto != null && tipoDocNuevo.equals(dto.getTipoDoc()) && nroDocNuevo.equals(dto.getNroDoc()) ))).thenReturn(new ArrayList<>());
 
-        assertDoesNotThrow(() -> gestorHuesped.modificarHuesped(tipoDocViejo, nroDocViejo, huespedModificado));
+        assertDoesNotThrow(() -> gestorHuesped.modificarHuesped(tipoDocViejo, nroDocViejo, huespedModificado, false));
 
         ArgumentCaptor<Huesped> captorHuesped = ArgumentCaptor.forClass(Huesped.class);
         verify(huespedDAO, times(1)).modificarHuesped(eq(tipoDocViejo), eq(nroDocViejo), captorHuesped.capture());

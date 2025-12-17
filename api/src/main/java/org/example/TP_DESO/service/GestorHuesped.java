@@ -1,5 +1,6 @@
 package org.example.TP_DESO.service;
 
+import org.example.TP_DESO.dao.EstadiaDAO;
 import org.example.TP_DESO.dao.EstadiaDAOMySQL;
 import org.example.TP_DESO.dao.HuespedDAO;
 import org.example.TP_DESO.dao.HuespedDAOMySQL;
@@ -20,10 +21,10 @@ import java.util.Objects;
 @Service
 public class GestorHuesped {
     @Autowired
-    private HuespedDAOMySQL huespedDAO;
-    @Autowired
-    private EstadiaDAOMySQL estadiaDAO;
     private HuespedDAO huespedDAO;
+    @Autowired
+    private EstadiaDAO estadiaDAO;
+
 
     private GestorHuesped(HuespedDAO huespedDAO) throws FracasoOperacion {
 

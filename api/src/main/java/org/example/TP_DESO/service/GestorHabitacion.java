@@ -1,5 +1,6 @@
 package org.example.TP_DESO.service;
 
+import org.example.TP_DESO.dao.HabitacionDAO;
 import org.example.TP_DESO.dao.HabitacionDAOMySQL;
 import org.example.TP_DESO.domain.Habitacion;
 import org.example.TP_DESO.dto.HabitacionDTO;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 @Service
 public class GestorHabitacion {
     @Autowired
-    private HabitacionDAOMySQL dao;
+    private HabitacionDAO dao;
 
     private static GestorHabitacion singleton_instance;
 

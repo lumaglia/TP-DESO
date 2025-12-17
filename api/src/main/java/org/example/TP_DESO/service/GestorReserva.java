@@ -21,9 +21,9 @@ public class GestorReserva {
     private static GestorReserva singleton_instance;
 
     @Autowired
-    private ReservaDAOMySQL daoReserva;
+    private ReservaDAO daoReserva;
     @Autowired
-    private EstadiaDAOMySQL daoEstadia;
+    private EstadiaDAO daoEstadia;
     @Autowired
     private GestorHabitacion gestorHabitacion;
 

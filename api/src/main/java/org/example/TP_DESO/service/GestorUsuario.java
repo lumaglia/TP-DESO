@@ -32,7 +32,7 @@ public class GestorUsuario implements UserDetailsService {
     private static GestorUsuario singleton_instance;
 
     @Autowired
-    private UsuarioDAOMySQL dao;
+    private UsuarioDAO dao;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired

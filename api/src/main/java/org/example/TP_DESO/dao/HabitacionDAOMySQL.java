@@ -115,7 +115,7 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
         }
     }
 
-    @Override // No es lo mismo que obtenerHabitacion?
+    @Override
     public HabitacionDTO buscarPorNumero(int numero) throws FracasoOperacion {
         try{
             return this.obtenerHabitacion(String.valueOf(numero));

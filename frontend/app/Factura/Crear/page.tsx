@@ -3,11 +3,12 @@
 import React, { useState } from 'react'
 import { ChangeEvent } from 'react'
 import { useForm } from 'react-hook-form'
+import { ScrollArea } from '@base-ui-components/react/scroll-area';
 import Encabezado from '../../Encabezado'
 import Row from '../../Row'
 import Campo from '../../Campo'
 import { AlertaCancelar } from '../../Alertas.tsx'
-import { fieldTypes } from '../../../public/constants'
+import {comboValues, fieldTypes, MapNameToApi, validation} from '../../../public/constants'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useFetch } from '@/hooks/useFetch'
 
@@ -64,10 +65,24 @@ export default function CrearFactura() {
         seleccionado: boolean,
         procesado: boolean
     }[]>([])
+    const [ selectedHuesped, setSelectedHuesped ] = useState<{
+        nombre: string;
+        apellido: string;
+        cuil: string;
+        tipoDoc: string;
+        nroDoc: string;
+        menorEdad: boolean;
+    } | null>(null)
     const [huespedes, setHuespedes] = useState<HuespedCheckout[]>([])
     const [estado, setEstado] = useState<EstadosCU07>(EstadosCU07.DatosHabitacion)
     const [responsableSeleccionado, setResponsableSeleccionado] = useState<HuespedCheckout | null>(null)
     const [errorResponsable, setErrorResponsable] = useState<string | null>(null)
+    const [errorHabitacion, setErrorHabitacion] = useState(false);
+
+    const [opcion, setOpcion] = useState('Huesped');
+    const manejarCambio = (e:any) => {
+        setOpcion(e.target.value);
+    };
 
     const validation = {
         idHabitacion: {
@@ -127,6 +142,7 @@ export default function CrearFactura() {
 
     const submitCheckout = (data: FormFactura) => {
         const diaCheckout = new Date(new Date().getTime()-24*3600000).toISOString().split('T')[0];
+        setErrorHabitacion(false);
         fetchApi('/Factura/Checkout', {
             method: 'POST',
             body: JSON.stringify({
@@ -167,6 +183,7 @@ export default function CrearFactura() {
                     })
                 }else{
                     console.log(res?.status, "NO SE ENCONTRO RESERVA, INDICAR MENSAJE DE ERROR")
+                    setErrorHabitacion(true);
                 }
 
             })
@@ -242,80 +259,98 @@ export default function CrearFactura() {
 
     return (
         <>
-            <Encabezado titulo={'Crear una factura'}/>
-            <h2 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>Ingrese datos de la habitación</h2>
+            <Encabezado titulo={'Facturar'}/>
             {/* puntos 1 al 3 del flujo */}
             {estado === EstadosCU07.DatosHabitacion && (
-                <form onSubmit={handleSubmit(submitCheckout)} noValidate>
-                    <Row>
-                        <Campo
-                            field={"Numero de habitación"}
-                            register={register}
-                            errors={errors}
-                            validation={validation.idHabitacion}
-                            placeholder={"Numero de habitación"}
-                            isRequired={true}
-                            type={fieldTypes.TEXTBOX}
-                        />
-                        <Campo
-                            field={"Hora de salida"}
-                            register={register}
-                            errors={errors}
-                            validation={validation.horaSalida}
-                            placeholder={"HH:MM"}
-                            isRequired={true}
-                            type={fieldTypes.TIME}
-                        />
-                    </Row>
-                    <Row>
-                        <button type='button' className='Button' onClick={() => setAlertaCancelarOpen(true)}>Cancelar</button>
-                        <button type="submit" className="Button">Confirmar</button>
-                    </Row>
-                </form>
+                <>
+                    <h2 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>Ingrese datos de la habitación</h2>
+                    <form onSubmit={handleSubmit(submitCheckout)} noValidate>
+                        <Row>
+                            <Campo
+                                field={"Numero de habitación"}
+                                register={register}
+                                errors={errors}
+                                validation={validation.idHabitacion}
+                                placeholder={"Numero de habitación"}
+                                isRequired={true}
+                                type={fieldTypes.TEXTBOX}
+                            />
+                            <Campo
+                                field={"Hora de salida"}
+                                register={register}
+                                errors={errors}
+                                validation={validation.horaSalida}
+                                placeholder={"HH:MM"}
+                                isRequired={true}
+                                type={fieldTypes.TIME}
+                            />
+                        </Row>
+                        <Row>
+                            <button type='button' className='Button' onClick={() => setAlertaCancelarOpen(true)}>Cancelar</button>
+                            <button type="submit" className="Button">Confirmar</button>
+                        </Row>
+                    </form>
+                    { errorHabitacion?<Row><p>No se ha encontrado una estadía para la habitación ingresada que haga checkout hoy.</p></Row>:<></> }
+                </>
             )}
 
             {/* puntos 4 al 5 del flujo */}
             {estado === EstadosCU07.SeleccionResponsable && (
                 <div style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>
 
-                    <h3 style={{textAlign: 'center'}}>
-                        Huéspedes que realizan checkout
+                    <h3 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>
+                        Seleccionar un responsable de Pago
                     </h3>
+                    <p style={{textAlign: 'center'}}>Puede seleccionar un huesped o un tercero.</p>
 
-                    {errorResponsable && (
-                        <p className="ErrorText" style={{textAlign: 'center'}}>
-                            {errorResponsable}
-                        </p>
-                    )}
+                    <Row>
+                        <select required defaultValue={'Huesped'} onChange={manejarCambio}>
+                        {comboValues['Responsable Pago'].map((option) => (<option key={option} value={option}>{option}</option>))}
+                        </select>
+                    </Row>
 
-                    <table className="TablaBuscar">
-                        <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
-                            <th>CUIT</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {huespedes.map((h, idx) => (
-                            <tr
-                                key={idx}
-                                className={responsableSeleccionado?.cuit === h.cuit ? 'selected' : ''}
-                                onClick={() => seleccionarResponsable(h)}
-                            >
-                                <td>{h.nombre}</td>
-                                <td>{h.apellido}</td>
-                                <td>{h.cuit}</td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
+                    {
+                        (opcion=='Huesped') ?
+                            <>
+                                <ScrollArea.Root className='ScrollArea'>
+                                    <ScrollArea.Viewport className='Viewport'>
+                                        <ScrollArea.Content className='Content'>
+                                            <table className='TablaBuscar'>
+                                                <thead>
+                                                <tr>
+                                                    <th>Nombre</th>
+                                                    <th>Apellido</th>
+                                                    <th>Tipo de documento</th>
+                                                    <th>Numero de documento</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {huespedes.map((huesped: any) => (
+                                                    <tr className={selectedHuesped === huesped ? 'selected' : ''}
+                                                        onClick={() => setSelectedHuesped(huesped)} key={huesped.nroDoc}>
+                                                        <td>{huesped.nombre}</td>
+                                                        <td>{huesped.apellido}</td>
+                                                        <td>{huesped.tipoDoc}</td>
+                                                        <td>{huesped.nroDoc}</td>
+                                                    </tr>
+                                                ))}
+                                                </tbody>
+                                            </table>
 
-                    <div style={{marginTop: '20px', display: 'flex', justifyContent: 'flex-end'}}>
-                        <button className="Button" onClick={submitResponsable}>
-                            ACEPTAR
-                        </button>
-                    </div>
+                                        </ScrollArea.Content>
+                                    </ScrollArea.Viewport>
+                                    <ScrollArea.Scrollbar className='Scrollbar' orientation='vertical'>
+                                        <ScrollArea.Thumb className='Thumb'/>
+                                    </ScrollArea.Scrollbar>
+                                </ScrollArea.Root>
+                            <div style={{marginTop: '20px', display: 'flex', justifyContent: 'flex-end'}}>
+                                <button className="Button" onClick={submitResponsable}>
+                                    ACEPTAR
+                                </button>
+                            </div>
+                            </>:
+                            <><p>hola</p></>
+                    }
                 </div>
             )}
 

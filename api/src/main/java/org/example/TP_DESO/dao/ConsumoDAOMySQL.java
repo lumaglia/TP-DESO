@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -17,6 +18,6 @@ public class ConsumoDAOMySQL implements ConsumoDAO {
     @Override
     public ArrayList<Consumo> consumosEstadiaNoPagos(Long idEstadia) {
         ArrayList<Consumo> consumos = consumoRepository.findConsumoByEstadia_idEstadia(idEstadia);
-        return (ArrayList<Consumo>) consumos.stream().filter(c -> c.getFactura()==null).toList();
+        return (ArrayList<Consumo>) consumos.stream().filter(c -> c.getFactura()==null).collect(Collectors.toCollection(ArrayList::new));
     }
 }

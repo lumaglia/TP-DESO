@@ -14,6 +14,7 @@ import org.example.TP_DESO.domain.Reserva;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -39,8 +40,8 @@ public class EstadiaDTO {
         this.fechaInicio = estadia.getFechaInicio();
         this.fechaFin = estadia.getFechaFin();
         this.habitacion = HabitacionMapper.toDTO(estadia.getHabitacion());
-        this.huespedes = (ArrayList<HuespedDTO>) estadia.getHuespedes().stream().map(HuespedMapper::toDTO).toList();
-        this.consumos = (ArrayList<ConsumoDTO>) estadia.getConsumos().stream().map(ConsumoDTO::new).toList();
+        this.huespedes = (ArrayList<HuespedDTO>) estadia.getHuespedes().stream().map(HuespedMapper::toDTO).collect(Collectors.toCollection(ArrayList::new));
+        this.consumos = (ArrayList<ConsumoDTO>) estadia.getConsumos().stream().map(ConsumoDTO::new).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public EstadiaDTO(Long idEstadia, LocalDate fechaInicio, LocalDate fechaFin, ArrayList<HuespedDTO> huespedDTO, HabitacionDTO habitacionDTO) {

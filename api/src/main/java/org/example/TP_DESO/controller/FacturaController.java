@@ -35,7 +35,7 @@ public class FacturaController {
             return ResponseEntity.ok().body(resultado);
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage().contains("Estadía no encontrada con habitacion y fecha fin:")){
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             throw new FracasoOperacion("Error : " + e.getMessage());
         }

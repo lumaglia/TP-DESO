@@ -2,6 +2,7 @@ package org.example.TP_DESO.dto.CU07;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.TP_DESO.domain.Consumo;
 import org.example.TP_DESO.domain.Habitacion;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.domain.Reserva;
@@ -19,22 +20,25 @@ import java.util.ArrayList;
 @Getter
 @Setter
 public class EstadiaFacturacionDTO {
-    private Long id;
-    private String nroHabitacion;
-    private Float montoEstadia;
-    private ArrayList<HuespedDTO> huespedes;
-    private ArrayList<ConsumoDTO> consumos;
+    public class ConsumosEstadiaDTO {
+        private String nombre;
+        private String detalle;
+        private float monto;
 
-    public EstadiaFacturacionDTO(EstadiaDTO estadiaDTO) {
-        long noches = ChronoUnit.DAYS.between(estadiaDTO.getFechaInicio(), estadiaDTO.getFechaFin());
-        if (LocalDateTime.now().toLocalTime().isAfter(LocalTime.of(18, 0))){
-            noches++;
+        public ConsumosEstadiaDTO(Consumo consumo) {
+            this.nombre = String.valueOf(consumo.getTipo());
+            this.detalle = consumo.getDetalle();
+            this.monto = consumo.getMonto();
         }
+    }
 
-        this.id = estadiaDTO.getIdEstadia();
-        this.nroHabitacion = estadiaDTO.getHabitacion().getNroHabitacion();
-        this.montoEstadia = noches * estadiaDTO.getHabitacion().getPrecioNoche();
-        this.huespedes = estadiaDTO.getHuespedes();
-        this.consumos = estadiaDTO.getConsumos();
+    private Float montoEstadia;
+    private ArrayList<HuespedCheckoutDTO> huespedes;
+    private ArrayList<ConsumosEstadiaDTO> consumos;
+
+    public EstadiaFacturacionDTO(EstadiaDTO estadiaDTO, float montoEstadia, ArrayList<Consumo> consumos) {
+        this.montoEstadia = montoEstadia;
+        this.huespedes = (ArrayList<HuespedCheckoutDTO>) estadiaDTO.getHuespedes().stream().map(HuespedCheckoutDTO::new).toList();
+        this.consumos = (ArrayList<ConsumosEstadiaDTO>) consumos.stream().map(ConsumosEstadiaDTO::new).toList();
     }
 }

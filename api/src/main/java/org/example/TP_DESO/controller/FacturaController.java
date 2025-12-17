@@ -31,8 +31,7 @@ public class FacturaController {
     public ResponseEntity<EstadiaFacturacionDTO> obtenerHuespedesCheckot(
             @RequestBody RequestCheckoutDTO request) throws FracasoOperacion {
         try{
-            EstadiaDTO estadia = gestorFactura.obtenerEstadia(request.getNumHabitacion());
-            EstadiaFacturacionDTO resultado = new EstadiaFacturacionDTO(estadia);
+            EstadiaFacturacionDTO resultado = gestorFactura.estadiaFacturacion(request.getNumHabitacion());
             return ResponseEntity.ok().body(resultado);
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage().contains("Estadía no encontrada con habitacion y fecha fin:")){

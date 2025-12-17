@@ -1,22 +1,24 @@
 package org.example.TP_DESO.service;
 
 import org.example.TP_DESO.dao.DireccionDAOMySQL;
-import org.example.TP_DESO.dao.Mappers.DireccionMapper;
 import org.example.TP_DESO.dao.ResponsablePagoDAOMySQL;
 import org.example.TP_DESO.dao.*;
 import org.example.TP_DESO.dao.FacturaDAOMySQL;
 import org.example.TP_DESO.dao.NotaCreditoDAOMySQL;
-import org.example.TP_DESO.domain.Factura;
-import org.example.TP_DESO.domain.PersonaFisica;
-import org.example.TP_DESO.domain.PersonaJuridica;
+import org.example.TP_DESO.domain.*;
+import org.example.TP_DESO.dto.CU07.EstadiaFacturacionDTO;
 import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
+import org.example.TP_DESO.dto.ConsumoDTO;
 import org.example.TP_DESO.dto.EstadiaDTO;
 import org.example.TP_DESO.dto.FacturaDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
+import org.example.TP_DESO.patterns.mappers.DireccionMapper;
+import org.example.TP_DESO.patterns.strategy.PrecioHabitacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,9 +35,12 @@ public class GestorFactura {
     private EstadiaDAOMySQL daoEstadia;
     @Autowired
     private ResponsablePagoDAOMySQL daoResponsablePago;
-
+    @Autowired
+    private PrecioHabitacion calcularPrecioHabitacion;
     @Autowired
     private DireccionDAOMySQL direccionDAO;
+    @Autowired
+    private ConsumoDAOMySQL daoConsumo;
 
     private GestorFactura() {
 
@@ -150,6 +155,19 @@ public class GestorFactura {
 
     public void generarNotaCredito(){
 
+    }
+
+    public EstadiaFacturacionDTO estadiaFacturacion(String nrHabitacion) throws FracasoOperacion{
+        try{
+            EstadiaDTO estadia = this.obtenerEstadia(nrHabitacion);
+            float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), estadia.getFechaFin());
+            ArrayList<Consumo> consumos = daoConsumo.consumosEstadiaNoPagos(estadia.getIdEstadia());
+
+            return new EstadiaFacturacionDTO(estadia, montoEstadia, consumos);
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Erros: " + e.getMessage());
+        }
     }
 
 }

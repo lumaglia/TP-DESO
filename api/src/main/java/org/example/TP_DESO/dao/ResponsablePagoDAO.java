@@ -16,6 +16,10 @@ public interface ResponsablePagoDAO {
 
     // FUNCIONES PARA LA PERSONA JURIDICA (TAMPOCO SOY UNA IA SOY JUAN)
     void crearPersonaJuridica() throws FracasoOperacion;
+
+    // FUNCIONES PARA LA PERSONA JURIDICA (TAMPOCO SOY UNA IA SOY JUAN)
+    PersonaJuridica crearPersonaJuridica(PersonaJuridica personaJuridica) throws FracasoOperacion;
+
     PersonaJuridica obtenerPersonaJuridica(String cuit) throws FracasoOperacion;
     void modificarPersonaJuridica() throws FracasoOperacion;
     void eliminarPersonaJuridica() throws FracasoOperacion;

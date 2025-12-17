@@ -17,7 +17,6 @@ public class ResponsablePagoDAOMySQL implements ResponsablePagoDAO{
     @Autowired
     private PersonaJuridicaRepository pjRepository;
 
-    //FUNCIONES PARA OBTENER CUALQUIER RESPONSABLE PORQUE ESTOY DESESPERADO Y NO SE QUE PONER AAAAAAA
 
 
     // FUNCIONES PARA LA PERSONA FISICA (NO SOY UNA IA SOY JUAN)
@@ -50,10 +49,22 @@ public class ResponsablePagoDAOMySQL implements ResponsablePagoDAO{
 
     }
 
-    // FUNCIONES PARA LA PERSONA JURIDICA (TAMPOCO SOY UNA IA SOY JUAN)
     @Override
-    public void crearPersonaJuridica() throws FracasoOperacion{
+    public void crearPersonaJuridica() throws FracasoOperacion {
 
+    }
+
+    // FUNCIONES PARA LA PERSONA JURIDICA (TAMPOCO SOY UNA IA SOY JUAN), pero las hizo nacho
+    @Override
+    public PersonaJuridica crearPersonaJuridica(PersonaJuridica personaJuridica) throws FracasoOperacion {
+        try {
+            if (personaJuridica == null) {
+                throw new FracasoOperacion("PersonaJuridica no puede ser null");
+            }
+            return pjRepository.save(personaJuridica);
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al crear PersonaJuridica: " + e.getMessage());
+        }
     }
     @Override
     public PersonaJuridica obtenerPersonaJuridica(String cuit) throws FracasoOperacion{

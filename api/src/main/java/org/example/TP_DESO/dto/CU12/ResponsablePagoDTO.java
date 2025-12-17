@@ -1,6 +1,7 @@
 package org.example.TP_DESO.dto.CU12;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.TP_DESO.dao.Mappers.DireccionMapper;
 import org.example.TP_DESO.domain.PersonaFisica;
@@ -9,6 +10,7 @@ import org.example.TP_DESO.dto.DireccionDTO;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ResponsablePagoDTO {
     private Long id;
     private String razonSocial;

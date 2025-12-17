@@ -1,22 +1,19 @@
 package org.example.TP_DESO.service;
 
 import org.example.TP_DESO.dao.*;
-import org.example.TP_DESO.dao.Mappers.HuespedMapper;
+import org.example.TP_DESO.dao.*;
+import org.example.TP_DESO.dao.Mappers.DireccionMapper;
 import org.example.TP_DESO.domain.Factura;
-import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.domain.PersonaFisica;
 import org.example.TP_DESO.domain.PersonaJuridica;
 import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
 import org.example.TP_DESO.dto.EstadiaDTO;
 import org.example.TP_DESO.dto.FacturaDTO;
-import org.example.TP_DESO.dto.HuespedDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
-import org.example.TP_DESO.repository.FacturaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,6 +30,9 @@ public class GestorFactura {
     private EstadiaDAOMySQL daoEstadia;
     @Autowired
     private ResponsablePagoDAOMySQL daoResponsablePago;
+
+    @Autowired
+    private DireccionDAOMySQL direccionDAO;
 
     private GestorFactura() {
 
@@ -69,8 +69,43 @@ public class GestorFactura {
         catch (Exception e){ throw new FracasoOperacion("Error: " + e.getMessage()); }
     }
 
-    public void altaResponsablePago(ResponsablePagoDTO responsablePagoDTO){
+    public void altaResponsablePago(ResponsablePagoDTO responsablePagoDTO) throws FracasoOperacion {
+        try {
+            if (responsablePagoDTO == null) {
+                throw new FracasoOperacion("El responsablePagoDTO no puede ser null");
+            }
+            if (responsablePagoDTO.getCuit() == null || responsablePagoDTO.getCuit().isBlank()) {
+                throw new FracasoOperacion("El CUIT no puede ser vacío");
+            }
 
+            PersonaFisica pf = daoResponsablePago.obtenerPersonaFisica(responsablePagoDTO.getCuit());
+            PersonaJuridica pjExistente = daoResponsablePago.obtenerPersonaJuridica(responsablePagoDTO.getCuit());
+            if (pf != null || pjExistente != null) {
+                throw new FracasoOperacion("Ya existe un responsable de pago con ese CUIT/CUIL");
+            }
+
+            boolean esJuridica = responsablePagoDTO.getRazonSocial() != null
+                    && !responsablePagoDTO.getRazonSocial().isBlank()
+                    && !"N/A".equalsIgnoreCase(responsablePagoDTO.getRazonSocial().trim());
+
+            if (!esJuridica) {
+                throw new FracasoOperacion("Alta de Persona Física no implementada con este DTO");
+            }
+
+            PersonaJuridica pj = new PersonaJuridica();
+            pj.setRazonSocial(responsablePagoDTO.getRazonSocial());
+            pj.setCuit(responsablePagoDTO.getCuit());
+            pj.setTelefono(responsablePagoDTO.getTelefono());
+
+
+            pj.setDireccion(direccionDAO.crearDireccion(DireccionMapper.toDomain(responsablePagoDTO.getDireccion())));
+
+            daoResponsablePago.crearPersonaJuridica(pj);
+        } catch (FracasoOperacion e) {
+            throw e;
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al dar de alta responsable de pago: " + e.getMessage());
+        }
     }
 
     public void modificarResponsablePago(){

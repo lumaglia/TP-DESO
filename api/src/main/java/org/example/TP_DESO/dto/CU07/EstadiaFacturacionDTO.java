@@ -34,12 +34,16 @@ public class EstadiaFacturacionDTO {
     }
 
     private Float montoEstadia;
+    private LocalDate fechaInicio;
+    private LocalDate fechaFin;
     private ArrayList<HuespedCheckoutDTO> huespedes;
     private ArrayList<ConsumosEstadiaDTO> consumos;
 
     public EstadiaFacturacionDTO(EstadiaDTO estadiaDTO, float montoEstadia, ArrayList<Consumo> consumos) {
         this.montoEstadia = montoEstadia;
-        this.huespedes = (ArrayList<HuespedCheckoutDTO>) estadiaDTO.getHuespedes().stream().map(HuespedCheckoutDTO::new).collect(Collectors.toCollection(ArrayList::new));
-        this.consumos = (ArrayList<ConsumosEstadiaDTO>) consumos.stream().map(ConsumosEstadiaDTO::new).collect(Collectors.toCollection(ArrayList::new));
+        this.fechaInicio = estadiaDTO.getFechaInicio();
+        this.fechaFin = estadiaDTO.getFechaFin();
+        this.huespedes = estadiaDTO.getHuespedes().stream().map(HuespedCheckoutDTO::new).collect(Collectors.toCollection(ArrayList::new));
+        this.consumos = consumos.stream().map(ConsumosEstadiaDTO::new).collect(Collectors.toCollection(ArrayList::new));
     }
 }

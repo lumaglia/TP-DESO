@@ -166,7 +166,7 @@ public class GestorFactura {
             return new EstadiaFacturacionDTO(estadia, montoEstadia, consumos);
         }
         catch (Exception e){
-            throw new FracasoOperacion("Erros: " + e.getMessage());
+            throw new FracasoOperacion("Error al obtener la estadia para facturar: " + e.getMessage());
         }
     }
 

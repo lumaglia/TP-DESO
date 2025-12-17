@@ -242,6 +242,7 @@ export const validation = {
         },
         maxLength: {
             value: 30,
+            message: 'Usuario demasiado largo',
         },
         pattern: {
             value: /^[a-zA-Z0-9_-]+$/,

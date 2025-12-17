@@ -20,10 +20,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.argThat;
+import org.example.TP_DESO.dao.EstadiaDAO;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class GestorHuespedTest {
+
+    @MockBean
+    private EstadiaDAO estadiaDAO;
 
     @MockBean
     private HuespedDAO huespedDAO;
@@ -54,7 +58,6 @@ public class GestorHuespedTest {
         dto != null && "LC".equals(dto.getTipoDoc()) && "245".equals(dto.getNroDoc()) ))).thenReturn(new ArrayList<>());
 
         DocumentoYaExistente f = assertThrows(DocumentoYaExistente.class, () -> gestorHuesped.altaHuesped(huespedRepetido),"Tipo y Numero de Documento ya existentes deberían lanzar excepción.");
-        //Revisar pq no sale este ^^^^^^^^^^ assertThrows :(
 
         assertEquals("El tipo y numero de documento ya existen en el sistema",f.getMessage(), "Tipo y Numero de Documento ya existentes deberían lanzar excepción.");
 
@@ -82,7 +85,7 @@ public class GestorHuespedTest {
     @Test
     void testBuscarHuesped() throws FracasoOperacion {
 
-        //Faltan poner mensajes en los asserts
+       //Faltan poner mensajes en los asserts
 
         // busqueda sin datos
         HuespedDTO filtroVacio = new HuespedDTO();
@@ -191,4 +194,47 @@ public class GestorHuespedTest {
         assertEquals("PaisC", enviadoAlDao.getDireccion().getPais());
     }
 
+    @Test
+    void testBajaHuesped_error_conEstadia() throws FracasoOperacion {
+        HuespedDTO dto = new HuespedDTO("DNI", "123");
+
+        when(estadiaDAO.existeEstadiaDeHuesped("DNI", "123")).thenReturn(true);
+
+        assertThrows(FracasoOperacion.class, () -> gestorHuesped.bajaHuesped(dto));
+        verify(huespedDAO, never()).eliminarHuesped(anyString(), anyString());
+    }
+
+    @Test
+    void testBuscarHuesped_todosNulos() throws FracasoOperacion {
+        HuespedDTO filtroVacio = new HuespedDTO();
+        when(huespedDAO.obtenerHuesped()).thenReturn(new ArrayList<>());
+
+        gestorHuesped.buscarHuesped(filtroVacio);
+
+        verify(huespedDAO, times(1)).obtenerHuesped();
+    }
+
+    @Test
+    void testModificarHuesped_override_conEstadia() throws FracasoOperacion {
+        HuespedDTO nuevo = new HuespedDTO("DNI", "444");
+        nuevo.setDireccion(new DireccionDTO("Calle", "1", "1", "L", "P", "P"));
+
+        when(huespedDAO.obtenerHuesped(any())).thenReturn(new ArrayList<>(List.of(new HuespedDTO())));
+        when(estadiaDAO.existeEstadiaDeHuesped("DNI", "444")).thenReturn(true);
+
+        assertThrows(FracasoOperacion.class, () -> 
+            gestorHuesped.modificarHuesped("DNI", "111", nuevo, true));
+    }
+
+    @Test
+    void testModificarHuesped_sobrecargaSimple() throws FracasoOperacion {
+        HuespedDTO dto = new HuespedDTO("DNI", "123");
+        dto.setNombre("Nombre");
+        dto.setApellido("Apellido");
+        dto.setDireccion(new DireccionDTO("C", "D", "CP", "L", "P", "P"));
+
+
+        assertDoesNotThrow(() -> gestorHuesped.modificarHuesped(dto));
+        verify(huespedDAO).modificarHuesped(eq("DNI"), eq("123"), any(Huesped.class));
+    }
 }

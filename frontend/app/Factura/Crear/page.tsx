@@ -176,7 +176,7 @@ export default function CrearFactura() {
 
     const submitResponsable = () => {
         if (responsableSeleccionado === null) {
-            router.push('Responsable/Alta')
+            router.push('/ResponsablePago/Alta')
             return
         } else if (responsableSeleccionado.esMenor) {
             setErrorResponsable('No se puede seleccionar a un menor de edad como responsable de pago')

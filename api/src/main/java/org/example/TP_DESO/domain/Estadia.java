@@ -37,7 +37,5 @@ public class Estadia {
     @JoinColumn(name = "id_habitacion", referencedColumnName = "nroHabitacion")
     private Habitacion habitacion;
 
-    @OneToMany
-    @JoinColumn(name = "id_estadia", referencedColumnName = "idEstadia")
-    private List<Consumo> consumos = new ArrayList<>();
+
 }

@@ -5,15 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.TP_DESO.domain.*;
 import org.example.TP_DESO.patterns.mappers.HabitacionMapper;
 import org.example.TP_DESO.patterns.mappers.HuespedMapper;
-import org.example.TP_DESO.domain.Estadia;
-import org.example.TP_DESO.domain.Habitacion;
-import org.example.TP_DESO.domain.Huesped;
-import org.example.TP_DESO.domain.Reserva;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
@@ -35,13 +33,13 @@ public class EstadiaDTO {
         this.habitacion = habitacion;
         this.consumos = null;
     }
-    public EstadiaDTO(Estadia estadia) {
+    public EstadiaDTO(Estadia estadia, List<Consumo> consumos) {
         this.idEstadia = estadia.getIdEstadia();
         this.fechaInicio = estadia.getFechaInicio();
         this.fechaFin = estadia.getFechaFin();
         this.habitacion = HabitacionMapper.toDTO(estadia.getHabitacion());
         this.huespedes = (ArrayList<HuespedDTO>) estadia.getHuespedes().stream().map(HuespedMapper::toDTO).collect(Collectors.toCollection(ArrayList::new));
-        this.consumos = (ArrayList<ConsumoDTO>) estadia.getConsumos().stream().map(ConsumoDTO::new).collect(Collectors.toCollection(ArrayList::new));
+        this.consumos = (ArrayList<ConsumoDTO>) consumos.stream().map(ConsumoDTO::new).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public EstadiaDTO(Long idEstadia, LocalDate fechaInicio, LocalDate fechaFin, ArrayList<HuespedDTO> huespedDTO, HabitacionDTO habitacionDTO) {

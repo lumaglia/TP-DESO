@@ -1,6 +1,7 @@
 package org.example.TP_DESO;
 
 import org.example.TP_DESO.domain.*;
+import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -17,9 +18,10 @@ public class PopulateBDD implements CommandLineRunner {
     private final HuespedRepository huespedRepository;
     private final EstadiaRepository estadiaRepository;
     private final ReservaRepository reservaRepository;
+    private final ConsumoRepository consumoRepository;
 
     private static final boolean hardReset = false;
-    private static final boolean test = false;
+    private static final boolean test = true;
 
 
     @Autowired
@@ -28,13 +30,15 @@ public class PopulateBDD implements CommandLineRunner {
             DireccionRepository direccionRepository,
             HuespedRepository huespedRepository,
             EstadiaRepository estadiaRepository,
-            ReservaRepository reservaRepository
+            ReservaRepository reservaRepository,
+            ConsumoRepository consumoRepository
     ) {
         this.habitacionRepository = habitacionRepository;
         this.direccionRepository = direccionRepository;
         this.huespedRepository = huespedRepository;
         this.estadiaRepository = estadiaRepository;
         this.reservaRepository = reservaRepository;
+        this.consumoRepository = consumoRepository;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class PopulateBDD implements CommandLineRunner {
             }
 
             if(hardReset) resetearTablas();
-
+/*
             System.out.println("-> Poblando con datos a la bdd");
             //HABITACIONES
             poblarHabitaciones();
@@ -68,10 +72,11 @@ public class PopulateBDD implements CommandLineRunner {
                     LocalDate.of(2025, 2, 27),
                     LocalDate.of(2025, 1, 29)
             );
-
+*/
+            poblarDefensaDesarrollo();
 
             System.out.println("-> Finalizada la carga de datos");
-            //ESPERO QUE ESO SEA TODO POR FAVOR QUE DIFICIL FUE ESTO
+            //ESPERO QUE ESO SEA TO DO POR FAVOR QUE DIFICIL FUE ESTO
         } catch (Exception e) {
             throw new RuntimeException("Error al poblar la bdd: " + e.getMessage());
         }
@@ -94,7 +99,7 @@ public class PopulateBDD implements CommandLineRunner {
             h.setNroHabitacion(String.valueOf(i));
             h.setPrecioNoche(50800.0F);
             h.setCapacidad(1);
-            h.setTamanno(String.valueOf(30));
+            h.setTamanno("30 m^2");
             h.setCamasInd(1);
 
             habitacionRepository.save(h);
@@ -457,6 +462,205 @@ public class PopulateBDD implements CommandLineRunner {
         }
 
         System.out.println("-> Finalizado: " + reservasCount + " reservas y " + estadiasCount + " estadías creadas.");
+    }
+
+    public void poblarDefensaDesarrollo() throws FracasoOperacion {
+        try {
+            System.out.println("-> Generando defensa desarrollo");
+
+            LocalDate inicio = LocalDate.of(2025, 12, 10);
+            LocalDate inicioAntes = LocalDate.of(2025, 12, 5);
+
+            Direccion direccion = new Direccion(
+                    "San Martin", "1", "3000",
+                    "Santa Fe Capital", "Santa Fe", "Argentina"
+            );
+
+            Direccion direccion2 = new Direccion(
+                    "Belgrano", "2", "3000",
+                    "Santa Fe Capital", "Santa Fe", "Argentina"
+            );
+
+            Direccion direccion3 = new Direccion(
+                    "Roca", "1", "3000",
+                    "Santa Fe Capital", "Santa Fe", "Argentina"
+            );
+            direccionRepository.save(direccion);
+
+            Huesped h1 = crearHuesped(
+                    "MARTIN", "PEREZ", "23654978",
+                    "martin@gmail.com", direccion
+            );
+
+            crearEstadiaDefensa(
+                    habitacionRepository.findById("2").orElseThrow(),
+                    h1,
+                    List.of(h1),
+                    inicio
+            );
+
+            Huesped h2 = crearHuesped(
+                    "MARTINCITO", "PERECITO", "23654977",
+                    "martincito@gmail.com", direccion2
+            );
+
+            Huesped h3 = crearHuesped(
+                    "MARTINCITA", "MONCHA", "23654976",
+                    "martincita@gmail.com", direccion2
+            );
+
+            crearEstadiaDefensa(
+                    habitacionRepository.findById("12").orElseThrow(),
+                    h2,
+                    List.of(h2, h3),
+                    inicio
+            );
+
+            Huesped h4 = crearHuesped(
+                    "MARTINCHO", "PERENCHO", "23654678",
+                    "martincho@gmail.com", direccion3
+            );
+
+            Huesped h5 = crearHuesped(
+                    "MANOLO", "GARCIA", "23644968",
+                    "manolo@gmail.com", direccion3
+            );
+
+            crearEstadiaDefensa(
+                    habitacionRepository.findById("31").orElseThrow(),
+                    h4,
+                    List.of(h4, h5),
+                    inicio
+            );
+
+            Huesped h6 = crearHuesped(
+                    "CARLOS", "LOPEZ", "23611111",
+                    "carlos@gmail.com", direccion2
+            );
+
+            Huesped h7 = crearHuesped(
+                    "ANA", "LOPEZ", "23622222",
+                    "ana@gmail.com", direccion
+            );
+
+            crearEstadiaDefensa(
+                    habitacionRepository.findById("32").orElseThrow(),
+                    h6,
+                    List.of(h6, h7),
+                    inicioAntes
+            );
+
+            List<Huesped> family = List.of(
+                    crearHuesped("JUAN IGNACIO", "DORREGO", "30000001", "j1@gmail.com", direccion),
+                    crearHuesped("JUAN PEREZ", "DORREGO", "30000002", "j2@gmail.com", direccion),
+                    crearHuesped("JUAN MARIANO", "DORREGO", "30000003", "j3@gmail.com", direccion),
+                    crearHuesped("JUAN PEDRO", "DORREGO", "30000004", "j4@gmail.com", direccion),
+                    crearHuesped("JUAN FRANCISCO", "DORREGO", "30000005", "j5@gmail.com", direccion)
+            );
+
+            crearEstadiaDefensa(
+                    habitacionRepository.findById("38").orElseThrow(),
+                    family.get(0),
+                    family,
+                    inicio
+            );
+
+            Huesped h8 = crearHuesped(
+                    "PEDRO", "SUITE", "40000001",
+                    "pedro@gmail.com", direccion3
+            );
+
+            Huesped h9 = crearHuesped(
+                    "MARIA", "SUITE", "40000002",
+                    "maria@gmail.com", direccion3
+            );
+
+            crearEstadiaDefensa(
+                    habitacionRepository.findById("48").orElseThrow(),
+                    h8,
+                    List.of(h8, h9),
+                    inicio
+            );
+
+            System.out.println("-> Finalizando defensa desarrollo");
+
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al poblar: " + e.getMessage());
+        }
+    }
+
+
+    public void crearEstadiaDefensa(Habitacion h, Huesped quienReserva, List<Huesped> hs, LocalDate inicio) throws FracasoOperacion {
+        LocalDate fechaReserva = LocalDate.of(2025,10,28);
+        LocalDate fin = LocalDate.of(2025, 12, 17);
+        try{
+
+            Reserva r = new Reserva();
+            r.setFechaReserva(fechaReserva);
+            r.setFechaInicio(inicio);
+            r.setFechaFin(fin);
+            r.setNombre(quienReserva.getNombre().toUpperCase());
+            r.setApellido(quienReserva.getApellido().toUpperCase());
+            r.setTelefono(quienReserva.getTelefono());
+            r.setCancelada(false);
+            r.setHabitacion(h);
+            reservaRepository.save(r);
+
+            Estadia e = new Estadia();
+            e.setFechaInicio(inicio);
+            e.setFechaFin(fin);
+            e.setHabitacion(h);
+            e.setHuespedes(hs);
+            estadiaRepository.save(e);
+
+            Consumo consumo1 = new Consumo();
+            consumo1.setDetalle("Lavado y planchado");
+            consumo1.setTipo(Consumo.TipoConsumo.LAVADOPLANCHADO);
+            consumo1.setMonto(3000F);
+            consumo1.setEstadia(e);
+            consumo1.setFactura(null);
+
+            Consumo consumo2 = new Consumo();
+            consumo1.setDetalle("Compra Bar");
+            consumo1.setTipo(Consumo.TipoConsumo.BAR);
+            consumo1.setMonto(2500);
+            consumo1.setEstadia(e);
+            consumo1.setFactura(null);
+
+            Consumo consumo3 = new Consumo();
+            consumo1.setDetalle("Fue al sauna");
+            consumo1.setTipo(Consumo.TipoConsumo.SAUNA);
+            consumo1.setMonto(5500);
+            consumo1.setEstadia(e);
+            consumo1.setFactura(null);
+
+            List<Consumo> consumos = List.of(consumo1, consumo2, consumo3);
+
+            consumoRepository.saveAll(consumos);
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al crear la reserva: " + e.getMessage());
+        }
+    }
+
+    public Huesped crearHuesped(String nombre, String apellido, String dni, String email, Direccion direccion) throws FracasoOperacion {
+        try{
+            Huesped h = new Huesped(
+                    nombre, apellido, "DNI", dni,
+                    "20-" + dni + "-0",
+                    "Consumidor Final",
+                    LocalDate.of(1990, 1, 1),
+                    "123456789",
+                    email,
+                    "Empleado",
+                    "Argentina",
+                    direccion
+            );
+            return huespedRepository.save(h);
+
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al crear el huesped" + e.getMessage());
+        }
     }
 
     //LISTO BASTA HASTA ACA LLEGUE

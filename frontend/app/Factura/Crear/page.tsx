@@ -218,6 +218,7 @@ export default function CrearFactura() {
                             setItems(itemsFactura)
                             setHuespedes(data.huespedes)
                             setSelectedHuesped(null)
+                            setOpcion('Huesped')
                             setEstado(EstadosCU07.SeleccionResponsable)
                         }
                     })

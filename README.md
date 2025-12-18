@@ -33,3 +33,18 @@ json
     "usuario": "Conserje"
     "contrasenna": "contraseña1234"
 }
+
+CU 02 - Buscar Huesped
+
+Método: POST
+URL: http://localhost:3000/Huesped/Buscar
+Body (JSON):
+json
+{
+    "nombre": null
+    "apellido": null
+    "tipoDoc": "DNI"
+    "nroDOc": null
+}
+
+CU 04 - Reservar Habitación

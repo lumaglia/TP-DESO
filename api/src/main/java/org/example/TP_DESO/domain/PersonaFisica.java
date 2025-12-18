@@ -12,8 +12,8 @@ import lombok.Setter;
 public class PersonaFisica extends ResponsablePago {
     @OneToOne(optional = false)
     @JoinColumns({
-            @JoinColumn(name = "huesped_tipoDoc", referencedColumnName = "tipoDoc", nullable = false, unique = true),
-            @JoinColumn(name = "huesped_nroDoc", referencedColumnName = "nroDoc", nullable = false, unique = true)
+            @JoinColumn(name = "huesped_tipoDoc", referencedColumnName = "tipoDoc", nullable = false),
+            @JoinColumn(name = "huesped_nroDoc", referencedColumnName = "nroDoc", nullable = false)
     })
     private Huesped huesped;
 

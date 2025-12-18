@@ -91,9 +91,15 @@ export default function CrearFactura() {
     const [cuit, setCuit] = useState("");
     const [mostrarCU12, setMostrarCU12] = useState(false);
     const [done, setDone] = useState(false);
+    const [razon, setRazon] = useState("");
 
     const [opcion, setOpcion] = useState('Huesped');
     const manejarCambio = (e:any) => {
+        setRazon("")
+        setSelectedHuesped(null)
+        setCuit("")
+        setDone(false)
+        setMostrarCU12(false)
         setOpcion(e.target.value);
     };
 
@@ -216,8 +222,10 @@ export default function CrearFactura() {
             }})
             .then(res => {
                 if (res?.ok) {
-                    res?.json().then((data) => {
-                        console.log(data)
+                    res?.json().then((resdata) => {
+                        console.log(resdata)
+                        setCuit(data.cuit)
+                        setRazon(resdata.message)
                     })
                 }else{
                     console.log(res?.status)
@@ -238,6 +246,11 @@ export default function CrearFactura() {
         }else{
             setCuit(selectedHuesped?.cuil)
         }
+    }
+    const submitJuridica = () => {
+        setResponsablePago(razon)
+        setIsResponsableHuesped(false)
+        setEstado(EstadosCU07.ConfirmarFactura)
     }
 
     const submitFactura = (f: any) => {
@@ -368,7 +381,9 @@ export default function CrearFactura() {
                                 }
 
 
-                            </>:
+                            </>: (mostrarCU12 && !done)? <>
+                                    <p style={{textAlign: 'center'}}>El responsable de pago no ha sido encontrado, puede cargar uno nuevo a continuación.</p>
+                                    <AltaResponsablePago nested={true} setDone={setDone} setCuit={setCuit}/></>:
                             <>
                                 <form onSubmit={handleSubmit(submitResponsable)} noValidate>
                                     <Row><Campo field='CUIT' placeholder='11 - 11222333 - 2' register={register} errors={errors}
@@ -378,7 +393,11 @@ export default function CrearFactura() {
                                     Confirmar
                                 </button></Row></form>
                                 {
-
+                                    (razon != "")? <>
+                                        <h3 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>Razon Social: {razon}</h3>
+                                        <Row><button type='button' className='Button' onClick={() => setRazon("")}>Cancelar</button>
+                                            <button type="button" className="Button" onClick={() => submitJuridica()}>Aceptar</button></Row>
+                                    </> : <></>
                                 }
                                 <div style={{marginTop: '20px', display: 'flex', justifyContent: 'flex-end'}}>
 
@@ -443,7 +462,7 @@ export default function CrearFactura() {
                             <Row>
                             <button className={"Button"}
                                     onClick={submitFactura}>
-                                ACEPTAR
+                                Aceptar
                             </button>
                         </Row></>: <></> }
                     </div>

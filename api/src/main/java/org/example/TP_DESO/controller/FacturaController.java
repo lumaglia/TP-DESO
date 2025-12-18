@@ -1,14 +1,7 @@
 package org.example.TP_DESO.controller;
 
-import org.example.TP_DESO.domain.Factura;
-import org.example.TP_DESO.domain.Huesped;
-import org.example.TP_DESO.domain.ResponsablePago;
-import org.example.TP_DESO.dto.CU07.HuespedCheckoutDTO;
-import org.example.TP_DESO.dto.CU07.ItemsFacturaDTO;
 import org.example.TP_DESO.dto.CU07.RequestCheckoutDTO;
-import org.example.TP_DESO.dto.CU07.RequestDeItemsDTO;
-import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
-import org.example.TP_DESO.dto.EstadiaDTO;
+import org.example.TP_DESO.dto.CU12.PersonaJuridicaDTO;
 import org.example.TP_DESO.dto.CU07.EstadiaFacturacionDTO;
 import org.example.TP_DESO.dto.FacturaDTO;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
@@ -32,29 +25,13 @@ public class FacturaController {
             @RequestBody RequestCheckoutDTO request) throws FracasoOperacion {
         System.out.println(request.getDiaCheckOut());
         try{
-            EstadiaFacturacionDTO resultado = gestorFactura.estadiaFacturacion(request.getNumHabitacion());
+            EstadiaFacturacionDTO resultado = gestorFactura.estadiaFacturacion(request);
             return ResponseEntity.ok().body(resultado);
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage().contains("Estadía no encontrada con habitacion y fecha fin:")){
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            throw new FracasoOperacion("Error : " + e.getMessage());
-        }
-    }
-
-    @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping("/Factura/BuscarResponsable")
-    public ResponseEntity<ItemsFacturaDTO> buscarResponsablePago
-            (@RequestBody RequestDeItemsDTO request) throws FracasoOperacion{
-        try{
-            ResponsablePagoDTO responsablePago = gestorFactura.buscarResponsablePago(request.getResponsablePago().getCuil());
-
-            ItemsFacturaDTO items = new ItemsFacturaDTO(request.getEstadia(), responsablePago, request.getResponsablePago(), request.getConsumos());
-
-            return ResponseEntity.ok().body(items);
-
-        } catch (Exception e) {
-            throw new FracasoOperacion("Error : " + e.getMessage());
+            throw new FracasoOperacion("Error al obtener los huespedes que hacen checkout: " + e.getMessage());
         }
     }
 
@@ -65,39 +42,36 @@ public class FacturaController {
             gestorFactura.generarFactura(facturaDTO);
             return ResponseEntity.ok(facturaDTO);
         }
-        catch (FracasoOperacion e){
-            throw new FracasoOperacion("Error: " + e.getMessage());
-        }
         catch (Exception e){
-            throw new DocumentoYaExistente("Error : " + e.getMessage());
+            throw new DocumentoYaExistente("Error al crear la factura: " + e.getMessage());
         }
 
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/ResponsablePago/Alta")
-    public ResponseEntity<ResponsablePagoDTO> altaResponsablePago(
-            @RequestBody ResponsablePagoDTO responsablePagoDTO) throws FracasoOperacion{
+    public ResponseEntity<PersonaJuridicaDTO> altaResponsablePago(
+            @RequestBody PersonaJuridicaDTO personaJuridicaDTO) throws FracasoOperacion{
         try{
-            gestorFactura.altaResponsablePago(responsablePagoDTO);
-            return ResponseEntity.ok(responsablePagoDTO);
+            gestorFactura.altaPersonaJuridica(personaJuridicaDTO);
+            return ResponseEntity.ok(personaJuridicaDTO);
         }
         catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new FracasoOperacion("No se pudo dar de alta el responsable de pago: " + e.getMessage());
         }
 
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping("/ResponsablePago/Modificar")
-    public ResponseEntity<ResponsablePagoDTO> modificarResponsablePago(
-            @RequestBody ResponsablePagoDTO responsablePagoDTO) throws FracasoOperacion{
+    public ResponseEntity<PersonaJuridicaDTO> modificarResponsablePago(
+            @RequestBody PersonaJuridicaDTO personaJuridicaDTO) throws FracasoOperacion{
         try{
-            gestorFactura.altaResponsablePago(responsablePagoDTO);
-            return ResponseEntity.ok(responsablePagoDTO);
+            gestorFactura.modificarResponsablePago(personaJuridicaDTO);
+            return ResponseEntity.ok(personaJuridicaDTO);
         }
         catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new FracasoOperacion("Error al modificar el responsable de pago" + e.getMessage());
         }
 
     }

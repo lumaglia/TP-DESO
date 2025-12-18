@@ -1,7 +1,9 @@
 package org.example.TP_DESO.dao;
 
+import org.example.TP_DESO.domain.Direccion;
 import org.example.TP_DESO.domain.PersonaFisica;
 import org.example.TP_DESO.domain.PersonaJuridica;
+import org.example.TP_DESO.dto.CU12.PersonaJuridicaDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.PersonaFisicaRepository;
 import org.example.TP_DESO.repository.PersonaJuridicaRepository;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ResponsablePagoDAOMySQL implements ResponsablePagoDAO{
@@ -16,8 +19,8 @@ public class ResponsablePagoDAOMySQL implements ResponsablePagoDAO{
     private PersonaFisicaRepository pfRepository;
     @Autowired
     private PersonaJuridicaRepository pjRepository;
-
-
+    @Autowired
+    private DireccionDAOMySQL direccionDAO;
 
     // FUNCIONES PARA LA PERSONA FISICA (NO SOY UNA IA SOY JUAN)
     @Override
@@ -49,11 +52,6 @@ public class ResponsablePagoDAOMySQL implements ResponsablePagoDAO{
 
     }
 
-    @Override
-    public void crearPersonaJuridica() throws FracasoOperacion {
-
-    }
-
     // FUNCIONES PARA LA PERSONA JURIDICA (TAMPOCO SOY UNA IA SOY JUAN), pero las hizo nacho
     @Override
     public PersonaJuridica crearPersonaJuridica(PersonaJuridica personaJuridica) throws FracasoOperacion {
@@ -76,8 +74,31 @@ public class ResponsablePagoDAOMySQL implements ResponsablePagoDAO{
         }
     }
     @Override
-    public void modificarPersonaJuridica() throws FracasoOperacion{
+    public void modificarPersonaJuridica(Long id, String razonSocial, String cuit, String telefono, Direccion direccion) throws FracasoOperacion{
+        try{
+            Optional<PersonaJuridica> existente = pjRepository.findById(id);
+            if(existente.isPresent()){
+                PersonaJuridica pj = existente.get();
+                try{
+                    pjRepository.delete(pj);
+                } catch (Exception e) {
+                    throw new FracasoOperacion("No se pudo eliminar a la persona juridica: " + e.getMessage());
+                }
 
+                pj.setRazonSocial(razonSocial);
+                pj.setCuit(cuit);
+                pj.setTelefono(telefono);
+
+                if(pj.getDireccion() != null) {
+                    Direccion direccionProcesada = direccionDAO.crearDireccion(pj.getDireccion());
+                    pj.setDireccion(direccionProcesada);
+                }
+
+                pjRepository.save(pj);
+            }
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al modificar PersonaJuridica: " + e.getMessage());
+        }
     }
     @Override
     public void eliminarPersonaJuridica() throws FracasoOperacion{

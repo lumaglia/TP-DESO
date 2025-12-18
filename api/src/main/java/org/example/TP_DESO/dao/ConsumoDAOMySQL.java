@@ -18,6 +18,9 @@ public class ConsumoDAOMySQL implements ConsumoDAO {
     @Override
     public ArrayList<Consumo> consumosEstadiaNoPagos(Long idEstadia) {
         ArrayList<Consumo> consumos = consumoRepository.findConsumoByEstadia_idEstadia(idEstadia);
-        return (ArrayList<Consumo>) consumos.stream().filter(c -> c.getFactura()==null).collect(Collectors.toCollection(ArrayList::new));
+        return consumos.stream().filter(c -> c.getFactura()==null).collect(Collectors.toCollection(ArrayList::new));
+    }
+    public ArrayList<Consumo> consumosEstadia(Long idEstadia) {
+        return new ArrayList<>(consumoRepository.findConsumoByEstadia_idEstadia(idEstadia));
     }
 }

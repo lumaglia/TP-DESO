@@ -7,6 +7,9 @@ import org.example.TP_DESO.dao.FacturaDAOMySQL;
 import org.example.TP_DESO.dao.NotaCreditoDAOMySQL;
 import org.example.TP_DESO.domain.*;
 import org.example.TP_DESO.dto.CU07.EstadiaFacturacionDTO;
+import org.example.TP_DESO.dto.CU07.RequestCheckoutDTO;
+import org.example.TP_DESO.dto.CU12.PersonaFisicaDTO;
+import org.example.TP_DESO.dto.CU12.PersonaJuridicaDTO;
 import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
 import org.example.TP_DESO.dto.ConsumoDTO;
 import org.example.TP_DESO.dto.EstadiaDTO;
@@ -18,8 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GestorFactura {
@@ -68,55 +74,42 @@ public class GestorFactura {
                 throw new FracasoOperacion("El mismo cuit es tanto de una persona fisica como de una juridica");
             }
             else if (personaJuridica != null){
-                return new ResponsablePagoDTO(personaJuridica);
+                return new PersonaJuridicaDTO(personaJuridica);
             }
             else {
-                return new ResponsablePagoDTO(personaFisica);
+                return new PersonaFisicaDTO(personaFisica);
             }
         }
         catch (Exception e){ throw new FracasoOperacion("Error: " + e.getMessage()); }
     }
 
-    public ResponsablePagoDTO altaResponsablePago(ResponsablePagoDTO responsablePagoDTO) throws FracasoOperacion {
+    public ResponsablePagoDTO altaPersonaJuridica(PersonaJuridicaDTO personaJuridica) throws FracasoOperacion {
         try {
-            if (responsablePagoDTO == null) {
-                throw new FracasoOperacion("El responsablePagoDTO no puede ser null");
+            if (personaJuridica == null) {
+                throw new FracasoOperacion("El personaJuridicaDTO no puede ser null");
             }
-            if (responsablePagoDTO.getCuit() == null || responsablePagoDTO.getCuit().isBlank()) {
+            if (personaJuridica.getCuit() == null || personaJuridica.getCuit().isBlank()) {
                 throw new FracasoOperacion("El CUIT/CUIL no puede ser vacío");
             }
 
-            PersonaFisica pf = daoResponsablePago.obtenerPersonaFisica(responsablePagoDTO.getCuit());
-            if (pf != null) {
-                return new ResponsablePagoDTO(pf);
-            }
-
-            PersonaJuridica pjExistente = daoResponsablePago.obtenerPersonaJuridica(responsablePagoDTO.getCuit());
+            PersonaJuridica pjExistente = daoResponsablePago.obtenerPersonaJuridica(personaJuridica.getCuit());
             if (pjExistente != null) {
-                return new ResponsablePagoDTO(pjExistente);
-            }
-
-            boolean esJuridica = responsablePagoDTO.getRazonSocial() != null
-                    && !responsablePagoDTO.getRazonSocial().isBlank()
-                    && !"N/A".equalsIgnoreCase(responsablePagoDTO.getRazonSocial().trim());
-
-            if (!esJuridica) {
-                throw new FracasoOperacion("Alta de Persona Física no implementada con este DTO");
+                return new PersonaJuridicaDTO(pjExistente);
             }
 
             PersonaJuridica pj = new PersonaJuridica();
-            pj.setRazonSocial(responsablePagoDTO.getRazonSocial());
-            pj.setCuit(responsablePagoDTO.getCuit());
-            pj.setTelefono(responsablePagoDTO.getTelefono());
+            pj.setCuit(personaJuridica.getCuit());
+            pj.setRazonSocial(personaJuridica.getRazonSocial());
+            pj.setTelefono(personaJuridica.getTelefono());
 
             pj.setDireccion(
                     direccionDAO.crearDireccion(
-                            DireccionMapper.toDomain(responsablePagoDTO.getDireccion())
+                            DireccionMapper.toDomain(personaJuridica.getDireccion())
                     )
             );
 
             PersonaJuridica guardada = daoResponsablePago.crearPersonaJuridica(pj);
-            return new ResponsablePagoDTO(guardada);
+            return new PersonaJuridicaDTO(guardada);
 
         } catch (FracasoOperacion e) {
             throw e;
@@ -125,8 +118,15 @@ public class GestorFactura {
         }
     }
 
-    public void modificarResponsablePago(){
-
+    public void modificarResponsablePago(ResponsablePagoDTO nuevoResponsableDTO) throws FracasoOperacion{
+        try{
+            if(nuevoResponsableDTO instanceof PersonaJuridicaDTO pj){
+                daoResponsablePago.modificarPersonaJuridica(pj.getId(), pj.getRazonSocial(), pj.getCuit(), pj.getTelefono(), DireccionMapper.toDomain(pj.getDireccion()));
+            }
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al modificar el responsable juridico: " + e.getMessage());
+        }
     }
 
     public void bajaResponsablePago(){
@@ -157,11 +157,18 @@ public class GestorFactura {
 
     }
 
-    public EstadiaFacturacionDTO estadiaFacturacion(String nrHabitacion) throws FracasoOperacion{
+    public EstadiaFacturacionDTO estadiaFacturacion(RequestCheckoutDTO request) throws FracasoOperacion{
         try{
-            EstadiaDTO estadia = this.obtenerEstadia(nrHabitacion);
-            float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), estadia.getFechaFin());
-            ArrayList<Consumo> consumos = daoConsumo.consumosEstadiaNoPagos(estadia.getIdEstadia());
+            LocalDateTime fin = LocalDateTime.parse(request.getDiaCheckOut());
+            EstadiaDTO estadia = this.obtenerEstadia(request.getNumHabitacion());
+            float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), fin);
+            ArrayList<Consumo> consumosEstadia = daoConsumo.consumosEstadia(estadia.getIdEstadia());
+
+            if(estadiaPaga(consumosEstadia)){
+                montoEstadia = 0F;
+            }
+
+            ArrayList<Consumo> consumos = consumosEstadia.stream().filter(c -> c.getFactura()!= null).collect(Collectors.toCollection(ArrayList::new));
 
             return new EstadiaFacturacionDTO(estadia, montoEstadia, consumos);
         }
@@ -170,4 +177,12 @@ public class GestorFactura {
         }
     }
 
+    public boolean estadiaPaga(ArrayList<Consumo> consumos){
+        for (Consumo consumo : consumos) {
+            if(consumo.getFactura() != null && consumo.getFactura().isPagaEstadia()){
+                return true;
+            }
+        }
+        return false;
+    }
 }

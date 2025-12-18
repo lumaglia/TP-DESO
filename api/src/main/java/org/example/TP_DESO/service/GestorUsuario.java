@@ -94,7 +94,7 @@ public class GestorUsuario implements UserDetailsService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plus(5, ChronoUnit.MINUTES))
+                .expiresAt(now.plus(60, ChronoUnit.MINUTES))
                 .subject(usuario)
                 .claim("scope", "ROLE_USER")
                 .build();

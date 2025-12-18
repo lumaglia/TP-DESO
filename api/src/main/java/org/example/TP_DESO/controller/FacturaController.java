@@ -78,9 +78,9 @@ public class FacturaController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/Factura/BuscarResponsablePago")
+    @GetMapping("/Factura/BuscarResponsablePago/{cuit}")
     public ResponseEntity<String> buscarResponsablePago(
-            @RequestBody String cuit) throws FracasoOperacion{
+            @PathVariable("cuit") String cuit) throws FracasoOperacion{
         try{
             ResponsablePagoDTO responsable = gestorFactura.buscarResponsablePago(cuit);
             if(responsable instanceof PersonaJuridicaDTO resultado){

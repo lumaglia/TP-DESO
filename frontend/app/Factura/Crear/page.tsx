@@ -11,6 +11,7 @@ import { AlertaCancelar } from '../../Alertas.tsx'
 import {comboValues, fieldTypes, MapNameToApi, validation} from '../../../public/constants'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useFetch } from '@/hooks/useFetch'
+import AltaResponsablePago from '../../ResponsablePago/Alta/page'
 
 type FormFactura = {
     idHabitacion : string;
@@ -88,6 +89,8 @@ export default function CrearFactura() {
     const [responsablePago, setResponsablePago] = useState("");
     const [isResponsableHuesped, setIsResponsableHuesped] = useState(false);
     const [cuit, setCuit] = useState("");
+    const [mostrarCU12, setMostrarCU12] = useState(false);
+    const [done, setDone] = useState(false);
 
     const [opcion, setOpcion] = useState('Huesped');
     const manejarCambio = (e:any) => {
@@ -146,21 +149,13 @@ export default function CrearFactura() {
         },
     }
 
-    const seleccionarResponsable = (h: any) => {
-        setErrorResponsable(null)
 
-        if (responsableSeleccionado?.cuit == h.cuit) {
-            setResponsableSeleccionado(null)
-        } else {
-            setResponsableSeleccionado(h)
-        }
-    }
 
     const submitCheckout = (data: FormFactura) => {
         const [horas, minutos] = data.horaSalida.split(':');
         const dia = new Date(new Date().getTime()-24*3600000);
         dia.setHours(+horas, +minutos, 0, 0)
-        const diaCheckout = new Date(dia.getTime()-3*3600000).toISOString();
+        const diaCheckout = new Date(dia.getTime()-1*3600000).toISOString();
         console.log(diaCheckout);
         setErrorHabitacion(false);
         fetchApi('/Factura/Checkout', {
@@ -212,14 +207,9 @@ export default function CrearFactura() {
 
     }
 
-    const submitResponsable = () => {
-        fetchApi('/Factura/Checkout', {
-            method: 'POST',
-            body: JSON.stringify({
-                estadia: estadia,
-                responsablePago: responsableSeleccionado,
-                consumos: estadia!.consumos,
-            }),
+    const submitResponsable = (data:any) => {
+        fetchApi(`/Factura/BuscarResponsablePago/${data.cuit}`, {
+            method: 'GET',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -231,7 +221,9 @@ export default function CrearFactura() {
                     })
                 }else{
                     console.log(res?.status)
-                    //Usar CU12
+                    setCuit("")
+                    setDone(false)
+                    setMostrarCU12(true)
                 }
             })
 
@@ -389,9 +381,7 @@ export default function CrearFactura() {
 
                                 }
                                 <div style={{marginTop: '20px', display: 'flex', justifyContent: 'flex-end'}}>
-                                    <button className="Button" onClick={submitResponsable}>
-                                        ACEPTAR
-                                    </button>
+
                                 </div>
                             </>
                     }

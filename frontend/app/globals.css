@@ -81,9 +81,9 @@ body {
     align-self: flex-end;
 
     &:disabled {
-        background-color: rgba(84, 95, 113, 0.47);
+        background-color: rgba(176, 185, 200, 0.47);
         &:hover{
-            background-color: rgba(84, 95, 113, 0.47);
+            background-color: rgba(176, 185, 200, 0.47);
 
         }
     }

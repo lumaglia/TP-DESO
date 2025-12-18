@@ -30,6 +30,9 @@ export default function Home() {
                     <Link href='/Estadia/Alta'>
                         <button className='Button FixedLength'>Ocupar Habitación</button>
                     </Link>
+                    <Link href='/Habitacion/Buscar'>
+                        <button className='Button FixedLength'>Mostrar Estado Habitaciones</button>
+                    </Link>
                 </Row>
                 <Row>
                     <Link href='/Factura/Crear'>

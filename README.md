@@ -1,3 +1,5 @@
+# README
+
 Este proyecto está compuesto por un backend desarrollado en Java utilizando Spring Boot y un frontend desarrollado con Next.js. Para poder ejecutar la aplicación es necesario tener instalado previamente Java 25 y Node.js, el cual incluye npm de forma predeterminada.
 
 Para ejecutar el backend, simplemente se debe abrir el proyecto en un IDE (como IntelliJ IDEA) y ejecutar la clase principal que contiene el método main y la anotación @SpringBootApplication. Esto iniciará automáticamente la aplicación Spring Boot.
@@ -9,7 +11,7 @@ El backend y el frontend deben ejecutarse en paralelo, cada uno en su propio pro
 Las pruebas unitarias del backend se pueden ejecutar utilizando Maven. Desde el directorio raíz del backend (TP-DESO/api), se debe abrir una terminal y ejecutar el comando './mvnw test' en sistemas Unix/Linux o 'mvnw test' o '.\mvnw test' en Windows. Esto ejecutará todas las pruebas unitarias configuradas en el proyecto y generará los reportes correspondientes (JaCoCo). Como pide el enunciado, las prubas son hechas en la capa service, especificamente en las clases 'GestorHuespued', 'GestorHabitacion' y 'GestorReserva'. En caso de querer ver las pruebas manualmente, estas se encuentran en el apartado 'TP-DESO\api\src\test\java\org\example\TP_DESO\service', donde se encontraran cada clase de de tipo test, y se pueden ejecutar tanto las clases con todos los test en ella, o cada metodo (test) que contiene la clase.
 
 
-Configuración y Población de la Base de Datos:
+## Configuración y Población de la Base de Datos
 
 Para asegurar el correcto funcionamiento del sistema, se debe seguir este procedimiento según el estado de la base de datos:
 
@@ -31,11 +33,11 @@ Acceda a la base de datos mediante un gestor (DBeaver, MySQL Workbench, etc.) ut
 Ejecute la sentencia DROP DATABASE defaultdb; para eliminar la base de datos actual.
 Vuelva a ejecutar la aplicación desde la rama FeaturePopulateBDD para recrear el entorno desde cero de manera limpia.
 
-
+## End Points
 
 Todos los endpoints para los casos de uso existen en http://localhost:8081 y son llamados por el Front para los casos de uso, a continuación se lista cada End Point y los casos de usos en los que se emplea.
 
-CU 01 - Auntenticar Usuario
+### CU 01 - Auntenticar Usuario
 
 Registrar Usuario
 Método: POST
@@ -65,7 +67,7 @@ Body (JSON):
 
 Valida el usuario en la base de datos y devuelve un token de login si existe el usuario
 
-CU 02 - Buscar Huesped
+### CU 02 - Buscar Huesped
 
 Método: POST
 URL: http://localhost:8081/Huesped/Buscar
@@ -82,7 +84,7 @@ Body (JSON):
 
 Devuelve una lista de huespedes que contengan los datos no nulos enviados en el body
 
-CU 04 - Reservar Habitación
+### CU 04 - Reservar Habitación
 
 Método: POST
 URL: http://localhost:8081/Habitacion/Reservar
@@ -111,13 +113,13 @@ Body (JSON):
 
 Crea las reservas suministradas en el array
 
-CU 05 - Mostrar Estado Habitación
+### CU 05 - Mostrar Estado Habitación
 
 Método: GET
 URL: http://localhost:8081/Habitacion/Buscar/{fechaInicio}/{fechaFin}
 Recupera todas las reservas y estadías para todas las habitaciones tales que existan dentro del rango de fechas.
 
-CU 06 - Cancelar Reserva
+### CU 06 - Cancelar Reserva
 
 Método: POST
 URL: http://localhost:8081/Habitacion/Reserva/Buscar
@@ -149,7 +151,7 @@ Body (JSON):
 
 Cancela la reserva suministrada cambiandole el estado a cancelada.
 
-CU 07 - Facturar
+### CU 07 - Facturar
 
 Método: POST
 URL: http://localhost:8081/Factura/Checkout
@@ -190,7 +192,7 @@ Body (JSON):
 Carga una factura en el sistema y genera su valor en base a los consumos declarados y si paga la estadia, 
 segun el booleano se asocia el Responsable de pago a una Persona Fisica de tipoDoc y nroDoc o a una Persona Juridica del cuit, los valores no usados se ignoran y tratan como basura.
 
-CU 09 - Dar de Alta Huesped
+### CU 09 - Dar de Alta Huesped
 
 Método: POST
 URL: http://localhost:8081/Huesped/Alta
@@ -222,7 +224,8 @@ Body (JSON):
 
 Carga un nuevo huesped al sistema
 
-CU 10 - Modificar Huesped (primer endpoint también utilizado por CU 09)
+### CU 10 - Modificar Huesped 
+Nota: El primer endpoint también utilizado por CU 09
 
 Método: PUT
 URL: http://localhost:8081/Huesped/Modificar
@@ -272,7 +275,7 @@ Body (JSON):
 
 Obtiene el Huesped Completo cuyo documento coincide con el suministrado.
 
-CU 11 - Dar de Baja Huesped
+### CU 11 - Dar de Baja Huesped
 
 Método: DELETE
 URL: http://localhost:8081/Huesped/Baja
@@ -297,7 +300,7 @@ Body (JSON):
 
 Elimina el huesped cuyo Documento se provee si existe y no tiene estadías asociadas
 
-CU 12 - Dar de Alta Responsable de Pago
+### CU 12 - Dar de Alta Responsable de Pago
 
 Método: POST
 URL: http://localhost:8081/ResponsablePago/Alta
@@ -343,7 +346,7 @@ Body (JSON):
 
 Modifica la Persona Juridica de CUIT provisto cambiandole todos sus datos a los nuevos
 
-CU 15 - Ocupar Habitación
+### CU 15 - Ocupar Habitación
 
 Método: POST
 URL: http://localhost:8081/Habitacion/Ocupar
@@ -356,16 +359,16 @@ Body (JSON):
     "fechaFin": "2025-12-25",
     "huespedes": [
         {
-            nombre: 'MANOLO', 
-            apellido: 'GARCIA', 
-            tipoDoc: 'DNI', 
-            nroDoc: '23644968'
+            "nombre": "MANOLO", 
+            "apellido": "GARCIA", 
+            "tipoDoc": "DNI", 
+            "nroDoc": "23644968"
         },
         {
-            nombre: 'MARTINCHO', 
-            apellido: 'PERENCHO', 
-            tipoDoc: 'DNI', 
-            nroDoc:'23654678'
+            "nombre": "MARTINCHO", 
+            "apellido": "PERENCHO", 
+            "tipoDoc": "DNI", 
+            "nroDoc": "23654678"
         }
     ]
 }

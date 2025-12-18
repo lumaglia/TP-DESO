@@ -136,6 +136,9 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
                 else if(h instanceof DobleEstandar && Objects.equals(tipoHabitacion, "Doble Estandar")){
                     resultado.add(HabitacionMapper.toDTO(h));
                 }
+                else if(h instanceof DobleSuperior && Objects.equals(tipoHabitacion, "Doble Superior")){
+                    resultado.add(HabitacionMapper.toDTO(h));
+                }
                 else if(h instanceof IndividualEstandar && Objects.equals(tipoHabitacion, "Individual Estándar")){
                     resultado.add(HabitacionMapper.toDTO(h));
                 }

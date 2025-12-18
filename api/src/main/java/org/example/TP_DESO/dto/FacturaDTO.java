@@ -28,6 +28,5 @@ public class FacturaDTO {
         this.idFactura = factura.getNroFactura();
         this.idNota = factura.getNotaCredito().getNroNotaCredito();
         this.idEstadia = factura.getEstadia().getIdEstadia();
-        this.idPago = factura.getPago().getId();
     }
 }

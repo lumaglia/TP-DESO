@@ -33,13 +33,8 @@ public class Factura {
     )
     private NotaCredito notaCredito;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(
-            name = "responsable_pago_id", referencedColumnName = "Id",
-            nullable = false
-    )
+            name = "responsable_pago_id", referencedColumnName = "Id")
     private ResponsablePago responsablePago;
-
-    @OneToOne(mappedBy = "factura", cascade = CascadeType.ALL)
-    private Pago pago;
 }

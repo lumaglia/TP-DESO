@@ -137,7 +137,6 @@ public class GestorFactura {
             Factura factura = new Factura();
 
             factura.setPagaEstadia(emitirFacturaDTO.isPagaEstadia());
-            factura.setPago(null);
             factura.setNotaCredito(null);
 
             LocalDateTime fin = LocalDateTime.ofInstant(Instant.parse(emitirFacturaDTO.getDiaCheckOut()), ZoneId.systemDefault());

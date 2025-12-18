@@ -26,6 +26,7 @@ type HuespedCheckout = {
 
 type ConsumoFactura = {
     id: number,
+    tipo: string,
     descripcion: string,
     monto: number,
 }
@@ -42,6 +43,13 @@ type FacturaPreviewDTO = {
     nombreResponsablePago : string;
     tipoFactura: string;
     total: number;
+}
+
+type ItemValues = {
+    id: number,
+    tipo: string,
+    descripcion: string,
+    monto: number
 }
 
 enum EstadosCU07 {
@@ -62,8 +70,6 @@ export default function CrearFactura() {
         tipo: string,
         descripcion: string
         monto: number
-        seleccionado: boolean,
-        procesado: boolean
     }[]>([])
     const [ selectedHuesped, setSelectedHuesped ] = useState<{
         nombre: string;
@@ -73,16 +79,26 @@ export default function CrearFactura() {
         nroDoc: string;
         menorEdad: boolean;
     } | null>(null)
+    const [selectedItems, setSelectedItems ] = useState<Array<ItemValues>>([])
     const [huespedes, setHuespedes] = useState<HuespedCheckout[]>([])
     const [estado, setEstado] = useState<EstadosCU07>(EstadosCU07.DatosHabitacion)
     const [responsableSeleccionado, setResponsableSeleccionado] = useState<HuespedCheckout | null>(null)
     const [errorResponsable, setErrorResponsable] = useState<string | null>(null)
     const [errorHabitacion, setErrorHabitacion] = useState(false);
+    const [responsablePago, setResponsablePago] = useState("");
+    const [isResponsableHuesped, setIsResponsableHuesped] = useState(false);
+    const [cuit, setCuit] = useState("");
 
     const [opcion, setOpcion] = useState('Huesped');
     const manejarCambio = (e:any) => {
         setOpcion(e.target.value);
     };
+
+    const formateador = new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS', // Código ISO de la moneda (USD, EUR, MXN, etc.)
+        minimumFractionDigits: 2
+    });
 
     const validation = {
         idHabitacion: {
@@ -160,26 +176,28 @@ export default function CrearFactura() {
                         setEstadia(data)
 
                         const itemsFactura = [
-                            {
+                            ...(data.montoEstadia > 0 ? [{
                                 id: data.id,
                                 tipo: 'Estadia',
                                 descripcion: 'Costo de la estadia',
                                 monto: data.montoEstadia,
-                                seleccionado: true,
-                                procesado: false
-                            },
+                            }] : []),
+
                             ...data.consumos?.map(c => ({
                                 id: c.id,
-                                tipo: 'Consumo',
+                                tipo: c.tipo,
                                 descripcion: c.descripcion,
                                 monto: c.monto,
-                                seleccionado: true,
-                                procesado: false
                             })) ?? []
-                        ]
-                        setItems(itemsFactura)
-                        setHuespedes(data.huespedes)
-                        setEstado(EstadosCU07.SeleccionResponsable)
+                        ];
+                        if (itemsFactura.length === 0) {
+                            console.log("CONSUMOS VACIOS LISTO ESTADIA")
+                        }else{
+                            setItems(itemsFactura)
+                            setHuespedes(data.huespedes)
+                            setSelectedHuesped(null)
+                            setEstado(EstadosCU07.SeleccionResponsable)
+                        }
                     })
                 }else{
                     console.log(res?.status, "NO SE ENCONTRO RESERVA, INDICAR MENSAJE DE ERROR")
@@ -221,10 +239,20 @@ export default function CrearFactura() {
 
         }
     }
+    const submitHuesped = () => {
+        setResponsablePago(selectedHuesped?.apellido + " " + selectedHuesped?.nombre)
+        setIsResponsableHuesped(true)
+        setEstado(EstadosCU07.ConfirmarFactura)
+        if(selectedHuesped?.cuil === null || selectedHuesped?.cuil === undefined) {
+            setCuit("")
+        }else{
+            setCuit(selectedHuesped?.cuil)
+        }
+    }
 
     const submitFactura = (f: any) => {
-        const seleccionados = items.filter(i => i.seleccionado)
-        if(seleccionados.length===0){
+
+        if(selectedItems.length===0){
             alert('Debe seleccionar al menos un item')
             return
         }
@@ -343,13 +371,22 @@ export default function CrearFactura() {
                                         <ScrollArea.Thumb className='Thumb'/>
                                     </ScrollArea.Scrollbar>
                                 </ScrollArea.Root>
-                            <div style={{marginTop: '20px', display: 'flex', justifyContent: 'flex-end'}}>
-                                <button className="Button" onClick={submitResponsable}>
-                                    ACEPTAR
-                                </button>
-                            </div>
+                                {
+                                    selectedHuesped?.menorEdad == true? <p style={{textAlign: 'center'}}>La persona seleccionada es menor de edad, por favor elija otra.</p>
+                                        :
+                                        selectedHuesped===null? <></> : <Row><button className="Button" onClick={submitHuesped}>Confirmar</button></Row>
+                                }
+
+
                             </>:
-                            <><p>hola</p></>
+                            <>
+                                <p>hola</p>
+                                <div style={{marginTop: '20px', display: 'flex', justifyContent: 'flex-end'}}>
+                                    <button className="Button" onClick={submitResponsable}>
+                                        ACEPTAR
+                                    </button>
+                                </div>
+                            </>
                     }
                 </div>
             )}
@@ -360,50 +397,58 @@ export default function CrearFactura() {
             (el 8 es solo definicio de que hace el back) */}
             {estado === EstadosCU07.ConfirmarFactura && (
                 <div>
-                    <div>
-                        <h3>Responsable de pago: {responsableSeleccionado?.nombre} {responsableSeleccionado?.apellido}</h3>
+                    <div style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>
+                        <h3 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>Responsable de pago: {responsablePago}</h3>
+                        <>
+                        <ScrollArea.Root className='ScrollArea'>
+                            <ScrollArea.Viewport className='Viewport'>
+                                <ScrollArea.Content className='Content'>
+                                    <table>
+                                        <thead style={{position: 'sticky', top: '0'}}>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Descripcion</th>
+                                            <th>Monto</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {items.map((item: any) => (
+                                            <tr className={selectedItems.findIndex(h => h.id == item.id )!= -1 ? 'selected' : ''}
+                                                onClick={() => selectedItems.findIndex(h => h.id == item.id )!= -1 ?
+                                                    setSelectedItems(() => {
+                                                        let i = selectedItems.findIndex(h => h.id == item.id );
+                                                        return [...selectedItems.slice(0,i),...selectedItems.slice(i+1)];
+                                                    })
+                                                    :
+                                                    setSelectedItems([...selectedItems, item])} key={item.id}>
+                                                <td>{item.tipo}</td>
+                                                <td>{item.descripcion}</td>
+                                                <td>{formateador.format(item.monto)}</td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
 
-                        <table>
-                            <thead>
-                            <tr>
-                                <th></th>
-                                <th>Descripción</th>
-                                <th>Monto</th>
-                                <th>IVA</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {items.map(i => (
-                                <tr key={i.id}>
-                                    <td>
-                                        <input
-                                            type="checkbox"
-                                            checked={i.seleccionado}
-                                            onChange={() =>
-                                                setItems(prev =>
-                                                    prev.map(it =>
-                                                        it.id === i.id && !it.procesado
-                                                            ? { ...it, seleccionado: !it.seleccionado }
-                                                            : it
-                                                    )
-                                                )
-                                            }
-                                        />
-                                    </td>
-                                    <td>{i.descripcion}</td>
-                                    <td>${i.monto}</td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
+                                </ScrollArea.Content>
+                            </ScrollArea.Viewport>
+                            <ScrollArea.Scrollbar className='Scrollbar'>
+                                <ScrollArea.Thumb className='Thumb'/>
+                            </ScrollArea.Scrollbar>
+                        </ScrollArea.Root>
+                        </>
                     </div>
                     <div>
-                        <Row>
+                        { selectedItems.length > 0 ? <>
+                            <h4 style={{textAlign: 'center'}}>Subtotal: {formateador.format(selectedItems.reduce((acc, item) => acc + item.monto, 0))}</h4>
+                            <h4 style={{textAlign: 'center'}}>IVA: {formateador.format(selectedItems.reduce((acc, item) => acc + item.monto, 0)*.21)} (21%)</h4>
+                            <h3 style={{textAlign: 'center'}}>Tipo de Factura: {cuit == "" ? "B" : "A"}</h3>
+                            <h2 style={{textAlign: 'center'}}>Total: {formateador.format(selectedItems.reduce((acc, item) => acc + item.monto, 0)*1.21)}</h2>
+                            <Row>
                             <button className={"Button"}
                                     onClick={submitFactura}>
                                 ACEPTAR
                             </button>
-                        </Row>
+                        </Row></>: <></> }
                     </div>
                 </div>
             )}

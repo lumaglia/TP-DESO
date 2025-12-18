@@ -213,35 +213,29 @@ export default function CrearFactura() {
     }
 
     const submitResponsable = () => {
-        if (responsableSeleccionado === null) {
-            router.push('/ResponsablePago/Alta')
-            return
-        } else if (responsableSeleccionado.esMenor) {
-            setErrorResponsable('No se puede seleccionar a un menor de edad como responsable de pago')
-            return;
-        } else {
-            fetchApi('/Factura/Checkout', {
-                method: 'POST',
-                body: JSON.stringify({
-                    estadia: estadia,
-                    responsablePago: responsableSeleccionado,
-                    consumos: estadia!.consumos,
-                }),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }})
-                .then(res => {
-                    if (res?.ok) {
-                        res?.json().then(() => {
-                            setEstado(EstadosCU07.ConfirmarFactura)
-                        })
-                    }else{
-                        console.log(res?.status)
-                    }
-                })
+        fetchApi('/Factura/Checkout', {
+            method: 'POST',
+            body: JSON.stringify({
+                estadia: estadia,
+                responsablePago: responsableSeleccionado,
+                consumos: estadia!.consumos,
+            }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }})
+            .then(res => {
+                if (res?.ok) {
+                    res?.json().then((data) => {
+                        console.log(data)
+                    })
+                }else{
+                    console.log(res?.status)
+                    //Usar CU12
+                }
+            })
 
-        }
+
     }
     const submitHuesped = () => {
         setResponsablePago(selectedHuesped?.apellido + " " + selectedHuesped?.nombre)
@@ -384,7 +378,16 @@ export default function CrearFactura() {
 
                             </>:
                             <>
-                                <p>hola</p>
+                                <form onSubmit={handleSubmit(submitResponsable)} noValidate>
+                                    <Row><Campo field='CUIT' placeholder='11 - 11222333 - 2' register={register} errors={errors}
+                                                  validation={validation['cuit']}
+                                                  isRequired/></Row>
+                                <Row><button type="submit" className="Button">
+                                    Confirmar
+                                </button></Row></form>
+                                {
+
+                                }
                                 <div style={{marginTop: '20px', display: 'flex', justifyContent: 'flex-end'}}>
                                     <button className="Button" onClick={submitResponsable}>
                                         ACEPTAR

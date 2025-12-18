@@ -24,7 +24,7 @@ type FormResponsablePago = {
     telefono: string
 }
 
-export default function AltaResponsablePago({nested=false, setDone} : {nested?: boolean, setDone?: React.Dispatch<React.SetStateAction<boolean>>}) {
+export default function AltaResponsablePago({nested=false, setDone, setCuit} : {nested?: boolean, setDone?: React.Dispatch<React.SetStateAction<boolean>>, setCuit?: React.Dispatch<React.SetStateAction<string>>}) {
     const form = useForm<FormResponsablePago>();
     const { register, control, handleSubmit, formState, watch, clearErrors, trigger } = form;
     const { errors } = formState;
@@ -50,7 +50,10 @@ export default function AltaResponsablePago({nested=false, setDone} : {nested?: 
             }
             else if (res?.ok) {
                 if(nested){
-                    if(setDone)setDone(true);
+                    if(setCuit && setDone){
+                        setCuit(data.cuit);
+                        setDone(true);
+                    }
                 }else{
                     router.push(
                         `/ResponsablePago/Alta/success?responsablePago=${encodeURIComponent(data.razonSocial)}&returnTo=${encodeURIComponent(returnTo ?? '/')}`
@@ -60,6 +63,10 @@ export default function AltaResponsablePago({nested=false, setDone} : {nested?: 
             }
         });
     };
+    const cancelarNested = () => {
+        if(setCuit)setCuit("");
+        if(setDone)setDone(true)
+    }
 
 
     return (
@@ -102,7 +109,7 @@ export default function AltaResponsablePago({nested=false, setDone} : {nested?: 
                                    validation={validation['pais']} register={register} errors={errors}/>
                         </Row>
                         <Row>
-                            <button type='button' className='Button' onClick={() => setAlertaCancelarOpen(true)}>Cancelar</button>
+                            <button type='button' className='Button' onClick={() => nested? cancelarNested() :setAlertaCancelarOpen(true)}>Cancelar</button>
                             <button type='submit' className='Button'>Enviar</button>
                         </Row>
                     </div>
@@ -110,7 +117,7 @@ export default function AltaResponsablePago({nested=false, setDone} : {nested?: 
             </form>
 
             <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='el alta de Responsable de Pago'/>
-            <AlertaDocumentoRP open={alertaDocumentoOpen} setOpen={setAlertaDocumentoOpen} data={formRef.current}/>
+            <AlertaDocumentoRP open={alertaDocumentoOpen} setOpen={setAlertaDocumentoOpen} data={formRef.current} nested={nested} setCuit={setCuit} setDone={setDone}/>
         </>
     )
 }

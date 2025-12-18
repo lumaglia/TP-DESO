@@ -15,13 +15,15 @@ public class EstadiaFacturacionDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ConsumosEstadiaDTO {
-        private String nombre;
-        private String detalle;
+        private Long id;
+        private String tipo;
+        private String descripcion;
         private float monto;
 
         public ConsumosEstadiaDTO(Consumo consumo) {
-            this.nombre = String.valueOf(consumo.getTipo());
-            this.detalle = consumo.getDetalle();
+            this.id = consumo.getId();
+            this.tipo = String.valueOf(consumo.getTipo());
+            this.descripcion = consumo.getDetalle();
             this.monto = consumo.getMonto();
         }
     }

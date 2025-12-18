@@ -47,8 +47,9 @@ type FacturaPreviewDTO = {
 }
 
 type ItemValues = {
-    id: number,
-    tipo: string,
+    uiKey: string
+    id?: number,
+    tipo: 'Estadia' | string,
     descripcion: string,
     monto: number
 }
@@ -69,7 +70,8 @@ export default function CrearFactura() {
     const [estadia, setEstadia] = useState<Estadia | null>(null)
     const fetchApi = useFetch();
     const [items, setItems] = useState<{
-        id: number,
+        uiKey: string,
+        id?: number,
         tipo: string,
         descripcion: string
         monto: number
@@ -111,7 +113,7 @@ export default function CrearFactura() {
 
     const formateador = new Intl.NumberFormat('es-AR', {
         style: 'currency',
-        currency: 'ARS', // Código ISO de la moneda (USD, EUR, MXN, etc.)
+        currency: 'ARS',
         minimumFractionDigits: 2
     });
 
@@ -173,7 +175,6 @@ export default function CrearFactura() {
         setFechaSalida(diaCheckout)
         setErrorHabitacion(false);
         requestHabitacion(data.idHabitacion,diaCheckout);
-
     }
 
     const requestHabitacion = (numHabitacion:string, diaCheckOut:string) => {
@@ -195,19 +196,21 @@ export default function CrearFactura() {
 
                         const itemsFactura = [
                             ...(data.montoEstadia > 0 ? [{
-                                id: data.id,
+                                uiKey: `estadia-${data.id}`,
                                 tipo: 'Estadia',
                                 descripcion: 'Costo de la estadia',
                                 monto: data.montoEstadia,
                             }] : []),
 
                             ...data.consumos?.map(c => ({
+                                uiKey: `consumo-${c.id}`,
                                 id: c.id,
                                 tipo: c.tipo,
                                 descripcion: c.descripcion,
                                 monto: c.monto,
                             })) ?? []
                         ];
+                        console.log(itemsFactura.map(i => i.uiKey));
                         if (itemsFactura.length === 0) {
                             console.log("CONSUMOS VACIOS LISTO ESTADIA")
                             setEstado(EstadosCU07.EstadiaFacturada);
@@ -282,10 +285,6 @@ export default function CrearFactura() {
             cuit: cuit,
             tipoDoc: tipoDoc,
             nroDoc: nroDoc,
-        }
-        if (selectedItems.length === 0) {
-            console.error("No hay elementos seleccionados (este caso no deberia pasar)");
-            return;
         }
         console.log(emitir)
         fetchApi('/Factura/Emitir', {
@@ -445,20 +444,30 @@ export default function CrearFactura() {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {items.map((item: any) => (
-                                            <tr className={selectedItems.findIndex(h => h.id == item.id )!= -1 ? 'selected' : ''}
-                                                onClick={() => selectedItems.findIndex(h => h.id == item.id )!= -1 ?
-                                                    setSelectedItems(() => {
-                                                        let i = selectedItems.findIndex(h => h.id == item.id );
-                                                        return [...selectedItems.slice(0,i),...selectedItems.slice(i+1)];
-                                                    })
-                                                    :
-                                                    setSelectedItems([...selectedItems, item])} key={item.id}>
-                                                <td>{item.tipo}</td>
-                                                <td>{item.descripcion}</td>
-                                                <td>{formateador.format(item.monto)}</td>
-                                            </tr>
-                                        ))}
+                                        {items.map(item => {
+                                            const selected = selectedItems.some(
+                                                s => s.uiKey === item.uiKey
+                                            );
+
+                                            return (
+                                                <tr
+                                                    key={item.uiKey}
+                                                    className={selected ? 'selected' : ''}
+                                                    onClick={() => {
+                                                        setSelectedItems(prev => {
+                                                            const exists = prev.some(s => s.uiKey === item.uiKey);
+                                                            return exists
+                                                                ? prev.filter(s => s.uiKey !== item.uiKey)
+                                                                : [...prev, item];
+                                                        });
+                                                    }}
+                                                >
+                                                    <td>{item.tipo}</td>
+                                                    <td>{item.descripcion}</td>
+                                                    <td>{formateador.format(item.monto)}</td>
+                                                </tr>
+                                            );
+                                        })}
                                         </tbody>
                                     </table>
 

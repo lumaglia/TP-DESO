@@ -34,9 +34,18 @@ public class ResponsablePagoDAOMySQL implements ResponsablePagoDAO{
         }
     }
     @Override
-    public Optional<PersonaFisica> obtenerPersonaFisica(String cuit) throws FracasoOperacion{
+    public Optional<PersonaFisica> obtenerPersonaFisicaCuit(String cuit) throws FracasoOperacion{
         try{
             return pfRepository.findByHuesped_Cuil(cuit);
+        }
+        catch (Exception e) {
+            throw new FracasoOperacion("Error: " + e.getMessage());
+        }
+    }
+    @Override
+    public Optional<PersonaFisica> obtenerPersonaFisica(String tipoDoc, String nroDoc) throws FracasoOperacion{
+        try{
+            return pfRepository.findByHuesped_TipoDocAndHuesped_NroDoc(tipoDoc, nroDoc);
         }
         catch (Exception e) {
             throw new FracasoOperacion("Error: " + e.getMessage());

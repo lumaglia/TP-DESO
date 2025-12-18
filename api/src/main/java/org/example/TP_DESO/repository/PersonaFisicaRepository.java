@@ -9,4 +9,5 @@ import java.util.Optional;
 
 public interface PersonaFisicaRepository extends JpaRepository<PersonaFisica, Long> {
     Optional<PersonaFisica> findByHuesped_Cuil(String cuit);
+    Optional<PersonaFisica> findByHuesped_TipoDocAndHuesped_NroDoc(String tipoDoc, String nroDoc);
 }

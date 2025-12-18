@@ -79,10 +79,10 @@ public class GestorFactura {
 
     public ResponsablePagoDTO buscarResponsablePago(String cuit) throws FracasoOperacion {
         try{
-            Optional<PersonaFisica> personaFisica = daoResponsablePago.obtenerPersonaFisica(cuit);
+            Optional<PersonaFisica> personaFisica = daoResponsablePago.obtenerPersonaFisicaCuit(cuit);
             PersonaJuridica personaJuridica = daoResponsablePago.obtenerPersonaJuridica(cuit);
 
-            if(personaJuridica == null && !personaFisica.isPresent()){
+            if(personaJuridica == null && personaFisica.isEmpty()){
                 throw new FracasoOperacion("No se encontro el responsable de pago");
             }
             else if (personaJuridica != null && personaFisica.isPresent()){
@@ -180,9 +180,9 @@ public class GestorFactura {
                 huespedDTO.setTipoDoc(emitirFacturaDTO.getTipoDoc());
                 huespedDTO.setNroDoc(emitirFacturaDTO.getNroDoc());
 
-                Huesped huesped = HuespedMapper.toDomain(gestorHuesped.buscarHuesped(huespedDTO).getFirst());
+                Huesped huesped = gestorHuesped.buscarHuespedDomain(emitirFacturaDTO.getTipoDoc(), emitirFacturaDTO.getNroDoc());
 
-                Optional<PersonaFisica> pf = daoResponsablePago.obtenerPersonaFisica(huesped.getCuil());
+                Optional<PersonaFisica> pf = daoResponsablePago.obtenerPersonaFisica(huesped.getTipoDoc(), huesped.getNroDoc());
 
                 if(pf.isPresent()){
                     factura.setResponsablePago(pf.get());

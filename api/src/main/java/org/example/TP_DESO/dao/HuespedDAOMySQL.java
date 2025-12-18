@@ -201,4 +201,12 @@ public class HuespedDAOMySQL implements HuespedDAO {
             throw new FracasoOperacion("Error al eliminar huésped: " + e.getMessage());
         }
     }
+    @Override
+    public Huesped obtenerHuespedDomain(String tipoDoc, String nroDoc) throws FracasoOperacion{
+        try{
+            return  huespedRepository.findByTipoDocAndNroDoc(tipoDoc, nroDoc).get();
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error en el DAOhuesped al querer obtenr elhuesped domain: " + e.getMessage());
+        }
+    }
 }

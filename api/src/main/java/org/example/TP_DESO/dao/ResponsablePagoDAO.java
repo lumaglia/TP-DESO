@@ -11,7 +11,8 @@ import java.util.Optional;
 
 public interface ResponsablePagoDAO {
     PersonaFisica crearPersonaFisica(Huesped huesped) throws FracasoOperacion;
-    Optional<PersonaFisica> obtenerPersonaFisica(String cuit) throws FracasoOperacion;
+    Optional<PersonaFisica> obtenerPersonaFisicaCuit(String cuit) throws FracasoOperacion;
+    Optional<PersonaFisica> obtenerPersonaFisica(String tipoDoc, String nroDoc) throws FracasoOperacion;
     List<PersonaFisica> obtenerTodasPersonaFisica() throws FracasoOperacion;
     void modificarPersonaFisica() throws FracasoOperacion;
     void eliminarPersonaFisica() throws FracasoOperacion;

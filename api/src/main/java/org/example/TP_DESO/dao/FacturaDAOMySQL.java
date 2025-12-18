@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Primary
 @Service
 public class FacturaDAOMySQL implements FacturaDAO {
@@ -24,9 +26,9 @@ public class FacturaDAOMySQL implements FacturaDAO {
     }
 
     @Override
-    public Factura obtenerFacturaPorEstadia(Long id) throws FracasoOperacion {
+    public List<Factura> obtenerFacturaPorEstadia(Long id) throws FracasoOperacion {
         try{
-            return facturaRepository.findByEstadia_idEstadia(id).get();
+            return facturaRepository.findAllByEstadia_idEstadia(id);
         } catch (Exception e) {
             throw new FracasoOperacion("Error al obtener la factura por el id de estadia" + e.getMessage());
         }

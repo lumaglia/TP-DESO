@@ -186,7 +186,7 @@ public class GestorFactura {
                 factura.setResponsablePago(pf);
             }
             else{
-                PersonaJuridica pj = daoResponsablePago.obtenerPersonaJuridica(emitirFacturaDTO.getNumHabitacion());
+                PersonaJuridica pj = daoResponsablePago.obtenerPersonaJuridica(emitirFacturaDTO.getCuit());
 
                 if(pj == null){
                     throw new FracasoOperacion("No existe la persona juridica en el sistema");
@@ -199,6 +199,7 @@ public class GestorFactura {
 
             for(Consumo c : consumos){
                 c.setFactura(factura);
+                daoConsumo.guardarConsumoConFactura(c);
             }
 
             return factura;
@@ -223,7 +224,9 @@ public class GestorFactura {
             float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), fin);
             ArrayList<Consumo> consumosEstadia = daoConsumo.consumosEstadia(estadia.getIdEstadia());
 
-            if(daoFactura.obtenerFacturaPorEstadia(estadia.getIdEstadia()) != null){
+            boolean yaPagoLaEstadia = daoFactura.obtenerFacturaPorEstadia(estadia.getIdEstadia()).stream().anyMatch(Factura::isPagaEstadia);
+
+            if(yaPagoLaEstadia){
                 montoEstadia = 0F;
             }
             return new EstadiaFacturacionDTO(estadia, montoEstadia, consumosEstadia);

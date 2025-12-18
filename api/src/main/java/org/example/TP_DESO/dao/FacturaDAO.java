@@ -3,9 +3,11 @@ package org.example.TP_DESO.dao;
 import org.example.TP_DESO.domain.Factura;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 
+import java.util.List;
+
 public interface FacturaDAO {
     Factura crearFactura(Factura factura) throws FracasoOperacion;
-    Factura obtenerFacturaPorEstadia(Long idEstadia) throws FracasoOperacion;
+    List<Factura> obtenerFacturaPorEstadia(Long idEstadia) throws FracasoOperacion;
     void modificarFactura() throws FracasoOperacion;
     void eliminarFactura() throws FracasoOperacion;
 }

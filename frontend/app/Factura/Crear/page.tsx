@@ -100,6 +100,7 @@ export default function CrearFactura() {
     const [fechaSalida, setFechaSalida] = useState("");
     const [tipoDoc, setTipoDoc] = useState("");
     const [nroDoc, setNroDoc] = useState("");
+    const [popUpEmitir, setPopUpEmitir] = useState(false)
 
     const [opcion, setOpcion] = useState('Huesped');
     const manejarCambio = (e:any) => {
@@ -297,6 +298,8 @@ export default function CrearFactura() {
             .then(res => {
                 if (res?.ok){
                     alert('Factura emitida correctamente.')
+                    setSelectedItems([])
+                    setItems([])
                     setEstado(EstadosCU07.ConfirmarFactura)
                     requestHabitacion(nroHab,fechaSalida)
                 }
@@ -508,6 +511,7 @@ export default function CrearFactura() {
                 </>
             )}
             <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la facturación de estadía'/>
+
         </>
     );
 }

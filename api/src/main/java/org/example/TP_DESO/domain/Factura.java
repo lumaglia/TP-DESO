@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Table(name = "factura")
 @Getter
 @Setter
-@Transactional
+
 public class Factura {
 
     @Id

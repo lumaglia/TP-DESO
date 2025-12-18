@@ -1,6 +1,7 @@
 package org.example.TP_DESO.dao;
 
 import org.example.TP_DESO.exceptions.FracasoOperacion;
+import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.TP_DESO.domain.Consumo;
 import org.example.TP_DESO.domain.Factura;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
 @Service
+@Primary
 @Transactional
 public class ConsumoDAOMySQL implements ConsumoDAO {
     @Autowired
@@ -34,6 +36,16 @@ public class ConsumoDAOMySQL implements ConsumoDAO {
             return consumoRepository.findById(idConsumo).get();
         } catch (Exception e) {
             throw new FracasoOperacion("Error al obtener el consumo por id:" + e.getMessage());
+        }
+    }
+    @Override
+    @Transactional
+    public void guardarConsumoConFactura(Consumo consumo) throws FracasoOperacion{
+        try{
+            consumoRepository.save(consumo);
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al guardar el consumo con una nueva factura: " + e.getMessage());
         }
     }
 }

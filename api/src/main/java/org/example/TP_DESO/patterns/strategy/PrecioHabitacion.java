@@ -11,11 +11,7 @@ import java.time.temporal.ChronoUnit;
 @Component
 public class PrecioHabitacion implements PrecioHabitacionStrategy {
 
-    public double calcularPrecio(
-            HabitacionDTO h,
-            LocalDate inicio,
-            LocalDateTime fin
-    ) {
+    public double calcularPrecio(HabitacionDTO h, LocalDate inicio, LocalDateTime fin) {
         double precioNoche = h.getPrecioNoche();
         LocalDate fechaFin = fin.toLocalDate();
         long noches = ChronoUnit.DAYS.between(inicio, fechaFin);

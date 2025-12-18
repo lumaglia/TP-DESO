@@ -20,9 +20,7 @@ import org.example.TP_DESO.patterns.strategy.PrecioHabitacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,9 +55,8 @@ public class GestorFactura {
         return singleton_instance;
     }
 
-    public EstadiaDTO obtenerEstadia(String NroHabitacion) throws FracasoOperacion {
-        LocalDate fecha = LocalDate.now();
-        return daoEstadia.buscarEstadiaPorHabitacionYFechaFin(NroHabitacion, fecha);
+    public EstadiaDTO obtenerEstadia(String NroHabitacion, LocalDateTime fin) throws FracasoOperacion {
+        return daoEstadia.buscarEstadiaPorHabitacionYFechaFin(NroHabitacion, fin.toLocalDate());
     }
 
     public ResponsablePagoDTO buscarResponsablePago(String cuit) throws FracasoOperacion {
@@ -159,8 +156,9 @@ public class GestorFactura {
 
     public EstadiaFacturacionDTO estadiaFacturacion(RequestCheckoutDTO request) throws FracasoOperacion{
         try{
-            LocalDateTime fin = LocalDateTime.parse(request.getDiaCheckOut());
-            EstadiaDTO estadia = this.obtenerEstadia(request.getNumHabitacion());
+            LocalDateTime fin = LocalDateTime.ofInstant(Instant.parse(request.getDiaCheckOut()), ZoneId.systemDefault());
+            System.out.println(fin);
+            EstadiaDTO estadia = this.obtenerEstadia(request.getNumHabitacion(), fin);
             float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), fin);
             ArrayList<Consumo> consumosEstadia = daoConsumo.consumosEstadia(estadia.getIdEstadia());
 

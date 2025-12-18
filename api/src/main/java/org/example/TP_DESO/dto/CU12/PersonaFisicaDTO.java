@@ -1,12 +1,16 @@
 package org.example.TP_DESO.dto.CU12;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.TP_DESO.domain.PersonaFisica;
 import org.example.TP_DESO.dto.HuespedDTO;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PersonaFisicaDTO extends ResponsablePagoDTO{
     private String tipoDoc;
     private String nroDoc;

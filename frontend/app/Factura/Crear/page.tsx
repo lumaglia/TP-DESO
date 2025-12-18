@@ -57,6 +57,8 @@ enum EstadosCU07 {
     DatosHabitacion,
     SeleccionResponsable,
     ConfirmarFactura,
+    FacturaEmitida,
+    EstadiaFacturada
 }
 
 export default function CrearFactura() {
@@ -92,6 +94,10 @@ export default function CrearFactura() {
     const [mostrarCU12, setMostrarCU12] = useState(false);
     const [done, setDone] = useState(false);
     const [razon, setRazon] = useState("");
+    const [nroHab, setNroHab] = useState("");
+    const [fechaSalida, setFechaSalida] = useState("");
+    const [tipoDoc, setTipoDoc] = useState("");
+    const [nroDoc, setNroDoc] = useState("");
 
     const [opcion, setOpcion] = useState('Huesped');
     const manejarCambio = (e:any) => {
@@ -163,12 +169,19 @@ export default function CrearFactura() {
         dia.setHours(+horas, +minutos, 0, 0)
         const diaCheckout = new Date(dia.getTime()-1*3600000).toISOString();
         console.log(diaCheckout);
+        setNroHab(data.idHabitacion);
+        setFechaSalida(diaCheckout);
         setErrorHabitacion(false);
+        requestHabitacion()
+
+    }
+
+    const requestHabitacion = () => {
         fetchApi('/Factura/Checkout', {
             method: 'POST',
             body: JSON.stringify({
-                numHabitacion: data.idHabitacion,
-                diaCheckOut: diaCheckout
+                numHabitacion: nroHab,
+                diaCheckOut: fechaSalida
             }),
             headers: {
                 'Accept': 'application/json',
@@ -197,6 +210,7 @@ export default function CrearFactura() {
                         ];
                         if (itemsFactura.length === 0) {
                             console.log("CONSUMOS VACIOS LISTO ESTADIA")
+                            setEstado(EstadosCU07.EstadiaFacturada);
                         }else{
                             setItems(itemsFactura)
                             setHuespedes(data.huespedes)
@@ -210,7 +224,6 @@ export default function CrearFactura() {
                 }
 
             })
-
     }
 
     const submitResponsable = (data:any) => {
@@ -230,6 +243,7 @@ export default function CrearFactura() {
                 }else{
                     console.log(res?.status)
                     setCuit("")
+                    setRazon("")
                     setDone(false)
                     setMostrarCU12(true)
                 }
@@ -241,6 +255,10 @@ export default function CrearFactura() {
         setResponsablePago(selectedHuesped?.apellido + " " + selectedHuesped?.nombre)
         setIsResponsableHuesped(true)
         setEstado(EstadosCU07.ConfirmarFactura)
+        if(selectedHuesped){
+            setTipoDoc(selectedHuesped?.tipoDoc)
+            setNroDoc(selectedHuesped?.nroDoc)
+        }
         if(selectedHuesped?.cuil === null || selectedHuesped?.cuil === undefined) {
             setCuit("")
         }else{
@@ -255,37 +273,32 @@ export default function CrearFactura() {
 
     const submitFactura = (f: any) => {
 
-        if(selectedItems.length===0){
-            alert('Debe seleccionar al menos un item')
-            return
+        const emitir = {
+            pagaEstadia: (selectedItems.findIndex(h => h.tipo=='Estadia')!=-1),
+            consumos: (selectedItems.filter(h => h.tipo!='Estadia').map(h => h.id)),
+            numHabitacion: nroHab,
+            diaCheckOut: fechaSalida,
+            esHuesped: isResponsableHuesped,
+            cuit: cuit,
+            tipoDoc: tipoDoc,
+            nroDoc: nroDoc,
         }
-        else{
-            const emitir = {
-                idFactura: null,
-                idNota: null,
-                idEstadia: estadia!.id,
-                idPago: null,
-                idResponsable: responsableSeleccionado!.cuit,
-            }
+        console.log(emitir)
+        fetchApi('/Factura/Emitir', {
+            method: 'POST',
+            body: JSON.stringify(emitir),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }})
+            .then(res => {
+                if (res?.ok){
+                    alert('Factura emitida correctamente.')
+                    setEstado(EstadosCU07.ConfirmarFactura)
+                    requestHabitacion()
+                }
+            })
 
-            fetchApi('/Factura/Emitir', {
-                method: 'POST',
-                body: JSON.stringify(emitir),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }})
-                .then(res => res?.json())
-                .then(() => {
-                    if (items.filter(i => !i.seleccionado).length > 0) {
-                        alert('Factura emitida. Quedan ítems pendientes.')
-                        setEstado(EstadosCU07.SeleccionResponsable)
-                    } else {
-                        alert('Factura emitida correctamente')
-                        router.push('/')
-                    }
-                })
-        }
     }
 
     return (
@@ -467,6 +480,19 @@ export default function CrearFactura() {
                         </Row></>: <></> }
                     </div>
                 </div>
+            )}
+            {estado === EstadosCU07.FacturaEmitida && (
+                <>
+                    <h3 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>La factura ha sido emitida correctamente. Espere un momento...</h3>
+                </>
+            )}
+            {estado === EstadosCU07.EstadiaFacturada && (
+                <>
+                    <h3 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>La estadia ha sido facturada completamente.</h3>
+                    <Row>
+                        <button type='button' className='Button' onClick={() => router.push("/")}>Volver al menu</button>
+                    </Row>
+                </>
             )}
             <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la facturación de estadía'/>
         </>

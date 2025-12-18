@@ -14,4 +14,5 @@ public interface HuespedDAO {
     void modificarHuesped(String tipoDoc, String numeroDoc, Huesped huesped) throws FracasoOperacion;
     void eliminarHuesped(String tipoDoc, String numeroDoc) throws FracasoOperacion;
 
+    Huesped obtenerHuespedDomain(String tipoDoc, String nroDoc) throws FracasoOperacion;
 }

@@ -1,0 +1,230 @@
+@startuml
+'Se incluye en la entrega puesto que es mucho más legible
+
+skinparam groupInheritance 2
+
+title Diagrama de Clases
+
+enum tipoConsumo{
+  LavadoPlanchado
+  Sauna
+  Bar
+}
+
+class GestorReserva {
+  +HacerReserva()
+  +MostrarReservas()
+  +CancelarReserva()
+  +CheckIn()
+  +CheckOut()
+}
+
+class GestorHabitacion {
+  +MostrarHabitaciones()
+  +ObtenerEstadoHabitacion()
+}
+
+class GestorPago{
+  +RegistrarPago()
+  +MostrarCheques()
+  +MostrarIngresos()
+  +CorroborarPago()
+}
+
+class GestorFactura{
+  +BuscarResponsablePago()
+  +AltaResponsablePago()
+  +ModificarResponsablePago()
+  +BajaResponsablePago()
+  +GenerarFactura()
+  +MostrarFacturasResponsablePago()
+  +GenerarNotaCredito()
+}
+
+class GestorHuesped{
+  +BuscarHuesped()
+  +AltaHuesped()
+  +ModificarHuesped()
+  +BajaHuesped()
+}
+
+class GestorUsuario{
+  +AutenticarUsuario()
+}
+
+class Usuario{
+  +usuario: string
+  +contraseña: string
+}
+
+abstract class Habitacion{
+  +nroHabitacion: string
+  +precioNoche: float
+  +capacidad: int
+  +tamanno: string
+}
+class IndividualEstandar{
+  +camasInd: int
+}
+class DobleEstandar{
+  +camasInd: int
+  +camasDob: int
+}
+class DobleSuperior{
+  +camasKingInd: int
+  +camasKingDob: int
+}
+class SuperiorFamilyPlan{
+  +camasInd: int
+  +camasDob: int
+}
+class SuiteDoble{
+  camasKingDob: int
+}
+class Reserva{
+  +fechaReserva: Date
+  +fechaInicio: Date
+  +fechaFin: Date
+  +apellido: string
+  +nombre: string
+  +telefono: string
+  +cancelada: bool
+}
+class Estadia{
+  +fechaInicio: Date
+  +fechaFin: Date
+}
+class Consumo{
+  +monto: float
+  +tipo: tipoConsumo
+  +detalle: string
+}
+class Factura{
+  +nroFactura: string
+  +monto: float
+  +pagaEstadia: bool
+}
+abstract class ResponsablePago
+
+class PersonaJuridica{
+  +razonSocial: string
+  +cuit: string
+  +telefono: string
+}
+class PersonaFisica
+class Pago{
+  +fechaCobro: Date
+  +montoTotal: float
+}
+abstract class MetodoPago{
+}
+class PagoParcial{
+  +monto: float
+  +fechaPago: date
+}
+class NotaCredito{
+  +nroNotaCredito: string
+  +importeNeto: float
+  +iva: float
+  +importeTotal: float
+}
+class Efectivo{
+}
+class MonedaExtranjera{
+  +cotizacion: float
+  +divisa: string
+}
+class Cheque{
+  +nroCheque: string
+  +banco: string
+  +plaza: Date
+  +fechaCobro: Date
+}
+class TarjetaCredito{
+  +nroTarjeta: string
+  +codigo: string
+  +fechaVen: Date
+  +titular: string
+  +cuotas: int
+}
+class TarjetaDebito{
+  +nroTarjeta: string
+  +codigo: string
+  +fechaVen: Date
+  +titular: string
+}
+class Huesped{
+  +nombre: string
+  +apellido: string
+  +tipoDoc: string
+  +numeroDoc: string
+  +cuil: string
+  +posicionIva: string
+  +fechaNac: Date
+  +telefono: string
+  +email: string
+  +ocupacion: string
+  +nacionalidad: string
+}
+class Direccion{
+  +domicilio: string
+  +depto: string
+  +codigoPostal: string
+  +localidad: string
+  +provincia: string
+  +pais: string
+}
+
+
+
+
+
+Habitacion <|-- IndividualEstandar
+Habitacion <|-- DobleEstandar
+Habitacion <|-- DobleSuperior
+Habitacion <|-- SuperiorFamilyPlan
+Habitacion <|-- SuiteDoble
+
+MetodoPago <|-- Efectivo
+MetodoPago <|-- MonedaExtranjera
+MetodoPago <|-- Cheque
+MetodoPago <|-- TarjetaCredito
+MetodoPago <|-- TarjetaDebito
+
+ResponsablePago <|-- PersonaJuridica
+ResponsablePago <|-- PersonaFisica
+
+GestorUsuario ..> Usuario
+
+Habitacion "1" <-- "0..n" Reserva
+Habitacion "1" <-- "0..n" Estadia
+Estadia "0..1" -- "0..1" Reserva
+Estadia *-- "0..n" Consumo
+Huesped "1..n" -- "0..n" Estadia
+
+GestorHabitacion ..> Habitacion
+GestorReserva ..> Reserva
+GestorReserva ..> Estadia
+GestorHuesped ..> Huesped
+Pago "1..n" o-- "1..n" MetodoPago
+(Pago, MetodoPago) .. PagoParcial
+Huesped "0..n" --> "1" Direccion
+PersonaJuridica "0..n" --> "1" Direccion
+
+Factura "0..n" -- "1" Estadia
+Factura "0..n" o-- "1" ResponsablePago
+PersonaFisica "0..1" --> "1" Huesped
+Factura "1..n" -- "0..1" NotaCredito
+Factura "1" -- "0..1" Pago
+Factura "0..1" -- "0..n" Consumo
+GestorPago ..> Pago
+GestorFactura ..> Factura
+GestorPago ..> Estadia
+
+GestorFactura "1" -- "1" GestorHuesped
+GestorReserva "1" -- "1" GestorHabitacion
+GestorPago "1" -- "1" GestorReserva
+GestorPago "1" -- "1" GestorFactura
+
+
+@enduml

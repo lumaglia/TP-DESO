@@ -4,8 +4,8 @@ package org.example.TP_DESO.dao;
 import org.example.TP_DESO.domain.Estadia;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.*;
-import org.example.TP_DESO.dao.Mappers.EstadiaMapper;
-import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
+import org.example.TP_DESO.patterns.mappers.EstadiaMapper;
+import org.example.TP_DESO.patterns.mappers.HabitacionMapper;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.EstadiaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,6 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
     @Override
     public void crearEstadia(Estadia estadia) throws FracasoOperacion {
         try {
-
             if (estadia == null) {
                 throw new FracasoOperacion("La estadia no puede ser null");
             }
@@ -37,6 +36,15 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
 
         } catch (Exception e) {
             throw new FracasoOperacion("Error al crear estadía: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public Estadia obtenerEstadiaNroHabitacionFechaFin(String nroHabitacion, LocalDate fin) throws FracasoOperacion{
+        try{
+            return estadiaRepository.findByHabitacionNroHabitacionAndFechaFin(nroHabitacion, fin).get();
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al obtener la estadia en su forma domain (nroHabitacion y fecha fin):" + e.getMessage());
         }
     }
 

@@ -1,10 +1,13 @@
 package org.example.TP_DESO.dao;
 
+import org.example.TP_DESO.domain.Factura;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.FacturaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Primary
 @Service
@@ -13,13 +16,22 @@ public class FacturaDAOMySQL implements FacturaDAO {
     private FacturaRepository facturaRepository;
 
     @Override
-    public void crearFactura() throws FracasoOperacion {
-
+    public Factura crearFactura(Factura factura) throws FracasoOperacion {
+        try{
+            return facturaRepository.save(factura);
+        }
+        catch(Exception e){
+            throw new FracasoOperacion("Error al crear factura: " + e.getMessage());
+        }
     }
 
     @Override
-    public void obtenerFactura() throws FracasoOperacion {
-
+    public List<Factura> obtenerFacturaPorEstadia(Long id) throws FracasoOperacion {
+        try{
+            return facturaRepository.findAllByEstadia_idEstadia(id);
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al obtener la factura por el id de estadia" + e.getMessage());
+        }
     }
 
     @Override

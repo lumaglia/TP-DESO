@@ -2,14 +2,9 @@ package org.example.TP_DESO.controller;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
-import org.example.TP_DESO.domain.DobleEstandar;
-import org.example.TP_DESO.domain.IndividualEstandar;
-import org.example.TP_DESO.domain.SuiteDoble;
-import org.example.TP_DESO.domain.SuperiorFamilyPlan;
 import org.example.TP_DESO.dto.*;
-import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
+import org.example.TP_DESO.patterns.builder.HuespedDTOBuilder;
 import org.example.TP_DESO.service.GestorHabitacion;
 import org.example.TP_DESO.service.GestorHuesped;
 import org.example.TP_DESO.service.GestorReserva;
@@ -21,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController

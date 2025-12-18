@@ -49,30 +49,71 @@ deactivate GH
 activate UI
 Con<--UI: mostrarGrillaHuespedes(objetoGrilla)
 deactivate UI
-loop Hasta presionar siguiente
-  opt Conserje selecciona huesped
-    Con->UI: Seleccionar huesped 
-    activate UI
-    opt existe huesped marcado
-      UI->UI: desmarcarHuesped()
-      activate UI
-      deactivate UI
-    end
-    UI->UI: marcarHuesped(huespedDTO)
-    activate UI
-    deactivate UI
-    Con<--UI: mostrarCambios()
-    deactivate UI
-  end
+
+opt presiona SIGUIENTE sin seleccionar huesped
+  Con->UI: presiona SIGUIENTE
+  activate UI
+  Con<--UI: Ejecutar CU 09 - Dar Alta Huesped
+  deactivate UI
 end
+Con->UI: Seleccionar huesped 
+activate UI
+opt existe huesped marcado
+  UI->UI: vaciarMarcas()
+  activate UI
+  deactivate UI
+end
+UI->UI: marcarHuesped(huespedDTO)
+activate UI
+deactivate UI
+Con<--UI: mostrarCambios()
+deactivate UI
 Con->UI: presiona SIGUIENTE
 activate UI
-alt No Hay Huesped Seleccionado
-  Con<--UI: Ejecutar CU 09 - Dar Alta Huesped
-else Huesped Seleccionado
-  Con<--UI: Ejecutar CU 10 - Modificar Huesped (huespedDTO)
+UI->GH: getHuespedInstance(huespedDTO)
 deactivate UI
-end
+activate GH
+
+
+create participant "unaDireccion:Direccion" as D1
+GH --> D1: new Direccion
+activate D1
+GH -> D1: setDomicilio(domicilio)
+GH -> D1: setDepto(depto)
+GH -> D1: setCodigoPostal(codigoPostal)
+GH -> D1: setLocalidad(localidad)
+GH -> D1: setProvincia(provincia)
+GH -> D1: setPais(pais)
+GH -> D1: getInstance()
+GH <-- D1: unaDireccion
+deactivate D1
+
+create participant "unHuesped:Huesped" as H1
+GH --> H1: new Huesped
+activate H1
+GH -> H1: setNombre(nombre)
+GH -> H1: setApellido(apellido)
+GH -> H1: setTipoDoc(tipoDoc)
+GH -> H1: setNumeroDoc(nroDoc)
+GH -> H1: setCuil(cuil)
+GH -> H1: setPosicionIva(posicionIva)
+GH -> H1: setFechaNac(fechaNac)
+GH -> H1: setTelefono(telefono)
+GH -> H1: setEmail(email)
+GH -> H1: setOcupacion(ocupacion)
+GH -> H1: setNacionalidad(nacionalidad)
+GH -> H1: setDireccion(unaDireccion1)
+GH -> H1: getInstance()
+GH <-- H1: unHuesped
+deactivate H1
+
+
+UI<--GH: unHuespedDTO
+deactivate GH
+activate UI
+Con<--UI: Ejecutar CU 10 - Modificar Huesped (unHuesped)
+deactivate UI
+
 
 opt EventCancelar
   Con->UI: Presionar cancelar

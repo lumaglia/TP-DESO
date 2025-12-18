@@ -4,7 +4,7 @@ import org.example.TP_DESO.dao.HuespedDAO;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.DireccionDTO;
 import org.example.TP_DESO.dto.HuespedDTO;
-import org.example.TP_DESO.dto.HuespedDTOBuilder;
+import org.example.TP_DESO.patterns.builder.HuespedDTOBuilder;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 
 import java.io.*;
@@ -139,6 +139,11 @@ public class HuespedCSV implements HuespedDAO {
         }
     }
 
+    @Override
+    public Huesped obtenerHuespedDomain(String tipoDoc, String nroDoc) throws FracasoOperacion {
+        return new Huesped();
+    }
+
     public DireccionDTO obtenerDireccion(String pais, String codigoPostal, String domicilio, String depto) throws FracasoOperacion {
         return direccionCSV.obtenerDireccion(pais, codigoPostal, domicilio, depto);
     }
@@ -148,4 +153,5 @@ public class HuespedCSV implements HuespedDAO {
         else if (campo.isEmpty()) return true;
         else return campo.equals(csv);
     }
+
 }

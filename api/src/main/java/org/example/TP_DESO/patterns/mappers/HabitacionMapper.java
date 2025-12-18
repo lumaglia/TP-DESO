@@ -1,7 +1,9 @@
-package org.example.TP_DESO.dao.Mappers;
+package org.example.TP_DESO.patterns.mappers;
 
 import org.example.TP_DESO.domain.*;
 import org.example.TP_DESO.dto.*;
+import org.example.TP_DESO.patterns.factory.HabitacionFactory;
+import org.example.TP_DESO.patterns.factory.HabitacionType;
 
 public class HabitacionMapper {
 
@@ -18,7 +20,7 @@ public class HabitacionMapper {
             );
         }
         if (h instanceof DobleSuperior ds) {
-            return new DobleEstandarDTO(
+            return new DobleSuperiorDTO(
                     ds.getNroHabitacion(),
                     ds.getPrecioNoche(),
                     ds.getCapacidad(),
@@ -62,7 +64,7 @@ public class HabitacionMapper {
     public static Habitacion toDomain(HabitacionDTO h) {
 
         if (h instanceof DobleEstandarDTO de) {
-            DobleEstandar d = new DobleEstandar();
+            DobleEstandar d = (DobleEstandar) HabitacionFactory.create(HabitacionType.DOBLE_ESTANDAR);
 
             d.setCapacidad(de.getCapacidad());
             d.setPrecioNoche(de.getPrecioNoche());
@@ -74,7 +76,7 @@ public class HabitacionMapper {
             return d;
         }
         if (h instanceof DobleSuperiorDTO ds) {
-            DobleSuperior d = new DobleSuperior();
+            DobleSuperior d = (DobleSuperior) HabitacionFactory.create(HabitacionType.DOBLE_SUPERIOR);
 
             d.setCapacidad(ds.getCapacidad());
             d.setPrecioNoche(ds.getPrecioNoche());
@@ -86,7 +88,7 @@ public class HabitacionMapper {
             return d;
         }
         if (h instanceof IndividualEstandarDTO ie) {
-            IndividualEstandar i = new IndividualEstandar();
+            IndividualEstandar i = (IndividualEstandar) HabitacionFactory.create(HabitacionType.INDIVIDUAL_ESTANDAR);
 
             i.setCapacidad(ie.getCapacidad());
             i.setPrecioNoche(ie.getPrecioNoche());
@@ -97,7 +99,7 @@ public class HabitacionMapper {
             return i;
         }
         if (h instanceof SuiteDobleDTO sd) {
-            SuiteDoble s = new SuiteDoble();
+            SuiteDoble s = (SuiteDoble) HabitacionFactory.create(HabitacionType.SUITE_DOBLE);
 
             s.setCapacidad(sd.getCapacidad());
             s.setPrecioNoche(sd.getPrecioNoche());
@@ -108,7 +110,7 @@ public class HabitacionMapper {
             return s;
         }
         if (h instanceof SuperiorFamilyPlanDTO sfp){
-            SuperiorFamilyPlan s = new SuperiorFamilyPlan();
+            SuperiorFamilyPlan s = (SuperiorFamilyPlan) HabitacionFactory.create(HabitacionType.SUPERIOR_FAMILY_PLAN);
 
             s.setCapacidad(sfp.getCapacidad());
             s.setPrecioNoche(sfp.getPrecioNoche());

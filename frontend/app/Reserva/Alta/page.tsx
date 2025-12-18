@@ -120,6 +120,11 @@ export default function ReservarHabitacion() {
         }
     }
 
+    function rechazar() {
+        setSolicitudValida(false)
+        setSeleccionadas(new Map<string, Array<Array<Date>>>())
+    }
+
     return(
 
         <>
@@ -196,15 +201,12 @@ export default function ReservarHabitacion() {
                             </div>
                             {
                                 (!aceptar) ? <Row>
-                                        <button type='button' className='Button' onClick={() => setAlertaCancelarOpen(true)}>Rechazar
+                                        <button type='button' className='Button' onClick={() => rechazar()}>Rechazar
                                         </button>
                                         <button type='button' className='Button' onClick={() => setAceptar(true)}>Aceptar</button>
                                     </Row> :
                                     <>
-                                        <Row>
-                                            <button className='Button Disabled'>Rechazar</button>
-                                            <button className='Button Disabled'>Aceptar</button>
-                                        </Row>
+
                                         <h3 style={{textAlign: 'center'}}>Ingrese datos del Huesped</h3>
                                         <form method='post' onSubmit={handleSubmit(onSubmit)} noValidate>
                                             <Row>
@@ -226,7 +228,7 @@ export default function ReservarHabitacion() {
 
 
                             <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen}
-                                            text='la busqueda de huespedes'/>
+                                            text='la reserva de habitación'/>
                         </>
                 )
             }

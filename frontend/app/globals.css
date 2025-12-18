@@ -81,9 +81,9 @@ body {
     align-self: flex-end;
 
     &:disabled {
-        background-color: rgba(84, 95, 113, 0.47);
+        background-color: rgba(176, 185, 200, 0.47);
         &:hover{
-            background-color: rgba(84, 95, 113, 0.47);
+            background-color: rgba(176, 185, 200, 0.47);
 
         }
     }
@@ -176,4 +176,155 @@ p {
     &:hover {
         background-color: #f0f0f0;
     }
+}
+
+.ScrollArea {
+    margin: 20px;
+    box-sizing: border-box;
+    width: 50rem;
+    /*height: 8.5rem;*/
+    height: 20rem;
+}
+
+.Viewport {
+    height: 100%;
+    border-radius: 0.375rem;
+    outline: 1px solid black;
+    overscroll-behavior: contain;
+
+    &:focus-visible {
+        outline: 2px solid #80c7ea;
+    }
+}
+
+.Content {
+    position: sticky;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    /*padding-block: 0.75rem;*/
+    /*padding-left: 1rem;*/
+    /*margin-right: 1.5rem;*/
+    /*border-right: 1px solid black;*/
+    /*margin-bottom: 1.5rem;*/
+    /*border-bottom: 1px solid black;*/
+}
+
+.Scrollbar {
+    display: flex;
+    position: relative;
+    background-color: lightgray;
+    border-radius: 0.375rem;
+    margin: 0.5rem;
+    opacity: 0;
+    transition: opacity 150ms;
+    pointer-events: none;
+
+    &::before {
+        content: '';
+        position: absolute;
+    }
+
+    &[data-scrolling] {
+        transition-duration: 0ms;
+    }
+
+    &[data-hovering],
+    &[data-scrolling] {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+
+    &[data-orientation='vertical'] {
+        width: 0.25rem;
+        margin: 0.5rem;
+
+        &::before {
+            width: 1.25rem;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+
+    &[data-orientation='horizontal'] {
+        height: 0.25rem;
+        margin: 0.5rem;
+
+        &::before {
+            width: 100%;
+            height: 1.25rem;
+            left: 0;
+            right: 0;
+            bottom: -0.5rem;
+        }
+    }
+}
+
+.FixedLength {
+    width: 300px;
+}
+
+.Thumb {
+    width: 100%;
+    border-radius: inherit;
+    background-color: black;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0 2px;
+    color: #5C6677;
+}
+
+tr {
+    background-color: white;
+    user-select: none;
+    text-align: center;
+    width: auto;
+
+    &:nth-child(even) * {
+        background-color: #EEF1F4;
+    }
+    &:nth-child(odd) * {
+        background-color: white;
+    }
+
+}
+
+.TablaBuscar tbody tr {
+    border-top: 2px solid #D2D8E2;
+    border-bottom: 2px solid #D2D8E2;
+
+    &:first-child {
+        border-top: 4px solid #D2D8E2;
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.TablaBuscar tbody > tr:hover > td {
+    background-color: #d7e5fc;
+}
+
+tbody > tr.selected td {
+    background-color: #C2D8FB;
+}
+
+thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+table tbody th {
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 1;
 }

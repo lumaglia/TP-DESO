@@ -28,12 +28,10 @@ public class Estadia {
             joinColumns = @JoinColumn(name = "id_estadia", referencedColumnName = "idEstadia"),
             inverseJoinColumns = {
                     @JoinColumn(name = "tipo_doc", referencedColumnName = "tipoDoc"),
-                    @JoinColumn(name = "nro_doc",  referencedColumnName = "nroDoc")
+                    @JoinColumn(name = "nro_doc", referencedColumnName = "nroDoc")
             }
     )
     private List<Huesped> huespedes = new ArrayList<>();
-
-
 
     @ManyToOne
     @JoinColumn(name = "id_habitacion", referencedColumnName = "nroHabitacion")

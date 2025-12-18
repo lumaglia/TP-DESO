@@ -1,0 +1,255 @@
+@startchen
+
+title Diagrama Entidad Relacion
+
+entity Consumo <<weak>>{
+  idConsumo <<key>>
+  monto
+  tipo
+  detalle
+}
+
+entity Habitacion{
+  nroHabitacion <<key>>
+  precioNoche
+  tamanno
+  capacidad
+}
+
+entity IndividualEstandar{
+  camasInd
+}
+
+entity SuiteDoble{
+  camasKingDob
+}
+
+entity DobleSuperior{
+  camasKingInd
+  camasKingDob
+}
+
+
+entity SuperiorFamilyPlan{
+  camasInd
+  camasDob
+}
+
+
+entity DobleEstandar{
+  camasInd
+  camasDob
+}
+
+entity Reserva{
+  idReserva <<key>>
+  fechaReserva
+  fechaInicio 
+  fechaFin
+  apellido
+  nombre
+  telefono
+  cancelada
+}
+
+entity Estadia{
+  idEstadia <<key>>
+  fechaInicio
+  fechaFin
+}
+
+entity Huesped{
+  nombre
+  apellido
+  tipoDoc <<key>>
+  numeroDoc <<key>>
+  cuil  
+  posicionIva
+  fechaNac
+  telefono
+  email
+  ocupacion
+  nacionalidad
+}
+
+entity Direccion{
+  domicilio <<key>>
+  depto <<key>>
+  codigoPostal <<key>>
+  localidad
+  provincia
+  pais <<key>>
+}
+
+entity MetodoPago{
+  idMetodoPago <<key>>
+}
+
+entity TarjetaDebito{
+  nroTarjeta
+  codigo
+  fechaVen
+  titular
+}
+
+entity Efectivo{
+  cotizacion
+  divisa
+}
+
+entity Cheque{
+  nroCheque
+  banco
+  plaza
+  fechaCobro
+}
+
+entity TarjetaCredito{
+  nroTarjeta
+  codigo
+  fechaVen
+  titular
+  cuotas
+}
+
+entity Pago{
+  idPago <<key>>
+  fechaCobro
+  montoTotal
+}
+
+entity Factura{
+  nroFactura <<key>>
+  monto
+  pagaEstadia
+}
+
+entity NotaCredito{
+  nroNotaCredito <<key>>
+  importeNeto
+  iva 
+  importeTotal <<derived>>
+}
+
+entity ResponsablePago{
+  idResponsablePago <<key>>
+}
+
+entity PersonaFisica{
+}
+
+entity PersonaJuridica{
+  razonSocial
+  cuit
+  telofono
+}
+
+entity Usuario{
+  usuario <<key>>
+  contrasenna
+}
+
+relationship ES_DE{
+
+}
+
+relationship EN_UNA{
+
+}
+
+relationship "TIENE" as TIENE1 <<identifying>>{
+
+}
+
+relationship "TIENE" as TIENE2{
+
+}
+
+relationship "TIENE" as TIENE3{
+
+}
+
+relationship "TIENE" as TIENE4{
+
+}
+
+relationship VIVE_EN{
+
+}
+
+relationship CANCELA{
+
+}
+
+relationship "ES_PAGADA_CON" as ES_PAGADA_POR{
+
+}
+
+relationship "PAGADA_CON" as UTILIZA{
+  monto
+  fechaPago
+}
+
+relationship "ES_PAGADA_POR" as PAGADA_POR2{
+
+}
+
+relationship "VIVE_EN" as VIVE2{
+
+}
+
+relationship REPRESENTA_A{
+
+}
+
+relationship "ES_CUBIERTA_POR" as CUBRE{
+
+}
+
+CUBRE -(0,1)- Factura
+Consumo -(0,N)- CUBRE
+
+TIENE1 -N- Consumo
+Estadia -1- TIENE1
+
+ES_DE -1- Habitacion
+Reserva -N- ES_DE
+
+EN_UNA -1- Habitacion
+Estadia -N- EN_UNA
+
+TIENE2 -(0,1)- Reserva
+Estadia -(0,1)- TIENE2
+
+TIENE3 -(0,N)- Factura
+Estadia -1- TIENE3
+
+TIENE4 -(1,N)- Huesped
+Estadia -(0,N)- TIENE4
+
+VIVE_EN -1- Direccion
+Huesped -(0,N)- VIVE_EN
+
+CANCELA -(1,N)- Factura
+NotaCredito -(0,1)- CANCELA
+
+ES_PAGADA_POR -(0,1)- Pago
+Factura -1- ES_PAGADA_POR
+
+Pago -(1, N)- UTILIZA
+UTILIZA -(1,N)- MetodoPago
+
+PAGADA_POR2 -1- ResponsablePago
+Factura -(0,N)- PAGADA_POR2
+
+VIVE2 -1- Direccion
+PersonaJuridica -(0,N)- VIVE2
+
+REPRESENTA_A -1- Huesped
+PersonaFisica -(0,1)- REPRESENTA_A
+
+Habitacion ->- d {IndividualEstandar, SuiteDoble, DobleSuperior, SuperiorFamilyPlan, DobleEstandar}
+MetodoPago ->- d {TarjetaCredito, TarjetaDebito, Efectivo, Cheque}
+ResponsablePago ->- d {PersonaJuridica, PersonaFisica}
+
+@endchen

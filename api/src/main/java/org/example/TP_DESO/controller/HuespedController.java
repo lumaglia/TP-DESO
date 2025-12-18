@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.example.TP_DESO.dto.BuscarHuespedDTO;
 import org.example.TP_DESO.dto.DireccionDTO;
 import org.example.TP_DESO.dto.HuespedDTO;
-import org.example.TP_DESO.dto.HuespedDTOBuilder;
+import org.example.TP_DESO.patterns.builder.HuespedDTOBuilder;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.service.GestorHuesped;

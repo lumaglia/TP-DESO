@@ -1,14 +1,12 @@
 package org.example.TP_DESO.service;
 
 import org.example.TP_DESO.dao.EstadiaDAO;
-import org.example.TP_DESO.dao.EstadiaDAOMySQL;
 import org.example.TP_DESO.dao.HuespedDAO;
-import org.example.TP_DESO.dao.HuespedDAOMySQL;
 import org.example.TP_DESO.domain.Direccion;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.DireccionDTO;
 import org.example.TP_DESO.dto.HuespedDTO;
-import org.example.TP_DESO.dto.HuespedDTOBuilder;
+import org.example.TP_DESO.patterns.builder.HuespedDTOBuilder;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,5 +175,14 @@ public class GestorHuesped {
                 huespedDTO.getNroDoc(),
                 huesped
         );
+    }
+
+    public Huesped buscarHuespedDomain(String tipoDoc, String nroDoc) throws FracasoOperacion{
+        try{
+            return huespedDAO.obtenerHuespedDomain(tipoDoc, nroDoc);
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Erro en el gestorHuesped al querer recuperar un huesped domain: " + e.getMessage());
+        }
     }
 }

@@ -29,8 +29,4 @@ public abstract class Habitacion {
         this.capacidad = capacidad;
         this.tamanno = tamanno;
     }
-    
-    static public void sortHabitacionesByPrice(List<Habitacion> lh){
-        lh.sort((l, r) -> Float.compare(l.getPrecioNoche(), r.getPrecioNoche()));
-    }
 }

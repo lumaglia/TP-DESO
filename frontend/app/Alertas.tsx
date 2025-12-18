@@ -1,5 +1,5 @@
 import { AlertDialog } from '@base-ui-components/react/alert-dialog';
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import warningIcon from '../public/warning.png'
@@ -63,6 +63,59 @@ export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen:
                             }).then(res => {
                                 if(res?.ok){
                                     router.push(`/Huesped/Alta/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
+                                }
+                            })
+                        }}>
+                            Cargar Igualmente
+                        </AlertDialog.Close>
+                    </div>
+                </AlertDialog.Popup>
+            </AlertDialog.Portal>
+        </AlertDialog.Root>
+    );
+}
+export function AlertaDocumentoRP({open, setOpen, data, nested=false, setDone, setCuit} : {open: boolean, setOpen: (open: boolean, e: any) => void, data: any, nested?: boolean, setDone?: React.Dispatch<React.SetStateAction<boolean>>, setCuit?: React.Dispatch<React.SetStateAction<string>>}) {
+    const searchParams = useSearchParams();
+    const returnTo = searchParams.get('returnTo');
+    const router = useRouter();
+    const fetchApi = useFetch();
+    return (
+        <AlertDialog.Root open={open} onOpenChange={setOpen}>
+            {/*<AlertDialog.Trigger data-color="red" className={'Button'}>*/}
+            {/*    Discard draft*/}
+            {/*</AlertDialog.Trigger>*/}
+            <AlertDialog.Portal>
+                <AlertDialog.Backdrop className={'Backdrop'} />
+                <AlertDialog.Popup className={'Popup'} outline-color='yellow'>
+                    <div style={{display: 'flex', alignItems: 'flex-start', margin: '0', padding: '0'}}>
+                        <Image src={warningIcon} width={28} height={28} alt="warning" />
+                        <AlertDialog.Title className={'Title'}>
+                            Cuidado
+                        </AlertDialog.Title>
+                    </div>
+                    <AlertDialog.Description className={'Description'}>
+                        El CUIT ya existe en el sistema
+                    </AlertDialog.Description>
+                    <div className={'Actions'}>
+                        <AlertDialog.Close className={'PopupButton'} data-color='white'>Volver y Corregir</AlertDialog.Close>
+                        <AlertDialog.Close className={'PopupButton'} onClick={() => {
+                            fetchApi('/ResponsablePago/Modificar', {
+                                method: 'PUT',
+                                body: JSON.stringify(data),
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                }
+                            }).then(res => {
+                                if(res?.ok){
+                                    if(nested){
+                                        if(setDone && setCuit){
+                                            setCuit(data.cuit)
+                                            setDone(true)
+                                        }
+                                    }else{
+                                        router.push(`/ResponsablePago/Alta/success?responsablePago=${encodeURIComponent(data.razonSocial)}&returnTo=${encodeURIComponent(returnTo ?? '/')}`)
+                                    }
                                 }
                             })
                         }}>

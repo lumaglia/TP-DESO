@@ -30,6 +30,7 @@ public class FacturaController {
     @PostMapping("/Factura/Checkout")
     public ResponseEntity<EstadiaFacturacionDTO> obtenerHuespedesCheckot(
             @RequestBody RequestCheckoutDTO request) throws FracasoOperacion {
+        System.out.println(request.getDiaCheckOut());
         try{
             EstadiaFacturacionDTO resultado = gestorFactura.estadiaFacturacion(request.getNumHabitacion());
             return ResponseEntity.ok().body(resultado);

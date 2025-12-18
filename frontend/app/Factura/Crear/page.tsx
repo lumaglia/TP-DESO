@@ -157,13 +157,17 @@ export default function CrearFactura() {
     }
 
     const submitCheckout = (data: FormFactura) => {
-        const diaCheckout = new Date(new Date().getTime()-24*3600000).toISOString().split('T')[0];
+        const [horas, minutos] = data.horaSalida.split(':');
+        const dia = new Date(new Date().getTime()-24*3600000);
+        dia.setHours(+horas, +minutos, 0, 0)
+        const diaCheckout = new Date(dia.getTime()-3*3600000).toISOString();
+        console.log(diaCheckout);
         setErrorHabitacion(false);
         fetchApi('/Factura/Checkout', {
             method: 'POST',
             body: JSON.stringify({
                 numHabitacion: data.idHabitacion,
-                diaCheckout: diaCheckout
+                diaCheckOut: diaCheckout
             }),
             headers: {
                 'Accept': 'application/json',

@@ -3,12 +3,12 @@ package org.example.TP_DESO.dao;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.TP_DESO.domain.Consumo;
+import org.example.TP_DESO.domain.Factura;
 import org.example.TP_DESO.repository.ConsumoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -34,15 +34,6 @@ public class ConsumoDAOMySQL implements ConsumoDAO {
             return consumoRepository.findById(idConsumo).get();
         } catch (Exception e) {
             throw new FracasoOperacion("Error al obtener el consumo por id:" + e.getMessage());
-        }
-    }
-    @Override
-    public void vincularConFactura(Long idConsumo, String nroFactura) throws FracasoOperacion{
-        try{
-
-        }
-        catch (Exception e) {
-            throw new FracasoOperacion("Error al vincular con la factura: " +e.getMessage());
         }
     }
 }

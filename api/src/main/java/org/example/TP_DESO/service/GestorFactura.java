@@ -16,6 +16,7 @@ import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.patterns.mappers.DireccionMapper;
 import org.example.TP_DESO.patterns.mappers.EstadiaMapper;
+import org.example.TP_DESO.patterns.mappers.HabitacionMapper;
 import org.example.TP_DESO.patterns.mappers.HuespedMapper;
 import org.example.TP_DESO.patterns.strategy.PrecioHabitacion;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,20 @@ public class GestorFactura {
     }
 
     public EstadiaDTO obtenerEstadia(String NroHabitacion, LocalDateTime fin) throws FracasoOperacion {
-        return daoEstadia.buscarEstadiaPorHabitacionYFechaFin(NroHabitacion, fin.toLocalDate());
+        try{
+            return daoEstadia.buscarEstadiaPorHabitacionYFechaFin(NroHabitacion, fin.toLocalDate());
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al obtener el dto de al estadia en gestor factura: " + e.getMessage());
+        }
+    }
+    public Estadia obtenerEstadiaVinculada(String nroHabitacion, LocalDateTime fin) throws FracasoOperacion{
+        try{
+            return daoEstadia.obtenerEstadiaNroHabitacionFechaFin(nroHabitacion, fin.toLocalDate());
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al obtener el domain de al estadia en gestor factura: " + e.getMessage());
+        }
     }
 
     public ResponsablePagoDTO buscarResponsablePago(String cuit) throws FracasoOperacion {
@@ -141,12 +155,11 @@ public class GestorFactura {
             factura.setNotaCredito(null);
 
             LocalDateTime fin = LocalDateTime.ofInstant(Instant.parse(emitirFacturaDTO.getDiaCheckOut()), ZoneId.systemDefault());
-            EstadiaDTO estadia = obtenerEstadia(emitirFacturaDTO.getNumHabitacion(), fin);
+            Estadia estadia = obtenerEstadiaVinculada(emitirFacturaDTO.getNumHabitacion(), fin);
 
-            Estadia estadiaEntidad = EstadiaMapper.toDomain(estadia);
-            factura.setEstadia(estadiaEntidad);
+            factura.setEstadia(estadia);
 
-            float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), fin);
+            float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(HabitacionMapper.toDTO(estadia.getHabitacion()), estadia.getFechaInicio(), fin);
             if(!emitirFacturaDTO.isPagaEstadia()){
                 montoEstadia = 0F;
             }
@@ -182,10 +195,16 @@ public class GestorFactura {
                 factura.setResponsablePago(pj);
             }
 
-            return daoFactura.crearFactura(factura);
+            daoFactura.crearFactura(factura);
+
+            for(Consumo c : consumos){
+                c.setFactura(factura);
+            }
+
+            return factura;
         }
         catch (Exception e){
-            throw new FracasoOperacion("Error al crear factura: " + e.getMessage());
+            throw new FracasoOperacion("Error al crear factura /GestorFactura->GenerarFactura/: " + e.getMessage());
         }
     }
 
@@ -204,7 +223,7 @@ public class GestorFactura {
             float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), fin);
             ArrayList<Consumo> consumosEstadia = daoConsumo.consumosEstadia(estadia.getIdEstadia());
 
-            if(estadiaPaga(consumosEstadia)){
+            if(daoFactura.obtenerFacturaPorEstadia(estadia.getIdEstadia()) != null){
                 montoEstadia = 0F;
             }
             return new EstadiaFacturacionDTO(estadia, montoEstadia, consumosEstadia);
@@ -212,14 +231,5 @@ public class GestorFactura {
         catch (Exception e){
             throw new FracasoOperacion("Error al obtener la estadia para facturar: " + e.getMessage());
         }
-    }
-
-    public boolean estadiaPaga(ArrayList<Consumo> consumos){
-        for (Consumo consumo : consumos) {
-            if(consumo.getFactura() != null && consumo.getFactura().isPagaEstadia()){
-                return true;
-            }
-        }
-        return false;
     }
 }

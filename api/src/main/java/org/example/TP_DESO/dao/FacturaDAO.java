@@ -5,7 +5,7 @@ import org.example.TP_DESO.exceptions.FracasoOperacion;
 
 public interface FacturaDAO {
     Factura crearFactura(Factura factura) throws FracasoOperacion;
-    void obtenerFactura() throws FracasoOperacion;
+    Factura obtenerFacturaPorEstadia(Long idEstadia) throws FracasoOperacion;
     void modificarFactura() throws FracasoOperacion;
     void eliminarFactura() throws FracasoOperacion;
 }

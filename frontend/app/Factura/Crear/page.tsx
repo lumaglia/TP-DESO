@@ -47,7 +47,7 @@ type FacturaPreviewDTO = {
 }
 
 type ItemValues = {
-    id: string,
+    id: number,
     tipo: string,
     descripcion: string,
     monto: number
@@ -69,7 +69,7 @@ export default function CrearFactura() {
     const [estadia, setEstadia] = useState<Estadia | null>(null)
     const fetchApi = useFetch();
     const [items, setItems] = useState<{
-        id: string,
+        id: number,
         tipo: string,
         descripcion: string
         monto: number
@@ -195,14 +195,14 @@ export default function CrearFactura() {
 
                         const itemsFactura = [
                             ...(data.montoEstadia > 0 ? [{
-                                id: `{estadia-${data.id}`,
+                                id: data.id,
                                 tipo: 'Estadia',
                                 descripcion: 'Costo de la estadia',
                                 monto: data.montoEstadia,
                             }] : []),
 
                             ...data.consumos?.map(c => ({
-                                id: `consumo-${c.id}`,
+                                id: c.id,
                                 tipo: c.tipo,
                                 descripcion: c.descripcion,
                                 monto: c.monto,
@@ -282,6 +282,10 @@ export default function CrearFactura() {
             cuit: cuit,
             tipoDoc: tipoDoc,
             nroDoc: nroDoc,
+        }
+        if (selectedItems.length === 0) {
+            console.error("No hay elementos seleccionados (este caso no deberia pasar)");
+            return;
         }
         console.log(emitir)
         fetchApi('/Factura/Emitir', {

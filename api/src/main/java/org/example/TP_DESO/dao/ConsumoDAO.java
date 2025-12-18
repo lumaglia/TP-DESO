@@ -11,5 +11,4 @@ import java.util.Optional;
 public interface ConsumoDAO {
     ArrayList<Consumo> consumosEstadia(Long idEstadia) throws FracasoOperacion;
     Consumo obtenerConsumoPorId(Long idConsumo) throws FracasoOperacion;
-    void vincularConFactura(Long id, String nroFactura) throws FracasoOperacion;
 }

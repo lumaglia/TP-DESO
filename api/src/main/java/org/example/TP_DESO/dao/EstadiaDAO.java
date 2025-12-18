@@ -12,6 +12,7 @@ public interface EstadiaDAO {
 
     ArrayList <EstadiaDTO> obtenerEstadiaEntreFechas(LocalDate fechaInicio, LocalDate fechaFin) throws FracasoOperacion;
     ArrayList <Estadia> obtenerEstadiaEntreFechasDomainForm(LocalDate fechaInicio, LocalDate fechaFin) throws FracasoOperacion;
+    Estadia obtenerEstadiaNroHabitacionFechaFin(String nroHabitacion, LocalDate fin) throws FracasoOperacion;
 
     void modificarEstadia(Long idEstadia, Estadia estadia) throws FracasoOperacion;
     void eliminarEstadia(Long idEstadia) throws FracasoOperacion;

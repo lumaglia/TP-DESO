@@ -24,8 +24,12 @@ public class FacturaDAOMySQL implements FacturaDAO {
     }
 
     @Override
-    public void obtenerFactura() throws FracasoOperacion {
-
+    public Factura obtenerFacturaPorEstadia(Long id) throws FracasoOperacion {
+        try{
+            return facturaRepository.findByEstadia_idEstadia(id).get();
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al obtener la factura por el id de estadia" + e.getMessage());
+        }
     }
 
     @Override

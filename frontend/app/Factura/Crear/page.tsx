@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ChangeEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import { ScrollArea } from '@base-ui-components/react/scroll-area';
@@ -100,7 +100,6 @@ export default function CrearFactura() {
     const [fechaSalida, setFechaSalida] = useState("");
     const [tipoDoc, setTipoDoc] = useState("");
     const [nroDoc, setNroDoc] = useState("");
-    const [popUpEmitir, setPopUpEmitir] = useState(false)
 
     const [opcion, setOpcion] = useState('Huesped');
     const manejarCambio = (e:any) => {
@@ -297,11 +296,11 @@ export default function CrearFactura() {
             }})
             .then(res => {
                 if (res?.ok){
-                    alert('Factura emitida correctamente.')
+                    //alert('Factura emitida correctamente.')
                     setSelectedItems([])
                     setItems([])
-                    setEstado(EstadosCU07.ConfirmarFactura)
-                    requestHabitacion(nroHab,fechaSalida)
+                    setEstado(EstadosCU07.FacturaEmitida)
+                    requestHabitacion(nroHab, fechaSalida);
                 }
             })
 

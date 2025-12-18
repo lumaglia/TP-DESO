@@ -24,10 +24,9 @@ public class Consumo {
     private TipoConsumo tipo;
     private String detalle;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(
-            name = "id_estadia",referencedColumnName = "idEstadia",
-            nullable = false)
+            name = "id_estadia",referencedColumnName = "idEstadia")
     private Estadia estadia;
 
     @ManyToOne

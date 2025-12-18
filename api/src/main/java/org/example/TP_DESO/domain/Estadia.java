@@ -31,6 +31,7 @@ public class Estadia {
                     @JoinColumn(name = "nro_doc",  referencedColumnName = "nroDoc")
             }
     )
+    @org.hibernate.annotations.Immutable
     private List<Huesped> huespedes = new ArrayList<>();
 
     @ManyToOne

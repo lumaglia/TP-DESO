@@ -50,20 +50,13 @@ public class PopulateBDD implements CommandLineRunner {
             }
 
             if(hardReset) resetearTablas();
-/*
-            System.out.println("-> Poblando con datos a la bdd");
-            //HABITACIONES
-            poblarHabitaciones();
-            //DIRECCIONES
-            poblarDirecciones();
-            //HUESPEDES
-            poblarHuespedes();
-            //ESTADIAS
-            poblarEstadias();
-            //RESERVAS
-            poblarReservas();
-            //ELEMENTOS DE PRUEBA
 
+            System.out.println("-> Poblando con datos a la bdd");
+            poblarHabitaciones();
+            poblarDirecciones();
+            poblarHuespedes();
+            poblarEstadias();
+            poblarReservas();
             poblarEstadiasOcupacionTotal(
                     LocalDate.of(2025, 1, 1),
                     LocalDate.of(2025, 1, 20));
@@ -72,11 +65,10 @@ public class PopulateBDD implements CommandLineRunner {
                     LocalDate.of(2025, 2, 27),
                     LocalDate.of(2025, 1, 29)
             );
-*/
+
             poblarDefensaDesarrollo();
 
             System.out.println("-> Finalizada la carga de datos");
-            //ESPERO QUE ESO SEA TO DO POR FAVOR QUE DIFICIL FUE ESTO
         } catch (Exception e) {
             throw new RuntimeException("Error al poblar la bdd: " + e.getMessage());
         }
@@ -92,7 +84,6 @@ public class PopulateBDD implements CommandLineRunner {
 
     public void poblarHabitaciones(){
         System.out.println("-> Poblando Tabla de Habitaciones…");
-        //Habitaciones del tipo individual estandar
         for(int i=1; i<=10; i++){
             IndividualEstandar h = new IndividualEstandar();
 
@@ -105,7 +96,6 @@ public class PopulateBDD implements CommandLineRunner {
             habitacionRepository.save(h);
         }
 
-        //Habitaciones del tipo doble estandar
         for(int i=11; i<=28; i++){
             DobleEstandar h = new DobleEstandar();
 
@@ -134,7 +124,6 @@ public class PopulateBDD implements CommandLineRunner {
             habitacionRepository.save(h);
         }
 
-        //Habitaciones del tipo superior family plan
         for(int i=37; i<=46; i++){
             SuperiorFamilyPlan h =  new SuperiorFamilyPlan();
 
@@ -148,7 +137,6 @@ public class PopulateBDD implements CommandLineRunner {
             habitacionRepository.save(h);
         }
 
-        //Habitaciones del tipo suite doble
         for(int i=47; i<=48; i++){
             SuiteDoble h = new SuiteDoble();
 
@@ -360,10 +348,8 @@ public class PopulateBDD implements CommandLineRunner {
 
         System.out.println("-> Creando estadías para ocupar todas las habitaciones…");
 
-        // 1. Obtener todas las habitaciones
         List<Habitacion> habitaciones = habitacionRepository.findAll();
 
-        // 2. Crear 1 huésped dummy (puede ser un solo huésped para todas)
         Direccion direccionDummy = new Direccion(
                 "Testing Street", "2", "9999", "TestCity", "TestProvince", "TestingLand"
         );
@@ -379,14 +365,12 @@ public class PopulateBDD implements CommandLineRunner {
         );
         huespedRepository.save(huespedDummy);
 
-        // 3. Crear una estadía por habitación
         for (Habitacion hab : habitaciones) {
             Estadia e = new Estadia();
             e.setFechaInicio(inicio);
             e.setFechaFin(fin);
             e.setHabitacion(hab);
 
-            // agregamos el huésped dummy
             e.getHuespedes().add(huespedRepository.findByTipoDocAndNroDoc(huespedDummy.getTipoDoc(), huespedDummy.getNroDoc()).get());
 
             estadiaRepository.save(e);
@@ -405,7 +389,6 @@ public class PopulateBDD implements CommandLineRunner {
             System.out.println("WARNING: No hay 48 habitaciones, se repartirán las disponibles.");
         }
 
-        // Crear Huesped Dummy
         Direccion dummyDir = new Direccion(
                 "Fake Street", "1", "9999",
                 "TestCity", "TestProvince", "TestLand"
@@ -427,9 +410,6 @@ public class PopulateBDD implements CommandLineRunner {
         int reservasCount = Math.min(24, count);
         int estadiasCount = Math.min(24, count - reservasCount);
 
-        // -----------------------------
-        // 1. Crear Reservas (primeras N)
-        // -----------------------------
         for (int i = 0; i < reservasCount; i++) {
             Habitacion hab = habitaciones.get(i);
 
@@ -446,9 +426,6 @@ public class PopulateBDD implements CommandLineRunner {
             reservaRepository.save(r);
         }
 
-        // -----------------------------
-        // 2. Crear Estadías (siguientes N)
-        // -----------------------------
         for (int i = reservasCount; i < reservasCount + estadiasCount; i++) {
             Habitacion hab = habitaciones.get(i);
 
@@ -621,20 +598,24 @@ public class PopulateBDD implements CommandLineRunner {
             consumo1.setFactura(null);
 
             Consumo consumo2 = new Consumo();
-            consumo1.setDetalle("Compra Bar");
-            consumo1.setTipo(Consumo.TipoConsumo.BAR);
-            consumo1.setMonto(2500);
-            consumo1.setEstadia(e);
-            consumo1.setFactura(null);
+            consumo2.setDetalle("Compra Bar");
+            consumo2.setTipo(Consumo.TipoConsumo.BAR);
+            consumo2.setMonto(2500);
+            consumo2.setEstadia(e);
+            consumo2.setFactura(null);
 
             Consumo consumo3 = new Consumo();
-            consumo1.setDetalle("Fue al sauna");
-            consumo1.setTipo(Consumo.TipoConsumo.SAUNA);
-            consumo1.setMonto(5500);
-            consumo1.setEstadia(e);
-            consumo1.setFactura(null);
+            consumo3.setDetalle("Fue al sauna");
+            consumo3.setTipo(Consumo.TipoConsumo.SAUNA);
+            consumo3.setMonto(5500);
+            consumo3.setEstadia(e);
+            consumo3.setFactura(null);
 
-            List<Consumo> consumos = List.of(consumo1, consumo2, consumo3);
+            ArrayList<Consumo> consumos = new ArrayList();
+
+            consumos.add(consumo1);
+            consumos.add(consumo2);
+            consumos.add(consumo3);
 
             consumoRepository.saveAll(consumos);
         }
@@ -662,6 +643,4 @@ public class PopulateBDD implements CommandLineRunner {
             throw new FracasoOperacion("Error al crear el huesped" + e.getMessage());
         }
     }
-
-    //LISTO BASTA HASTA ACA LLEGUE
 }

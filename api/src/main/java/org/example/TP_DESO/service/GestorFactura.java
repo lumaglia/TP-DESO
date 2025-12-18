@@ -157,7 +157,6 @@ public class GestorFactura {
     public EstadiaFacturacionDTO estadiaFacturacion(RequestCheckoutDTO request) throws FracasoOperacion{
         try{
             LocalDateTime fin = LocalDateTime.ofInstant(Instant.parse(request.getDiaCheckOut()), ZoneId.systemDefault());
-            System.out.println(fin);
             EstadiaDTO estadia = this.obtenerEstadia(request.getNumHabitacion(), fin);
             float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), fin);
             ArrayList<Consumo> consumosEstadia = daoConsumo.consumosEstadia(estadia.getIdEstadia());
@@ -165,10 +164,7 @@ public class GestorFactura {
             if(estadiaPaga(consumosEstadia)){
                 montoEstadia = 0F;
             }
-
-            ArrayList<Consumo> consumos = consumosEstadia.stream().filter(c -> c.getFactura()!= null).collect(Collectors.toCollection(ArrayList::new));
-
-            return new EstadiaFacturacionDTO(estadia, montoEstadia, consumos);
+            return new EstadiaFacturacionDTO(estadia, montoEstadia, consumosEstadia);
         }
         catch (Exception e){
             throw new FracasoOperacion("Error al obtener la estadia para facturar: " + e.getMessage());

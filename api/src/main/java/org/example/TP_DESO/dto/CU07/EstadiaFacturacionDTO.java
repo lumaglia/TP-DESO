@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class EstadiaFacturacionDTO {
-    public class ConsumosEstadiaDTO {
+    public static class ConsumosEstadiaDTO {
         private String nombre;
         private String detalle;
         private float monto;

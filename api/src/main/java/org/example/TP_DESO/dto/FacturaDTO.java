@@ -1,12 +1,14 @@
 package org.example.TP_DESO.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.TP_DESO.domain.Factura;
 import org.example.TP_DESO.domain.PersonaJuridica;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class FacturaDTO {
     private String idFactura;
     private String idNota;

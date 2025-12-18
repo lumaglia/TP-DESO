@@ -24,16 +24,14 @@ public class Consumo {
     private TipoConsumo tipo;
     private String detalle;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
-            name = "estadia_id",referencedColumnName = "idEstadia",
-            nullable = false)
+            name = "id_estadia",referencedColumnName = "idEstadia")
     private Estadia estadia;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(
-            name = "factura_id", referencedColumnName = "nroFactura",
-            nullable = false
+            name = "factura_id", referencedColumnName = "nroFactura"
     )
     private Factura factura;
 }

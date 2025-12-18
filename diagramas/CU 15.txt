@@ -1,0 +1,213 @@
+@startuml
+
+
+skinparam style strictuml
+
+hide footBox
+title Diagrama de Secuencia CU 15 - Ocupar Habitacion
+
+actor Conserje as Con
+boundary "UI - Ocupar Habitacion" as UI
+control "Gestor Reserva" as GR
+control "Gestor Huesped" as GH
+participant "EstadiaDAO" as EDAO
+participant "HuespedDAO" as HuDAO
+participant "HabitacionDAO" as HaDAO
+participant "ReservaDAO" as RDAO
+
+Con -> UI: Solicitar asignar habitaciones
+activate UI
+
+loop desea cargar estadias
+
+ref over Con, UI: CU05
+
+opt grilla vacia
+    UI-->Con: mostrarMensaje("No hay habitaciones disponibles")
+    UI-->Con: Vuelve a la pantalla principal
+    deactivate UI
+end
+
+loop Sin seleccion pintada
+  Con->UI:seleccionar celdas y fechas y presionar SIGUIENTE
+  activate UI
+  UI->UI: verificarSeleccion()
+  activate UI
+  deactivate UI
+  alt seleccion sobre habitacion ocupada
+    UI->UI: anularSeleccion()
+    activate UI
+    deactivate UI
+    UI-->Con: mostrarMensaje("Se seleccionó un rango donde la habitación no está disponible")
+  else seleccion sobre habitacion reservada
+    UI-->Con: mostrarMensaje("La habitacion se encuentra reservada entre los\ndias DD/MM y DD/MM por NombreReserva")
+    deactivate UI
+    alt VOLVER
+      Con->UI: presiona VOLVER
+      activate UI
+      UI->UI: anularSeleccion()
+      activate UI
+      deactivate UI
+      UI-->Con: mostrarMensaje("Seleccione una habitacion para el rango de fechas")
+      deactivate UI
+    else OCUPAR IGUAL
+      Con->UI: presiona OCUPAR IGUAL
+      activate UI
+      UI->UI: pintarSeleccion()
+      activate UI
+      deactivate UI
+    end
+  else seleccion sobre habitacion libre
+    UI->UI: pintarSeleccion()
+    activate UI
+    deactivate UI
+  end
+end
+UI-->Con: mostrarMensaje("Presione Cualquier tecla para continuar")
+deactivate UI
+Con->UI: presiona una tecla
+loop desea elegir huespedes o no hay ninguno seleccionado
+  activate UI
+  loop mientras la grilla este vacia
+    UI->Con: Mostrar campos de criterio de busqueda: Nombre, Apellido, Tipo Doc y Nro Doc
+    deactivate UI
+    Con->UI: completa algunos campos o ninguno y presiona ACEPTAR
+    activate UI
+    UI->GH: buscarHuespedes(huespedDTO)
+    deactivate UI
+    activate GH
+    alt algun campo de huespedDTO no nulo
+      GH->HuDAO: buscarHuespedes(huespedDTO)
+      activate HuDAO
+      GH<--HuDAO: :listHuespedDTO
+      deactivate HuDAO
+    else todos los campos de huespedDTO nulos
+      GH->HuDAO: getHuespedes()
+      activate HuDAO
+      GH<--HuDAO: :listHuespedDTO
+      deactivate HuDAO
+    end
+    opt listHuespedDTO está vacia
+      UI<--GH: lanzarExcepcion("No hay coincidencias en el sistema")
+      deactivate GH
+      activate UI
+      Con<--UI: mostrarMensaje("No se han encontrado huespedes para los criterios seleccionados,\npor favor intente de nuevo.")
+      deactivate UI
+      activate GH
+    end
+  end
+  
+  GH->GH: crearGrilla(listHuespedDTO)
+  activate GH
+  deactivate GH
+  UI<--GH: :objetoGrilla
+  deactivate GH
+  activate UI
+  Con<--UI: mostrarGrillaHuespedes(objetoGrilla)
+  deactivate UI
+  
+  opt presiona ACEPTAR sin seleccionar huespedes
+    Con->UI: presiona ACEPTAR
+    activate UI
+    Con<--UI: mostrarMensaje("Debe seleccionar al menos un huesped")
+    deactivate UI
+  end
+  
+  loop selecciona huespedes
+    Con->UI: selecciona Huesped
+    activate UI
+    note right of UI
+      El sistema no realiza distincion
+      entre Huesped y acompañantes 
+      luego de este caso de uso por
+      lo que se los decidio tomar a
+      todos como huespedes iguales
+    end note
+    UI->UI: pintarCasilla()
+    activate UI
+    deactivate UI
+    
+    deactivate UI
+  end
+  Con->UI: presiona ACEPTAR
+  activate UI
+  Con<--UI: mostrarBotones(SEGUIR CARGANDO, CARGAR OTRA HABITACION, SALIR)
+  alt SEGUIR CARGANDO
+    Con->UI: presiona SEGUIR CARGANDO
+  else CARGAR OTRA HABITACION
+    Con->UI: presiona CARGAR OTRA HABITACION
+  else SALIR
+    Con->UI: presiona SALIR
+  end
+end
+UI->GR: checkIn(estadiaDTO)
+deactivate UI
+activate GR
+
+loop por Huesped Seleccionado
+  GR->HuDAO: buscarHuesped(huespedDTO)
+  activate HuDAO
+  GR<--HuDAO: huespedDTO
+  deactivate HuDAO
+  GR->GR: crearHuesped(huespedDTO)
+  activate GR
+  GR-->GR: unHuesped:Huesped
+  deactivate GR
+end
+GR->HaDAO: buscarHabitacion(habitacionDTO)
+activate HaDAO
+GR<--HaDAO: habitacionDTO
+deactivate HaDAO
+GR->GR: crearHabitacion(habitacionDTO)
+activate GR
+GR-->GR: unaHabitacion:Habitacion
+deactivate GR
+opt estadia coincide con reserva
+  GR->RDAO: buscarReserva(reservaDTO)
+  activate RDAO
+  GR<--RDAO: reservaDTO
+  deactivate RDAO
+  GR->GR: crearReserva(reservaDTO)
+  activate GR
+  GR-->GR: unaReserva:Reserva
+  deactivate GR
+end
+note right of GR
+      Las funciones crearHuesped(),
+      crearHabitacion() y crearReserva()
+      son anotaciones para resumir la creacion
+      de las entidades a partir de los DTO que
+      tomarían demasiado espacio en el diagrama
+    end note
+create participant "unaEstadia:Estadia" as E
+GR --> E: new Estadia
+activate E
+GR->E: setFechaInicio(fechaInicio)
+GR->E: setFechaFin(fechaFin)
+GR->E: setHabitacion(unaHabitacion)
+GR->E: setHuespedes(listHuespedes)
+opt estadia coincide con reserva
+  GR->E: setReserva(unaReserva)
+end
+GR->E: getInstance()
+GR<--E: unaEstadia
+deactivate E
+GR->EDAO: cargarEstadia(unaEstadia)
+activate EDAO
+GR<--EDAO: mostrarMensaje("Estadia cargada exitosamente")
+deactivate EDAO
+UI<--GR: mostrarMensaje("Estadia cargada exitosamente")
+deactivate GR
+activate UI
+Con<--UI: mostrarMensaje("La estadia fue cargada exitosamente")
+deactivate UI
+end
+
+opt EventCancelar
+  Con->UI: Presionar cancelar
+  activate UI
+  UI-->Con: Vuelve a la pantalla principal
+deactivate UI
+end
+
+@enduml

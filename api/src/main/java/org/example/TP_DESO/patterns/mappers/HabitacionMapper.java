@@ -20,7 +20,7 @@ public class HabitacionMapper {
             );
         }
         if (h instanceof DobleSuperior ds) {
-            return new DobleEstandarDTO(
+            return new DobleSuperiorDTO(
                     ds.getNroHabitacion(),
                     ds.getPrecioNoche(),
                     ds.getCapacidad(),

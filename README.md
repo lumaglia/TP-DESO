@@ -6,11 +6,34 @@ Para ejecutar el frontend, se debe abrir una terminal y posicionarse en el direc
 
 El backend y el frontend deben ejecutarse en paralelo, cada uno en su propio proceso. 
 
-La base de datos se popula mediante una clase Java 'PopulateBDD' ubicada al lado del archivo main. Para ejecutar el seed, se debe correr dicha clase manualmente desde el IDE (por ejemplo IntelliJ IDEA), ejecutándola como una aplicación Java. Esta clase se encarga de inicializar la base de datos con datos de prueba necesarios para el correcto funcionamiento del sistema. Una vez finalizada la ejecucion de la clase, se puede inicializar el proyecto con los datos.
-
 Las pruebas unitarias del backend se pueden ejecutar utilizando Maven. Desde el directorio raíz del backend (TP-DESO/api), se debe abrir una terminal y ejecutar el comando './mvnw test' en sistemas Unix/Linux o 'mvnw test' o '.\mvnw test' en Windows. Esto ejecutará todas las pruebas unitarias configuradas en el proyecto y generará los reportes correspondientes (JaCoCo). Como pide el enunciado, las prubas son hechas en la capa service, especificamente en las clases 'GestorHuespued', 'GestorHabitacion' y 'GestorReserva'. En caso de querer ver las pruebas manualmente, estas se encuentran en el apartado 'TP-DESO\api\src\test\java\org\example\TP_DESO\service', donde se encontraran cada clase de de tipo test, y se pueden ejecutar tanto las clases con todos los test en ella, o cada metodo (test) que contiene la clase.
 
-Todos los endpoints para los caso de uso existen en http://localhost:3000 y son llamados por el Front para los casos de uso, a continuación se lista cada End Point y los casos de usos en los que se emplea.
+
+Configuración y Población de la Base de Datos:
+
+Para asegurar el correcto funcionamiento del sistema, se debe seguir este procedimiento según el estado de la base de datos:
+
+--- A. Ejecución por primera vez (Base de Datos vacía)
+Si la base de datos no contiene tablas ni registros, se debe ejecutar la aplicación utilizando la rama FeaturePopulateBDD.
+Acción: Al iniciar la aplicación desde esta rama, el sistema generará automáticamente el esquema y cargará los datos mínimos necesarios para validar todos los Casos de Uso (CU).
+Resultado esperado: Una vez finalizada la carga, la aplicación estará lista para su uso.
+
+--- B. Ejecución estándar (Base de Datos ya poblada)
+Si la base de datos ya contiene información, se debe utilizar la rama main.
+Nota: Se desaconseja ejecutar la rama FeaturePopulateBDD sobre una base de datos ya existente, ya que esto podría generar conflictos de duplicidad o errores de ejecución.
+
+--- C. Resolución de problemas y Reinicio (Reset)
+En caso de experimentar errores durante el inicio, los motivos principales suelen ser:
+Latencia de red: Problemas de conexión con la base de datos remota.
+Conflictos de esquema: Intentar poblar una base de datos que ya posee registros.
+Si el error persiste y la aplicación no puede iniciar correctamente:
+Acceda a la base de datos mediante un gestor (DBeaver, MySQL Workbench, etc.) utilizando las credenciales provistas en el archivo application.properties.
+Ejecute la sentencia DROP DATABASE defaultdb; para eliminar la base de datos actual.
+Vuelva a ejecutar la aplicación desde la rama FeaturePopulateBDD para recrear el entorno desde cero de manera limpia.
+
+
+
+Todos los endpoints para los casos de uso existen en http://localhost:3000 y son llamados por el Front para los casos de uso, a continuación se lista cada End Point y los casos de usos en los que se emplea.
 
 CU 01 - Auntenticar Usuario
 

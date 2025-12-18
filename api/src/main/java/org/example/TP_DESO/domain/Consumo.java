@@ -29,4 +29,11 @@ public class Consumo {
             name = "estadia_id",referencedColumnName = "idEstadia",
             nullable = false)
     private Estadia estadia;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(
+            name = "factura_id", referencedColumnName = "nroFactura",
+            nullable = false
+    )
+    private Factura factura;
 }

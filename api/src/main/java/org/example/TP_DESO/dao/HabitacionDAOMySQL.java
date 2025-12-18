@@ -2,7 +2,7 @@ package org.example.TP_DESO.dao;
 
 import org.example.TP_DESO.domain.*;
 import org.example.TP_DESO.dto.HabitacionDTO;
-import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
+import org.example.TP_DESO.patterns.mappers.HabitacionMapper;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.EstadiaRepository;
 import org.example.TP_DESO.repository.HabitacionRepository;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -105,40 +104,23 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
         }
     }
 
-    @Override // No es lo mismo que obtenerHabitacion?
+    @Override
+    public ArrayList<Habitacion> obtenerTodasDomainForm() throws FracasoOperacion{
+        try{
+            return (ArrayList<Habitacion>) habitacionRepository.findAll();
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al recuperar las habitaciones" + e.getMessage());
+
+        }
+    }
+
+    @Override
     public HabitacionDTO buscarPorNumero(int numero) throws FracasoOperacion {
         try{
             return this.obtenerHabitacion(String.valueOf(numero));
         } catch (FracasoOperacion e) {
             throw new FracasoOperacion("Error al buscar por numero: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public ArrayList<HabitacionDTO> buscarHabitacionesOcupadas(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
-        try{
-            ArrayList<HabitacionDTO> resultado = new ArrayList<>();
-            ArrayList<Estadia> estadias = estadiaRepository.findByFechaInicioBetween(desde, hasta);
-
-            for(Estadia e : estadias) resultado.add(HabitacionMapper.toDTO(e.getHabitacion()));
-
-            return resultado;
-        } catch (Exception e) {
-            throw new FracasoOperacion("No se pudo recuperar las habitaciones ocupadas" + e.getMessage());
-        }
-    }
-
-    @Override
-    public ArrayList<HabitacionDTO> buscarHabitacionesDisponibles(LocalDate desde, LocalDate hasta) throws FracasoOperacion {
-        try{
-            ArrayList<HabitacionDTO> totales = obtenerTodas();
-            ArrayList<HabitacionDTO> ocupadas = buscarHabitacionesOcupadas(desde, hasta);
-
-            totales.removeAll(ocupadas);
-
-            return totales;
-        } catch (Exception e) {
-            throw new FracasoOperacion("No se pudo buscar las habitaciones disponibles" + e.getMessage());
         }
     }
 
@@ -167,4 +149,5 @@ public class HabitacionDAOMySQL implements HabitacionDAO{
             throw new FracasoOperacion("Error al buscar por tipo: " + e.getMessage());
         }
     }
+
 }

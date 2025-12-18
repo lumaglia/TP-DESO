@@ -1,6 +1,8 @@
 package org.example.TP_DESO.repository;
 
 
+import org.example.TP_DESO.domain.Estadia;
+import org.example.TP_DESO.domain.Habitacion;
 import org.example.TP_DESO.domain.Reserva;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,9 +15,10 @@ import java.util.ArrayList;
 @Repository
 public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
-    ArrayList<Reserva> findByFechaInicioBetween(LocalDate desde, LocalDate hasta);
+    ArrayList<Reserva> findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(LocalDate desde, LocalDate hasta);
     ArrayList<Reserva> findByApellido(String apellido);
     ArrayList<Reserva> findByApellidoAndNombre(String apellido, String nombre);
+    ArrayList<Reserva> findByHabitacionAndFechaInicioAndCancelada(Habitacion habitacion, LocalDate fechaInicio, boolean cancelada);
 
 
 }

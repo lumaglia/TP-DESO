@@ -11,9 +11,11 @@ import '../../globals.css'
 import '../Alta/AltaHuesped.css'
 import { comboValues, fieldTypes } from '../../../public/constants.ts'
 import './Buscar.css'
+import { useFetch } from '@/hooks/useFetch.ts'
 
 export default function BuscarHuesped() {
     const { register, formState, handleSubmit } = useForm();
+    const fetchApi = useFetch();
     const router = useRouter();
     const [ alertaCancelarOpen, setAlertaCancelarOpen] = useState(false);
     const [ alertaHuespedNoEncontradoOpen, setAlertaHuespedNoEncontradoOpen] = useState(false);
@@ -31,7 +33,7 @@ export default function BuscarHuesped() {
                 data[key] = null
             }
         }
-        fetch('http://localhost:8081/Huesped/Buscar', {
+        fetchApi('/Huesped/Buscar', {
             method: 'POST',
             body: JSON.stringify(data),
             headers: {
@@ -39,15 +41,17 @@ export default function BuscarHuesped() {
                 'Content-Type': 'application/json'
             }
         }).then(res => {
-            if (res.status === 204) {
-                setHuespedes([])
-                setSelectedHuesped(null)
-                setAlertaHuespedNoEncontradoOpen(true)
-            }else if(res.ok) {
-                res.json().then(data => {
-                    setHuespedes(data)
+            if(res != null){
+                if (res.status === 204) {
+                    setHuespedes([])
                     setSelectedHuesped(null)
-                })
+                    setAlertaHuespedNoEncontradoOpen(true)
+                }else if(res.ok) {
+                    res.json().then(data => {
+                        setHuespedes(data)
+                        setSelectedHuesped(null)
+                    })
+                }
             }
         })
     }
@@ -75,8 +79,8 @@ export default function BuscarHuesped() {
                 <ScrollArea.Root className='ScrollArea'>
                 <ScrollArea.Viewport className='Viewport'>
                     <ScrollArea.Content className='Content'>
-                        <table>
-                            <thead style={{position: 'sticky', top: '0'}}>
+                        <table className='TablaBuscar'>
+                            <thead>
                             <tr>
                                 <th>Nombre</th>
                                 <th>Apellido</th>
@@ -99,7 +103,7 @@ export default function BuscarHuesped() {
 
                     </ScrollArea.Content>
                 </ScrollArea.Viewport>
-                <ScrollArea.Scrollbar className='Scrollbar'>
+                <ScrollArea.Scrollbar className='Scrollbar' orientation='vertical'>
                     <ScrollArea.Thumb className='Thumb'/>
                 </ScrollArea.Scrollbar>
             </ScrollArea.Root>
@@ -113,8 +117,9 @@ export default function BuscarHuesped() {
                     </p>
                     <button className='Button' onClick={() => {
                         if (selectedHuesped) {
-                            router.push('/Huesped/Modificar')
-                        }else{
+                            const url = `/Huesped/Modificar?tipo=${encodeURIComponent(selectedHuesped.tipoDoc)}&nro=${encodeURIComponent(selectedHuesped.nroDoc)}`;
+                            router.push(url);
+                        } else {
                             setErrorNoSeleccionado(true)
                         }
                     }}>

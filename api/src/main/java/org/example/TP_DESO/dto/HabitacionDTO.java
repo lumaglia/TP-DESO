@@ -1,5 +1,9 @@
 package org.example.TP_DESO.dto;
 
+import lombok.Getter;
+
+@Getter
+
 public abstract class HabitacionDTO {
 
     private String nroHabitacion;

@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Primary
 @Service
@@ -100,14 +103,60 @@ public class HuespedDAOMySQL implements HuespedDAO {
     }
 
     @Override
+    public ArrayList<HuespedDTO> obtenerHuesped() throws FracasoOperacion {
+        try{
+            return huespedRepository.findAll().stream().map(h -> {
+                DireccionDTO direccionDTO = new DireccionDTO(
+                        h.getDireccion().getDomicilio(),
+                        h.getDireccion().getDepto(),
+                        h.getDireccion().getCodigoPostal(),
+                        h.getDireccion().getLocalidad(),
+                        h.getDireccion().getProvincia(),
+                        h.getDireccion().getPais()
+                );
+
+                return new HuespedDTO(
+                        h.getTipoDoc(),
+                        h.getNroDoc(),
+                        h.getApellido(),
+                        h.getNombre(),
+                        h.getCuil(),
+                        h.getPosicionIva(),
+                        h.getFechaNac(),
+                        h.getTelefono(),
+                        h.getEmail(),
+                        h.getOcupacion(),
+                        h.getNacionalidad(),
+                        direccionDTO
+                );
+            }).collect(Collectors.toCollection(ArrayList::new));
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al obtener huesped: " + e.getMessage());
+        }
+    }
+
+    @Override
     public void modificarHuesped(String tipoDoc, String numeroDoc, Huesped huesped) throws FracasoOperacion {
         try {
             Optional<Huesped> existente = huespedRepository.findByTipoDocAndNroDoc(tipoDoc, numeroDoc);
             if (existente.isPresent()) {
                 Huesped h = existente.get();
-                // Actualizar campos
-                h.setTipoDoc(huesped.getTipoDoc());
-                h.setNroDoc(huesped.getNroDoc());
+
+                if(!(Objects.equals(h.getTipoDoc(), huesped.getTipoDoc())&&Objects.equals(h.getNroDoc(), huesped.getNroDoc()))){
+                    try{
+                        huespedRepository.delete(h);
+                    }catch(Exception e){
+                        throw new FracasoOperacion("No se puede alterar Documento:" + e.getMessage());
+                    }
+                    h.setTipoDoc(huesped.getTipoDoc());
+                    h.setNroDoc(huesped.getNroDoc());
+                }
+
+                if (huesped.getDireccion() != null) {
+                    Direccion direccionProcesada = direccionDAO.crearDireccion(huesped.getDireccion());
+                    h.setDireccion(direccionProcesada);
+                }
+
                 h.setApellido(huesped.getApellido());
                 h.setNombre(huesped.getNombre());
                 h.setCuil(huesped.getCuil());
@@ -117,9 +166,8 @@ public class HuespedDAOMySQL implements HuespedDAO {
                 h.setEmail(huesped.getEmail());
                 h.setOcupacion(huesped.getOcupacion());
                 h.setNacionalidad(huesped.getNacionalidad());
-                h.setDireccion(huesped.getDireccion());
 
-                direccionDAO.crearDireccion(huesped.getDireccion());
+
                 huespedRepository.save(h);
             } else {
                 throw new FracasoOperacion("Huésped no encontrado con tipoDoc: " + tipoDoc + " y nroDoc: " + numeroDoc);

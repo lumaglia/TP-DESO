@@ -1,24 +1,28 @@
 package org.example.TP_DESO.dao;
 
+import org.example.TP_DESO.domain.Habitacion;
 import org.example.TP_DESO.domain.Reserva;
 import org.example.TP_DESO.dto.EstadiaDTO;
 import org.example.TP_DESO.dto.HabitacionDTO;
-import org.example.TP_DESO.dao.Mappers.EstadiaMapper;
-import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
-import org.example.TP_DESO.dao.Mappers.ReservaMapper;
+import org.example.TP_DESO.patterns.mappers.EstadiaMapper;
+import org.example.TP_DESO.patterns.mappers.HabitacionMapper;
+import org.example.TP_DESO.patterns.mappers.ReservaMapper;
 import org.example.TP_DESO.dto.ReservaDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.ReservaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
 
+@Service
 @Transactional
 public class ReservaDAOMySQL implements ReservaDAO{
 
-
+    @Autowired
     private ReservaRepository reservaRepository;
 
     @Override
@@ -43,10 +47,10 @@ public class ReservaDAOMySQL implements ReservaDAO{
         try {
 
             ArrayList<Reserva> reservas =
-                    reservaRepository.findByFechaInicioBetween(fechaInicio, fechaFin);
+                    reservaRepository.findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(fechaInicio, fechaFin);
 
             if (reservas.isEmpty()) {
-                throw new FracasoOperacion("No hay reservas en ese rango de fechas");
+                return new ArrayList<ReservaDTO>();
             }
 
             ArrayList<ReservaDTO> resultado = new ArrayList<>();
@@ -64,6 +68,7 @@ public class ReservaDAOMySQL implements ReservaDAO{
                 }
 
                 resultado.add(new ReservaDTO(
+                        r.getIdReserva(),
                         r.getFechaReserva(),
                         r.getFechaInicio(),
                         r.getFechaFin(),
@@ -79,6 +84,22 @@ public class ReservaDAOMySQL implements ReservaDAO{
             return resultado;
 
         } catch (Exception e) {
+            throw new FracasoOperacion("Error al obtener reservas: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public ArrayList<Reserva> obtenerReservasEntreFechasDomainForm(LocalDate fechaInicio, LocalDate fechaFin)
+            throws FracasoOperacion{
+        try{
+            ArrayList<Reserva> reservas =
+                    reservaRepository.findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(fechaInicio, fechaFin);
+
+            if (reservas.isEmpty()) throw new FracasoOperacion("No hay reservas en ese rango de fechas");
+
+            return reservas;
+        }
+        catch (Exception e){
             throw new FracasoOperacion("Error al obtener reservas: " + e.getMessage());
         }
     }
@@ -143,10 +164,6 @@ public class ReservaDAOMySQL implements ReservaDAO{
                 reservas = reservaRepository.findByApellidoAndNombre(apellido, nombre);
             }
 
-            if (reservas.isEmpty()) {
-                throw new FracasoOperacion("No se encontraron reservas para los datos ingresados");
-            }
-
             ArrayList<ReservaDTO> resultado = new ArrayList<>();
 
             for (Reserva r : reservas) {
@@ -160,6 +177,25 @@ public class ReservaDAOMySQL implements ReservaDAO{
         }
     }
 
+    @Override
+    public ArrayList<ReservaDTO> buscarReservasPorHabitacionFechaInicio(Habitacion habitacion, LocalDate fechaInicio) throws FracasoOperacion{
+        try {
+            ArrayList<Reserva> reservas;
+
+            reservas = reservaRepository.findByHabitacionAndFechaInicioAndCancelada(habitacion,fechaInicio,false);
+
+            ArrayList<ReservaDTO> resultado = new ArrayList<>();
+
+            for (Reserva r : reservas) {
+                resultado.add(ReservaMapper.toDTO(r));
+            }
+
+            return resultado;
+
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al buscar reservas: " + e.getMessage());
+        }
+    }
 
 
 

@@ -22,7 +22,7 @@ public class Estadia {
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "estadia_huesped",
             joinColumns = @JoinColumn(name = "id_estadia", referencedColumnName = "idEstadia"),
@@ -33,9 +33,11 @@ public class Estadia {
     )
     private List<Huesped> huespedes = new ArrayList<>();
 
-
-
     @ManyToOne
     @JoinColumn(name = "id_habitacion", referencedColumnName = "nroHabitacion")
     private Habitacion habitacion;
+
+    @OneToMany
+    @JoinColumn(name = "id_estadia", referencedColumnName = "idEstadia")
+    private List<Consumo> consumos = new ArrayList<>();
 }

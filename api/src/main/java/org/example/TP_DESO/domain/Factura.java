@@ -13,6 +13,8 @@ public class Factura {
 
     @Id
     private String nroFactura;
+    private float precio;
+    private boolean pagaEstadia;
 
     @ManyToOne(optional = false)
     @JoinColumn(
@@ -35,6 +37,6 @@ public class Factura {
     )
     private ResponsablePago responsablePago;
 
-    @OneToOne(mappedBy = "factura", optional = false)
+    @OneToOne(mappedBy = "factura", cascade = CascadeType.ALL)
     private Pago pago;
 }

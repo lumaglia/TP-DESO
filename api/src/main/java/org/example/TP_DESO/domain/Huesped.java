@@ -1,6 +1,7 @@
 package org.example.TP_DESO.domain;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +31,7 @@ public class Huesped {
     private String ocupacion;
     private String nacionalidad;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = {CascadeType.MERGE})
     @JoinColumns({
         @JoinColumn(name = "direccion_domicilio", referencedColumnName = "domicilio"),
         @JoinColumn(name = "direccion_depto", referencedColumnName = "depto"),

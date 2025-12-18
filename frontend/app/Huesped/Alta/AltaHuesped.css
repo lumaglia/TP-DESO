@@ -1,3 +1,26 @@
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color-scheme: light;
+    background-color: rgb(238, 241, 244);
+    color: #000000;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+}
+
+
+body {
+    margin: 0;
+    padding: 0;
+    min-width: 320px;
+    min-height: 100vh;
+}
 
 
 .Button {
@@ -15,6 +38,10 @@
     min-width: 100px;
     max-height: 41px;
     align-self: flex-end;
+
+    &[data-backcolor='red'] {
+        background-color: red;
+    }
 }
 .Button:hover {
     background-color: #6f7c97;
@@ -23,6 +50,8 @@
 .Button:focus-visible {
     background-color: #3d4555;
 }
+
+
 
 input:focus {
     outline: 2px solid #80c7ea; /* Change to your desired color */

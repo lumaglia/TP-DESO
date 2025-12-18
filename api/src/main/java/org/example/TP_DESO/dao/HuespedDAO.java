@@ -10,6 +10,7 @@ public interface HuespedDAO {
 
     void crearHuesped(Huesped huesped) throws FracasoOperacion;
     ArrayList<HuespedDTO> obtenerHuesped(HuespedDTO huespedDTO) throws FracasoOperacion;
+    ArrayList<HuespedDTO> obtenerHuesped() throws FracasoOperacion;
     void modificarHuesped(String tipoDoc, String numeroDoc, Huesped huesped) throws FracasoOperacion;
     void eliminarHuesped(String tipoDoc, String numeroDoc) throws FracasoOperacion;
 

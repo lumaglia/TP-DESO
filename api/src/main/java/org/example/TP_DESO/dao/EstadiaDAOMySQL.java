@@ -4,8 +4,8 @@ package org.example.TP_DESO.dao;
 import org.example.TP_DESO.domain.Estadia;
 import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.dto.*;
-import org.example.TP_DESO.dao.Mappers.EstadiaMapper;
-import org.example.TP_DESO.dao.Mappers.HabitacionMapper;
+import org.example.TP_DESO.patterns.mappers.EstadiaMapper;
+import org.example.TP_DESO.patterns.mappers.HabitacionMapper;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.repository.EstadiaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
 
         try {
             List<Estadia> estadias = estadiaRepository
-                    .findByFechaInicioBetween(fechaInicio, fechaFin);
+                    .findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(fechaInicio, fechaFin);
 
             if (estadias.isEmpty()) {
                 throw new FracasoOperacion("No existen estadías en ese rango de fechas");
@@ -65,8 +65,22 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
         }
     }
 
+    @Override
+    public ArrayList<Estadia> obtenerEstadiaEntreFechasDomainForm(LocalDate fechaInicio, LocalDate fechaFin)
+        throws FracasoOperacion {
+        try{
+            ArrayList<Estadia> estadias = estadiaRepository.findByFechaFinGreaterThanEqualAndFechaInicioLessThanEqual(fechaInicio, fechaFin);
 
+            if (estadias.isEmpty()) {
+                throw new FracasoOperacion("No existen estadías en ese rango de fechas");
+            }
 
+            return estadias;
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al obtener estadías: " + e.getMessage());
+        }
+    }
 
     @Override
     public void modificarEstadia(Long idEstadia, Estadia estadia) throws FracasoOperacion {
@@ -153,6 +167,7 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
             }
 
             return new EstadiaDTO(
+                    e.getIdEstadia(),
                     e.getFechaInicio(),
                     e.getFechaFin(),
                     huespedDTO,
@@ -227,6 +242,9 @@ public class EstadiaDAOMySQL implements EstadiaDAO{
         } catch (Exception e) {
             throw new FracasoOperacion("Error al buscar estadías del huésped: " + e.getMessage());
         }
+    }
+    public boolean existeEstadiaDeHuesped(String tipoDoc, String nroDoc) {
+        return estadiaRepository.existsByHuespedes_TipoDocAndHuespedes_NroDoc(tipoDoc, nroDoc);
     }
 
 

@@ -34,7 +34,7 @@ public class ResponsablePagoDAOMySQL implements ResponsablePagoDAO{
         }
     }
     @Override
-    public PersonaFisica obtenerPersonaFisica(String cuit) throws FracasoOperacion{
+    public Optional<PersonaFisica> obtenerPersonaFisica(String cuit) throws FracasoOperacion{
         try{
             return pfRepository.findByHuesped_Cuil(cuit);
         }

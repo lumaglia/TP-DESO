@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,20 +79,20 @@ public class GestorFactura {
 
     public ResponsablePagoDTO buscarResponsablePago(String cuit) throws FracasoOperacion {
         try{
-            PersonaFisica personaFisica = daoResponsablePago.obtenerPersonaFisica(cuit);
+            Optional<PersonaFisica> personaFisica = daoResponsablePago.obtenerPersonaFisica(cuit);
             PersonaJuridica personaJuridica = daoResponsablePago.obtenerPersonaJuridica(cuit);
 
-            if(personaJuridica == null && personaFisica == null){
+            if(personaJuridica == null && !personaFisica.isPresent()){
                 throw new FracasoOperacion("No se encontro el responsable de pago");
             }
-            else if (personaJuridica != null && personaFisica != null){
+            else if (personaJuridica != null && personaFisica.isPresent()){
                 throw new FracasoOperacion("El mismo cuit es tanto de una persona fisica como de una juridica");
             }
             else if (personaJuridica != null){
                 return new PersonaJuridicaDTO(personaJuridica);
             }
             else {
-                return new PersonaFisicaDTO(personaFisica);
+                return new PersonaFisicaDTO(personaFisica.get());
             }
         }
         catch (Exception e){ throw new FracasoOperacion("Error: " + e.getMessage()); }
@@ -172,7 +173,7 @@ public class GestorFactura {
                 consumos.add(consumo);
             }
 
-            factura.setPrecio(montoEstadia + montoConsumo);
+            factura.setPrecio((montoEstadia + montoConsumo) * 1.21F);
 
             if (emitirFacturaDTO.isEsHuesped()) {
                 HuespedDTO huespedDTO = new HuespedDTO();
@@ -181,9 +182,16 @@ public class GestorFactura {
 
                 Huesped huesped = HuespedMapper.toDomain(gestorHuesped.buscarHuesped(huespedDTO).getFirst());
 
-                PersonaFisica pf = daoResponsablePago.obtenerPersonaFisica(huesped.getCuil());
+                Optional<PersonaFisica> pf = daoResponsablePago.obtenerPersonaFisica(huesped.getCuil());
 
-                factura.setResponsablePago(pf);
+                if(pf.isPresent()){
+                    factura.setResponsablePago(pf.get());
+                }
+                else{
+                    PersonaFisica newpf = daoResponsablePago.crearPersonaFisica(huesped);
+                    factura.setResponsablePago(newpf);
+                }
+
             }
             else{
                 PersonaJuridica pj = daoResponsablePago.obtenerPersonaJuridica(emitirFacturaDTO.getCuit());

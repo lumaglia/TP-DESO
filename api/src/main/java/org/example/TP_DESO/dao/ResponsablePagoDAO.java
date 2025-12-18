@@ -7,10 +7,11 @@ import org.example.TP_DESO.domain.PersonaJuridica;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ResponsablePagoDAO {
     PersonaFisica crearPersonaFisica(Huesped huesped) throws FracasoOperacion;
-    PersonaFisica obtenerPersonaFisica(String cuit) throws FracasoOperacion;
+    Optional<PersonaFisica> obtenerPersonaFisica(String cuit) throws FracasoOperacion;
     List<PersonaFisica> obtenerTodasPersonaFisica() throws FracasoOperacion;
     void modificarPersonaFisica() throws FracasoOperacion;
     void eliminarPersonaFisica() throws FracasoOperacion;

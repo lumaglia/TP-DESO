@@ -15,6 +15,7 @@ import org.example.TP_DESO.dto.CU12.PersonaJuridicaDTO;
 import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.patterns.mappers.DireccionMapper;
+import org.example.TP_DESO.patterns.mappers.EstadiaMapper;
 import org.example.TP_DESO.patterns.mappers.HuespedMapper;
 import org.example.TP_DESO.patterns.strategy.PrecioHabitacion;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,6 +143,9 @@ public class GestorFactura {
             LocalDateTime fin = LocalDateTime.ofInstant(Instant.parse(emitirFacturaDTO.getDiaCheckOut()), ZoneId.systemDefault());
             EstadiaDTO estadia = obtenerEstadia(emitirFacturaDTO.getNumHabitacion(), fin);
 
+            Estadia estadiaEntidad = EstadiaMapper.toDomain(estadia);
+            factura.setEstadia(estadiaEntidad);
+
             float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), fin);
             if(!emitirFacturaDTO.isPagaEstadia()){
                 montoEstadia = 0F;
@@ -170,6 +174,10 @@ public class GestorFactura {
             }
             else{
                 PersonaJuridica pj = daoResponsablePago.obtenerPersonaJuridica(emitirFacturaDTO.getNumHabitacion());
+
+                if(pj == null){
+                    throw new FracasoOperacion("No existe la persona juridica en el sistema");
+                }
 
                 factura.setResponsablePago(pj);
             }

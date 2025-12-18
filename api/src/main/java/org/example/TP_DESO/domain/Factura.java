@@ -20,7 +20,7 @@ public class Factura {
     private float precio;
     private boolean pagaEstadia;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(
             name = "estadia_id", referencedColumnName = "idEstadia"
     )

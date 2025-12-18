@@ -3,6 +3,7 @@ package org.example.TP_DESO.controller;
 import org.example.TP_DESO.dto.CU07.RequestCheckoutDTO;
 import org.example.TP_DESO.dto.CU12.PersonaJuridicaDTO;
 import org.example.TP_DESO.dto.CU07.EstadiaFacturacionDTO;
+import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
 import org.example.TP_DESO.dto.FacturaDTO;
 import org.example.TP_DESO.exceptions.DocumentoYaExistente;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
@@ -76,4 +77,22 @@ public class FacturaController {
 
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/Factura/BuscarResponsablePago")
+    public ResponseEntity<String> buscarResponsablePago(
+            @RequestBody String cuit) throws FracasoOperacion{
+        try{
+            ResponsablePagoDTO responsable = gestorFactura.buscarResponsablePago(cuit);
+            if(responsable instanceof PersonaJuridicaDTO resultado){
+                return ResponseEntity.ok(resultado.getRazonSocial());
+            }
+            else{
+                throw new FracasoOperacion("El responsable de pago no es una persona juridica y este metodo no lo soporta");
+            }
+        }
+        catch (Exception e) {
+            throw new FracasoOperacion("Error al buscar el responsable de pago" + e.getMessage());
+        }
+
+    }
 }

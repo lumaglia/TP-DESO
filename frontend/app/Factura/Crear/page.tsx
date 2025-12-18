@@ -170,18 +170,18 @@ export default function CrearFactura() {
         const diaCheckout = new Date(dia.getTime()-1*3600000).toISOString();
         console.log(diaCheckout);
         setNroHab(data.idHabitacion);
-        setFechaSalida(diaCheckout);
+        setFechaSalida(diaCheckout)
         setErrorHabitacion(false);
-        requestHabitacion()
+        requestHabitacion(data.idHabitacion,diaCheckout);
 
     }
 
-    const requestHabitacion = () => {
+    const requestHabitacion = (numHabitacion:string, diaCheckOut:string) => {
         fetchApi('/Factura/Checkout', {
             method: 'POST',
             body: JSON.stringify({
-                numHabitacion: nroHab,
-                diaCheckOut: fechaSalida
+                numHabitacion: numHabitacion,
+                diaCheckOut: diaCheckOut
             }),
             headers: {
                 'Accept': 'application/json',
@@ -295,7 +295,7 @@ export default function CrearFactura() {
                 if (res?.ok){
                     alert('Factura emitida correctamente.')
                     setEstado(EstadosCU07.ConfirmarFactura)
-                    requestHabitacion()
+                    requestHabitacion(nroHab,fechaSalida)
                 }
             })
 

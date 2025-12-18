@@ -12,28 +12,31 @@ export default function Home() {
             <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginTop:'30px'}}>
                 <Row>
                     <Link href='/Huesped/Alta'>
-                        <button className='Button'>Dar de alta Huesped</button>
+                        <button className='Button FixedLength'>Dar de alta Huesped</button>
                     </Link>
                     <Link href='/Huesped/Buscar'>
-                        <button className='Button'>Buscar Huesped</button>
+                        <button className='Button FixedLength'>Buscar Huesped</button>
+                    </Link>
+                </Row>
+                <Row>
+                    <Link href='/Reserva/Alta'>
+                        <button className='Button FixedLength'>Reservar Habitación</button>
+                    </Link>
+                    <Link href='/Reserva/Baja'>
+                        <button className='Button FixedLength'>Cancelar Reserva</button>
                     </Link>
                 </Row>
                 <Row>
                     <Link href='/Estadia/Alta'>
-                        <button className='Button'>Ocupar Habitación</button>
+                        <button className='Button FixedLength'>Ocupar Habitación</button>
                     </Link>
-                    <Link href='/Reserva/Alta'>
-                        <button className='Button'>Reservar Habitación</button>
-                    </Link></Row>
+                </Row>
                 <Row>
-                    <Link href='/Reserva/Baja'>
-                        <button className={'Button'}>Cancelar Reserva</button>
-                    </Link>
                     <Link href='/Factura/Crear'>
-                        <button className='Button'>Facturar Habitación</button>
+                        <button className='Button FixedLength'>Facturar Habitación</button>
                     </Link>
                     <Link href='/ResponsablePago/Alta'>
-                        <button className='Button'>Dar de alta Responsable de Pago</button>
+                        <button className='Button FixedLength'>Dar de alta Responsable de Pago</button>
                     </Link>
                 </Row>
             </div>

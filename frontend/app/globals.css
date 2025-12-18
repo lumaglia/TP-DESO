@@ -264,6 +264,10 @@ p {
     }
 }
 
+.FixedLength {
+    width: 300px;
+}
+
 .Thumb {
     width: 100%;
     border-radius: inherit;

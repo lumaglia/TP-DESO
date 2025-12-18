@@ -1,5 +1,5 @@
 import { AlertDialog } from '@base-ui-components/react/alert-dialog';
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import warningIcon from '../public/warning.png'
@@ -74,8 +74,9 @@ export function AlertaDocumento({open, setOpen, data} : {open: boolean, setOpen:
         </AlertDialog.Root>
     );
 }
-
-export function AlertaDocumentoRP({open, setOpen, data} : {open: boolean, setOpen: (open: boolean, e: any) => void, data: any}) {
+export function AlertaDocumentoRP({open, setOpen, data, nested=false, setDone, setCuit} : {open: boolean, setOpen: (open: boolean, e: any) => void, data: any, nested?: boolean, setDone?: React.Dispatch<React.SetStateAction<boolean>>, setCuit?: React.Dispatch<React.SetStateAction<string>>}) {
+    const searchParams = useSearchParams();
+    const returnTo = searchParams.get('returnTo');
     const router = useRouter();
     const fetchApi = useFetch();
     return (
@@ -98,8 +99,6 @@ export function AlertaDocumentoRP({open, setOpen, data} : {open: boolean, setOpe
                     <div className={'Actions'}>
                         <AlertDialog.Close className={'PopupButton'} data-color='white'>Volver y Corregir</AlertDialog.Close>
                         <AlertDialog.Close className={'PopupButton'} onClick={() => {
-                            data.tipoDocViejo = data.tipoDoc;
-                            data.nroDocViejo = data.nroDoc;
                             fetchApi('/ResponsablePago/Modificar', {
                                 method: 'PUT',
                                 body: JSON.stringify(data),
@@ -109,7 +108,14 @@ export function AlertaDocumentoRP({open, setOpen, data} : {open: boolean, setOpe
                                 }
                             }).then(res => {
                                 if(res?.ok){
-                                    router.push(`/Huesped/Alta/success?huesped=${encodeURIComponent(data.nombre+' '+data.apellido)}`)
+                                    if(nested){
+                                        if(setDone && setCuit){
+                                            setCuit(data.cuit)
+                                            setDone(true)
+                                        }
+                                    }else{
+                                        router.push(`/ResponsablePago/Alta/success?responsablePago=${encodeURIComponent(data.razonSocial)}&returnTo=${encodeURIComponent(returnTo ?? '/')}`)
+                                    }
                                 }
                             })
                         }}>
@@ -121,7 +127,6 @@ export function AlertaDocumentoRP({open, setOpen, data} : {open: boolean, setOpe
         </AlertDialog.Root>
     );
 }
-
 
 export function AlertaDocumentoModificar({open, setOpen, data, tipoDoc, nroDoc, setErrorOpen} : {open: boolean, setOpen: (open: boolean, e: any) => void, data: any, tipoDoc: string, nroDoc: string, setErrorOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
     const router = useRouter();

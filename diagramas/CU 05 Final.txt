@@ -1,0 +1,92 @@
+@startuml
+
+
+skinparam style strictuml
+
+hide footBox
+title Diagrama de Secuencia CU 05 - Mostrar Estado de Habitaciones
+
+actor Conserje as Con
+boundary "UI - Mostrar Estado de Habitaciones" as UI
+control "Gestor Reservas" as GH
+participant "HabitacionDAO" as DAO
+
+Con -> UI: Solicitar ver estado de habitaciones
+activate UI
+
+UI-->Con: mostrar campo "DesdeFecha: dd/mm/yy"
+loop DesdeFechaValida==FALSE
+  Con->UI: llenar campo "DesdeFecha: dd/mm/yy"
+  UI->UI: verificarDesdeFecha()
+  activate UI
+  deactivate UI
+  opt DesdeFechaInvalida
+    UI-->Con: mostrarError()
+  end
+end
+
+UI-->Con: mostrar campo "HastaFecha: dd/mm/yy"
+loop HastaFechaValida==FALSE
+  Con->UI: llenar campo "HastaFecha: dd/mm/yy"
+  UI->UI: verificarHastaFecha()
+  activate UI
+  deactivate UI
+  opt DesdeFechaInvalida
+    UI-->Con: mostrarError()
+  end
+end
+
+Con->UI: presionar SIGUIENTE
+
+UI -> GH: obtenerReservasEstadias(desdeFecha, hastaFecha)
+deactivate UI
+activate GH
+GH -> DAO: getReservasEstadias(desdeFecha, hastaFecha)
+activate DAO
+DAO --> GH: :listHabitacionResEst
+deactivate DAO
+loop por Habitacion en listHabitacionResEst
+  create participant "unaHabitacion:Habitacion" as H
+  GH -> H: new Habitacion
+  activate H
+  note right of H
+    Si bien la clase habitacion es abstracta
+    se hace generica en el diagrama de secuencia
+    para no tener por duplicado 5 veces lo
+    mismo para cada subclase de Habitacion
+  end note
+  GH -> H: setNroHabitacion(nroHab)
+  GH -> H: setPrecioNoche(precioNoche)
+  GH -> H: setCapacidad(capacidad)
+  GH -> H: setTamanno(tamanno)
+  GH -> H: getInstance()
+  GH <-- H: unaHabitacion
+  deactivate H
+  GH -> GH: crearColumna(unaHabitacion,listReserva,listEstadia)
+  activate GH
+  deactivate GH
+  note right of GH
+    Retorna un arreglo encabezado
+    por la habitacion y seguido de
+    las fechas del rango seleccionado
+    cada una con su estado sea
+    disponible, reservada, ocupada o
+    en mantenimiento
+  end note
+end
+GH->GH: crearGrilla(listColumnas)
+activate GH
+deactivate GH
+GH --> UI: :objetoGrilla
+deactivate GH
+activate UI
+
+UI-->Con: mostrarGrilla()
+
+
+opt EventCancelar
+  Con->UI: presionar CANCELAR
+  UI-->Con: Vuelve a la pantalla principal
+end
+
+@enduml

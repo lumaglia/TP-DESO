@@ -176,4 +176,13 @@ public class GestorHuesped {
                 huesped
         );
     }
+
+    public Huesped buscarHuespedDomain(String tipoDoc, String nroDoc) throws FracasoOperacion{
+        try{
+            return huespedDAO.obtenerHuespedDomain(tipoDoc, nroDoc);
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Erro en el gestorHuesped al querer recuperar un huesped domain: " + e.getMessage());
+        }
+    }
 }

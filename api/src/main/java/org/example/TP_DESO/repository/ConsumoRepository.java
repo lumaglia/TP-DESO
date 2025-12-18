@@ -10,5 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface ConsumoRepository extends JpaRepository<Consumo, Long> {
-    ArrayList<Consumo> findConsumoByEstadia_idEstadia(Long idEstadia);
+    ArrayList<Consumo> findByEstadia_IdEstadiaAndFacturaIsNull(Long idEstadia);
+
 }

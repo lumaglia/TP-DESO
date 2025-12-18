@@ -139,6 +139,11 @@ public class HuespedCSV implements HuespedDAO {
         }
     }
 
+    @Override
+    public Huesped obtenerHuespedDomain(String tipoDoc, String nroDoc) throws FracasoOperacion {
+        return new Huesped();
+    }
+
     public DireccionDTO obtenerDireccion(String pais, String codigoPostal, String domicilio, String depto) throws FracasoOperacion {
         return direccionCSV.obtenerDireccion(pais, codigoPostal, domicilio, depto);
     }
@@ -148,4 +153,5 @@ public class HuespedCSV implements HuespedDAO {
         else if (campo.isEmpty()) return true;
         else return campo.equals(csv);
     }
+
 }

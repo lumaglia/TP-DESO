@@ -1,0 +1,119 @@
+@startuml
+skinparam style strictuml
+
+hide footBox
+title Diagrama de Secuencia CU 04 - Reservar Habitación
+
+actor Conserje as Con
+boundary "UI - Mostrar Estado de Habitaciones" as UI
+control "Gestor Reservas" as GR
+participant "ReservaDAO" as DAOR
+
+Con -> UI: Reservar habitaciones
+activate UI
+ref over Con, UI: CU05
+
+opt grilla vacia
+    UI-->Con: mostrarMensaje("No hay habitaciones disponibles")
+    UI-->Con: Vuelve a la pantalla principal
+    deactivate UI
+end
+  
+loop Desea Seleccionar Habitaciones
+  Con->UI:seleccionar celdas y fechas
+  activate UI
+  UI->UI: verificarSeleccion()
+  activate UI
+  deactivate UI
+  alt seleccion sobre habitaciones ya reservadas
+    UI-->UI: anularSeleccion()
+    activate UI
+    deactivate UI
+    UI-->Con: mostrarMensaje("Se seleccionó un rango donde la habitación no está disponible")
+  else seleccion sobre habitaciones no reservadas
+    UI-->UI: pintarSeleccion()
+    activate UI
+    deactivate UI
+    UI-->Con: mostrarCasillasPintadas()
+  end
+end
+deactivate UI
+Con -> UI: presiona SIGUIENTE
+activate UI
+UI -> GR: armarListaSelecciones(rangosFechasHabitaciones)
+activate GR
+GR --> UI: :listaSelecciones 
+deactivate GR
+UI --> Con: presentarListadoSeleccion()
+deactivate UI
+
+alt RECHAZAR
+  Con -> UI: selecciona RECHAZAR
+  activate UI
+  note right of UI
+    Los cambios fueron locales
+    por lo que no se requiere
+    deshacer
+  end note
+  UI-->Con: Vuelve a la pantalla principal
+else ACEPTAR
+  loop Mientras Campos Incompletos
+  UI-->Con: mostrar campos: nombre, apellido, telefono
+  deactivate UI
+  Con->UI: llena campos y presiona RESERVAR
+  activate UI
+  UI->UI:verificarCampos()
+  activate UI
+  deactivate UI 
+    opt nombreIncompleto
+      UI-->Con: mostrarErrorNombre()
+    end
+    opt apellidoIncompleto
+      UI-->Con: mostrarErrorApellido()
+    end
+    opt telefonoIncompleto
+      UI-->Con: mostrarErrorTelefono()
+    end
+  end
+  loop por cada habitacion seleccionada
+    UI->GR: cargarReserva(reservaDTO)
+    deactivate UI
+    activate GR
+    
+    
+    create participant "unaReserva:Reserva" as R
+    GR --> R: new Reserva
+    activate R
+    GR->R: setFechaReserva(fechaHoy)
+    GR->R: setFechaInicio(fechaInicio)
+    GR->R: setFechaFin(fechaFin)
+    GR->R: setApellido(apellido)
+    GR->R: setNombre(nombre)
+    GR->R: setTelefono(telefono)
+    GR->R: setNroHabitacion(nroHab)
+    GR->R: getInstance()
+    GR<--R: unaReserva
+    deactivate R
+    GR->DAOR: cargarReserva(unaReserva)
+    activate DAOR
+    GR<--DAOR: return("Reserva Cargada Exitosamente")
+    deactivate DAOR
+    
+    UI<--GR: return("Reserva Creada Exitosamente")
+    activate UI
+    Con<--UI: mostrarMensaje("La reserva ha sido registrada exitosamente")
+    
+  end
+end
+deactivate UI
+
+opt EventCancelar
+  Con->UI: Presionar cancelar
+  activate UI
+  UI-->Con: Vuelve a la pantalla principal
+deactivate UI
+end
+
+
+
+@enduml

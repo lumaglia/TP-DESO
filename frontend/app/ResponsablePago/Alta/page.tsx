@@ -71,7 +71,7 @@ export default function AltaResponsablePago({nested=false, setDone, setCuit} : {
 
     return (
         <>
-            <Encabezado titulo={"Dar de alta Responsable de Pago"} />
+        {nested?<></>:<Encabezado titulo={"Dar de alta Responsable de Pago"} />}
             <h2 style={{textAlign:'center'}}>Ingresar los datos del nuevo responsable de pago</h2>
 
             <form method='post' onSubmit={handleSubmit(onSubmit)} noValidate>

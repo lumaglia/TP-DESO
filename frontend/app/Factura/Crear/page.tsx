@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ChangeEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import { ScrollArea } from '@base-ui-components/react/scroll-area';
@@ -11,6 +11,7 @@ import { AlertaCancelar } from '../../Alertas.tsx'
 import {comboValues, fieldTypes, MapNameToApi, validation} from '../../../public/constants'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useFetch } from '@/hooks/useFetch'
+import AltaResponsablePago from '../../ResponsablePago/Alta/page'
 
 type FormFactura = {
     idHabitacion : string;
@@ -46,8 +47,9 @@ type FacturaPreviewDTO = {
 }
 
 type ItemValues = {
-    id: number,
-    tipo: string,
+    uiKey: string
+    id?: number,
+    tipo: 'Estadia' | string,
     descripcion: string,
     monto: number
 }
@@ -56,6 +58,8 @@ enum EstadosCU07 {
     DatosHabitacion,
     SeleccionResponsable,
     ConfirmarFactura,
+    FacturaEmitida,
+    EstadiaFacturada
 }
 
 export default function CrearFactura() {
@@ -66,7 +70,8 @@ export default function CrearFactura() {
     const [estadia, setEstadia] = useState<Estadia | null>(null)
     const fetchApi = useFetch();
     const [items, setItems] = useState<{
-        id: number,
+        uiKey: string,
+        id?: number,
         tipo: string,
         descripcion: string
         monto: number
@@ -88,15 +93,27 @@ export default function CrearFactura() {
     const [responsablePago, setResponsablePago] = useState("");
     const [isResponsableHuesped, setIsResponsableHuesped] = useState(false);
     const [cuit, setCuit] = useState("");
+    const [mostrarCU12, setMostrarCU12] = useState(false);
+    const [done, setDone] = useState(false);
+    const [razon, setRazon] = useState("");
+    const [nroHab, setNroHab] = useState("");
+    const [fechaSalida, setFechaSalida] = useState("");
+    const [tipoDoc, setTipoDoc] = useState("");
+    const [nroDoc, setNroDoc] = useState("");
 
     const [opcion, setOpcion] = useState('Huesped');
     const manejarCambio = (e:any) => {
+        setRazon("")
+        setSelectedHuesped(null)
+        setCuit("")
+        setDone(false)
+        setMostrarCU12(false)
         setOpcion(e.target.value);
     };
 
     const formateador = new Intl.NumberFormat('es-AR', {
         style: 'currency',
-        currency: 'ARS', // Código ISO de la moneda (USD, EUR, MXN, etc.)
+        currency: 'ARS',
         minimumFractionDigits: 2
     });
 
@@ -146,28 +163,26 @@ export default function CrearFactura() {
         },
     }
 
-    const seleccionarResponsable = (h: any) => {
-        setErrorResponsable(null)
 
-        if (responsableSeleccionado?.cuit == h.cuit) {
-            setResponsableSeleccionado(null)
-        } else {
-            setResponsableSeleccionado(h)
-        }
-    }
 
     const submitCheckout = (data: FormFactura) => {
         const [horas, minutos] = data.horaSalida.split(':');
         const dia = new Date(new Date().getTime()-24*3600000);
         dia.setHours(+horas, +minutos, 0, 0)
-        const diaCheckout = new Date(dia.getTime()-3*3600000).toISOString();
+        const diaCheckout = new Date(dia.getTime()-1*3600000).toISOString();
         console.log(diaCheckout);
+        setNroHab(data.idHabitacion);
+        setFechaSalida(diaCheckout)
         setErrorHabitacion(false);
+        requestHabitacion(data.idHabitacion,diaCheckout);
+    }
+
+    const requestHabitacion = (numHabitacion:string, diaCheckOut:string) => {
         fetchApi('/Factura/Checkout', {
             method: 'POST',
             body: JSON.stringify({
-                numHabitacion: data.idHabitacion,
-                diaCheckOut: diaCheckout
+                numHabitacion: numHabitacion,
+                diaCheckOut: diaCheckOut
             }),
             headers: {
                 'Accept': 'application/json',
@@ -181,25 +196,29 @@ export default function CrearFactura() {
 
                         const itemsFactura = [
                             ...(data.montoEstadia > 0 ? [{
-                                id: data.id,
+                                uiKey: `estadia-${data.id}`,
                                 tipo: 'Estadia',
                                 descripcion: 'Costo de la estadia',
                                 monto: data.montoEstadia,
                             }] : []),
 
                             ...data.consumos?.map(c => ({
+                                uiKey: `consumo-${c.id}`,
                                 id: c.id,
                                 tipo: c.tipo,
                                 descripcion: c.descripcion,
                                 monto: c.monto,
                             })) ?? []
                         ];
+                        console.log(itemsFactura.map(i => i.uiKey));
                         if (itemsFactura.length === 0) {
                             console.log("CONSUMOS VACIOS LISTO ESTADIA")
+                            setEstado(EstadosCU07.EstadiaFacturada);
                         }else{
                             setItems(itemsFactura)
                             setHuespedes(data.huespedes)
                             setSelectedHuesped(null)
+                            setOpcion('Huesped')
                             setEstado(EstadosCU07.SeleccionResponsable)
                         }
                     })
@@ -209,29 +228,28 @@ export default function CrearFactura() {
                 }
 
             })
-
     }
 
-    const submitResponsable = () => {
-        fetchApi('/Factura/Checkout', {
-            method: 'POST',
-            body: JSON.stringify({
-                estadia: estadia,
-                responsablePago: responsableSeleccionado,
-                consumos: estadia!.consumos,
-            }),
+    const submitResponsable = (data:any) => {
+        fetchApi(`/Factura/BuscarResponsablePago/${data.cuit}`, {
+            method: 'GET',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }})
             .then(res => {
                 if (res?.ok) {
-                    res?.json().then((data) => {
-                        console.log(data)
+                    res?.json().then((resdata) => {
+                        console.log(resdata)
+                        setCuit(data.cuit)
+                        setRazon(resdata.message)
                     })
                 }else{
                     console.log(res?.status)
-                    //Usar CU12
+                    setCuit("")
+                    setRazon("")
+                    setDone(false)
+                    setMostrarCU12(true)
                 }
             })
 
@@ -241,46 +259,52 @@ export default function CrearFactura() {
         setResponsablePago(selectedHuesped?.apellido + " " + selectedHuesped?.nombre)
         setIsResponsableHuesped(true)
         setEstado(EstadosCU07.ConfirmarFactura)
+        if(selectedHuesped){
+            setTipoDoc(selectedHuesped?.tipoDoc)
+            setNroDoc(selectedHuesped?.nroDoc)
+        }
         if(selectedHuesped?.cuil === null || selectedHuesped?.cuil === undefined) {
             setCuit("")
         }else{
             setCuit(selectedHuesped?.cuil)
         }
     }
+    const submitJuridica = () => {
+        setResponsablePago(razon)
+        setIsResponsableHuesped(false)
+        setEstado(EstadosCU07.ConfirmarFactura)
+    }
 
     const submitFactura = (f: any) => {
 
-        if(selectedItems.length===0){
-            alert('Debe seleccionar al menos un item')
-            return
+        const emitir = {
+            pagaEstadia: (selectedItems.findIndex(h => h.tipo=='Estadia')!=-1),
+            consumos: (selectedItems.filter(h => h.tipo!='Estadia').map(h => h.id)),
+            numHabitacion: nroHab,
+            diaCheckOut: fechaSalida,
+            esHuesped: isResponsableHuesped,
+            cuit: cuit,
+            tipoDoc: tipoDoc,
+            nroDoc: nroDoc,
         }
-        else{
-            const emitir = {
-                idFactura: null,
-                idNota: null,
-                idEstadia: estadia!.id,
-                idPago: null,
-                idResponsable: responsableSeleccionado!.cuit,
-            }
+        console.log(emitir)
+        fetchApi('/Factura/Emitir', {
+            method: 'POST',
+            body: JSON.stringify(emitir),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }})
+            .then(res => {
+                if (res?.ok){
+                    //alert('Factura emitida correctamente.')
+                    setSelectedItems([])
+                    setItems([])
+                    setEstado(EstadosCU07.FacturaEmitida)
+                    requestHabitacion(nroHab, fechaSalida);
+                }
+            })
 
-            fetchApi('/Factura/Emitir', {
-                method: 'POST',
-                body: JSON.stringify(emitir),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }})
-                .then(res => res?.json())
-                .then(() => {
-                    if (items.filter(i => !i.seleccionado).length > 0) {
-                        alert('Factura emitida. Quedan ítems pendientes.')
-                        setEstado(EstadosCU07.SeleccionResponsable)
-                    } else {
-                        alert('Factura emitida correctamente')
-                        router.push('/')
-                    }
-                })
-        }
     }
 
     return (
@@ -353,7 +377,7 @@ export default function CrearFactura() {
                                                 <tbody>
                                                 {huespedes.map((huesped: any) => (
                                                     <tr className={selectedHuesped === huesped ? 'selected' : ''}
-                                                        onClick={() => setSelectedHuesped(huesped)} key={huesped.nroDoc}>
+                                                        onClick={() => setSelectedHuesped(huesped)} key={`${huesped.tipoDoc}-${huesped.nroDoc}`}>
                                                         <td>{huesped.nombre}</td>
                                                         <td>{huesped.apellido}</td>
                                                         <td>{huesped.tipoDoc}</td>
@@ -376,7 +400,9 @@ export default function CrearFactura() {
                                 }
 
 
-                            </>:
+                            </>: (mostrarCU12 && !done)? <>
+                                    <p style={{textAlign: 'center'}}>El responsable de pago no ha sido encontrado, puede cargar uno nuevo a continuación.</p>
+                                    <AltaResponsablePago nested={true} setDone={setDone} setCuit={setCuit}/></>:
                             <>
                                 <form onSubmit={handleSubmit(submitResponsable)} noValidate>
                                     <Row><Campo field='CUIT' placeholder='11 - 11222333 - 2' register={register} errors={errors}
@@ -386,12 +412,14 @@ export default function CrearFactura() {
                                     Confirmar
                                 </button></Row></form>
                                 {
-
+                                    (razon != "")? <>
+                                        <h3 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>Razon Social: {razon}</h3>
+                                        <Row><button type='button' className='Button' onClick={() => setRazon("")}>Cancelar</button>
+                                            <button type="button" className="Button" onClick={() => submitJuridica()}>Aceptar</button></Row>
+                                    </> : <></>
                                 }
                                 <div style={{marginTop: '20px', display: 'flex', justifyContent: 'flex-end'}}>
-                                    <button className="Button" onClick={submitResponsable}>
-                                        ACEPTAR
-                                    </button>
+
                                 </div>
                             </>
                     }
@@ -419,20 +447,30 @@ export default function CrearFactura() {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {items.map((item: any) => (
-                                            <tr className={selectedItems.findIndex(h => h.id == item.id )!= -1 ? 'selected' : ''}
-                                                onClick={() => selectedItems.findIndex(h => h.id == item.id )!= -1 ?
-                                                    setSelectedItems(() => {
-                                                        let i = selectedItems.findIndex(h => h.id == item.id );
-                                                        return [...selectedItems.slice(0,i),...selectedItems.slice(i+1)];
-                                                    })
-                                                    :
-                                                    setSelectedItems([...selectedItems, item])} key={item.id}>
-                                                <td>{item.tipo}</td>
-                                                <td>{item.descripcion}</td>
-                                                <td>{formateador.format(item.monto)}</td>
-                                            </tr>
-                                        ))}
+                                        {items.map(item => {
+                                            const selected = selectedItems.some(
+                                                s => s.uiKey === item.uiKey
+                                            );
+
+                                            return (
+                                                <tr
+                                                    key={item.uiKey}
+                                                    className={selected ? 'selected' : ''}
+                                                    onClick={() => {
+                                                        setSelectedItems(prev => {
+                                                            const exists = prev.some(s => s.uiKey === item.uiKey);
+                                                            return exists
+                                                                ? prev.filter(s => s.uiKey !== item.uiKey)
+                                                                : [...prev, item];
+                                                        });
+                                                    }}
+                                                >
+                                                    <td>{item.tipo}</td>
+                                                    <td>{item.descripcion}</td>
+                                                    <td>{formateador.format(item.monto)}</td>
+                                                </tr>
+                                            );
+                                        })}
                                         </tbody>
                                     </table>
 
@@ -453,13 +491,27 @@ export default function CrearFactura() {
                             <Row>
                             <button className={"Button"}
                                     onClick={submitFactura}>
-                                ACEPTAR
+                                Aceptar
                             </button>
                         </Row></>: <></> }
                     </div>
                 </div>
             )}
+            {estado === EstadosCU07.FacturaEmitida && (
+                <>
+                    <h3 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>La factura ha sido emitida correctamente. Espere un momento...</h3>
+                </>
+            )}
+            {estado === EstadosCU07.EstadiaFacturada && (
+                <>
+                    <h3 style={{marginTop: '30px', width: 'fit-content', marginLeft: 'auto', marginRight: 'auto'}}>La estadia ha sido facturada completamente.</h3>
+                    <Row>
+                        <button type='button' className='Button' onClick={() => router.push("/")}>Volver al menu</button>
+                    </Row>
+                </>
+            )}
             <AlertaCancelar open={alertaCancelarOpen} setOpen={setAlertaCancelarOpen} text='la facturación de estadía'/>
+
         </>
     );
 }

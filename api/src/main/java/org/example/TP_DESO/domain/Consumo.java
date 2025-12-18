@@ -24,7 +24,7 @@ public class Consumo {
     private TipoConsumo tipo;
     private String detalle;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
             name = "id_estadia",referencedColumnName = "idEstadia")
     private Estadia estadia;

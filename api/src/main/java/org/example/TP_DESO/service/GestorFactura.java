@@ -6,16 +6,18 @@ import org.example.TP_DESO.dao.*;
 import org.example.TP_DESO.dao.FacturaDAOMySQL;
 import org.example.TP_DESO.dao.NotaCreditoDAOMySQL;
 import org.example.TP_DESO.domain.*;
+import org.example.TP_DESO.dto.*;
+import org.example.TP_DESO.dto.CU07.EmitirFacturaDTO;
 import org.example.TP_DESO.dto.CU07.EstadiaFacturacionDTO;
 import org.example.TP_DESO.dto.CU07.RequestCheckoutDTO;
 import org.example.TP_DESO.dto.CU12.PersonaFisicaDTO;
 import org.example.TP_DESO.dto.CU12.PersonaJuridicaDTO;
 import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
-import org.example.TP_DESO.dto.ConsumoDTO;
-import org.example.TP_DESO.dto.EstadiaDTO;
-import org.example.TP_DESO.dto.FacturaDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.patterns.mappers.DireccionMapper;
+import org.example.TP_DESO.patterns.mappers.EstadiaMapper;
+import org.example.TP_DESO.patterns.mappers.HabitacionMapper;
+import org.example.TP_DESO.patterns.mappers.HuespedMapper;
 import org.example.TP_DESO.patterns.strategy.PrecioHabitacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +48,8 @@ public class GestorFactura {
     private DireccionDAOMySQL direccionDAO;
     @Autowired
     private ConsumoDAOMySQL daoConsumo;
+    @Autowired
+    private GestorHabitacion gestorHabitacion;
 
     private GestorFactura() {
 
@@ -56,25 +61,38 @@ public class GestorFactura {
     }
 
     public EstadiaDTO obtenerEstadia(String NroHabitacion, LocalDateTime fin) throws FracasoOperacion {
-        return daoEstadia.buscarEstadiaPorHabitacionYFechaFin(NroHabitacion, fin.toLocalDate());
+        try{
+            return daoEstadia.buscarEstadiaPorHabitacionYFechaFin(NroHabitacion, fin.toLocalDate());
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al obtener el dto de al estadia en gestor factura: " + e.getMessage());
+        }
+    }
+    public Estadia obtenerEstadiaVinculada(String nroHabitacion, LocalDateTime fin) throws FracasoOperacion{
+        try{
+            return daoEstadia.obtenerEstadiaNroHabitacionFechaFin(nroHabitacion, fin.toLocalDate());
+        }
+        catch (Exception e){
+            throw new FracasoOperacion("Error al obtener el domain de al estadia en gestor factura: " + e.getMessage());
+        }
     }
 
     public ResponsablePagoDTO buscarResponsablePago(String cuit) throws FracasoOperacion {
         try{
-            PersonaFisica personaFisica = daoResponsablePago.obtenerPersonaFisica(cuit);
+            Optional<PersonaFisica> personaFisica = daoResponsablePago.obtenerPersonaFisicaCuit(cuit);
             PersonaJuridica personaJuridica = daoResponsablePago.obtenerPersonaJuridica(cuit);
 
-            if(personaJuridica == null && personaFisica == null){
+            if(personaJuridica == null && personaFisica.isEmpty()){
                 throw new FracasoOperacion("No se encontro el responsable de pago");
             }
-            else if (personaJuridica != null && personaFisica != null){
+            else if (personaJuridica != null && personaFisica.isPresent()){
                 throw new FracasoOperacion("El mismo cuit es tanto de una persona fisica como de una juridica");
             }
             else if (personaJuridica != null){
                 return new PersonaJuridicaDTO(personaJuridica);
             }
             else {
-                return new PersonaFisicaDTO(personaFisica);
+                return new PersonaFisicaDTO(personaFisica.get());
             }
         }
         catch (Exception e){ throw new FracasoOperacion("Error: " + e.getMessage()); }
@@ -130,19 +148,72 @@ public class GestorFactura {
 
     }
 
-    public void generarFactura(FacturaDTO facturaDTO) throws FracasoOperacion {
-        try{
-
+    public Factura generarFactura(EmitirFacturaDTO emitirFacturaDTO) throws FracasoOperacion {
+        try {
             Factura factura = new Factura();
-            factura.setNroFactura(factura.getNroFactura());
-            factura.setPago(factura.getPago());
-            factura.setEstadia(factura.getEstadia());
-            factura.setNotaCredito(factura.getNotaCredito());
+
+            factura.setPagaEstadia(emitirFacturaDTO.isPagaEstadia());
+            factura.setNotaCredito(null);
+
+            LocalDateTime fin = LocalDateTime.ofInstant(Instant.parse(emitirFacturaDTO.getDiaCheckOut()), ZoneId.systemDefault());
+            Estadia estadia = obtenerEstadiaVinculada(emitirFacturaDTO.getNumHabitacion(), fin);
+
+            factura.setEstadia(estadia);
+
+            float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(HabitacionMapper.toDTO(estadia.getHabitacion()), estadia.getFechaInicio(), fin);
+            if(!emitirFacturaDTO.isPagaEstadia()){
+                montoEstadia = 0F;
+            }
+
+            ArrayList<Consumo> consumos = new ArrayList<>();
+            float montoConsumo = 0F;
+            for(String idConsumo : emitirFacturaDTO.getConsumos()){
+                Consumo consumo = daoConsumo.obtenerConsumoPorId(Long.parseLong(idConsumo));
+                montoConsumo += consumo.getMonto();
+                consumos.add(consumo);
+            }
+
+            factura.setPrecio((montoEstadia + montoConsumo) * 1.21F);
+
+            if (emitirFacturaDTO.isEsHuesped()) {
+                HuespedDTO huespedDTO = new HuespedDTO();
+                huespedDTO.setTipoDoc(emitirFacturaDTO.getTipoDoc());
+                huespedDTO.setNroDoc(emitirFacturaDTO.getNroDoc());
+
+                Huesped huesped = gestorHuesped.buscarHuespedDomain(emitirFacturaDTO.getTipoDoc(), emitirFacturaDTO.getNroDoc());
+
+                Optional<PersonaFisica> pf = daoResponsablePago.obtenerPersonaFisica(huesped.getTipoDoc(), huesped.getNroDoc());
+
+                if(pf.isPresent()){
+                    factura.setResponsablePago(pf.get());
+                }
+                else{
+                    PersonaFisica newpf = daoResponsablePago.crearPersonaFisica(huesped);
+                    factura.setResponsablePago(newpf);
+                }
+
+            }
+            else{
+                PersonaJuridica pj = daoResponsablePago.obtenerPersonaJuridica(emitirFacturaDTO.getCuit());
+
+                if(pj == null){
+                    throw new FracasoOperacion("No existe la persona juridica en el sistema");
+                }
+
+                factura.setResponsablePago(pj);
+            }
 
             daoFactura.crearFactura(factura);
+
+            for(Consumo c : consumos){
+                c.setFactura(factura);
+                daoConsumo.guardarConsumoConFactura(c);
+            }
+
+            return factura;
         }
         catch (Exception e){
-            throw new FracasoOperacion("Error al crear factura: " + e.getMessage());
+            throw new FracasoOperacion("Error al crear factura /GestorFactura->GenerarFactura/: " + e.getMessage());
         }
     }
 
@@ -157,30 +228,19 @@ public class GestorFactura {
     public EstadiaFacturacionDTO estadiaFacturacion(RequestCheckoutDTO request) throws FracasoOperacion{
         try{
             LocalDateTime fin = LocalDateTime.ofInstant(Instant.parse(request.getDiaCheckOut()), ZoneId.systemDefault());
-            System.out.println(fin);
-            EstadiaDTO estadia = this.obtenerEstadia(request.getNumHabitacion(), fin);
+            EstadiaDTO estadia = obtenerEstadia(request.getNumHabitacion(), fin);
             float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), fin);
             ArrayList<Consumo> consumosEstadia = daoConsumo.consumosEstadia(estadia.getIdEstadia());
 
-            if(estadiaPaga(consumosEstadia)){
+            boolean yaPagoLaEstadia = daoFactura.obtenerFacturaPorEstadia(estadia.getIdEstadia()).stream().anyMatch(Factura::isPagaEstadia);
+
+            if(yaPagoLaEstadia){
                 montoEstadia = 0F;
             }
-
-            ArrayList<Consumo> consumos = consumosEstadia.stream().filter(c -> c.getFactura()!= null).collect(Collectors.toCollection(ArrayList::new));
-
-            return new EstadiaFacturacionDTO(estadia, montoEstadia, consumos);
+            return new EstadiaFacturacionDTO(estadia, montoEstadia, consumosEstadia);
         }
         catch (Exception e){
             throw new FracasoOperacion("Error al obtener la estadia para facturar: " + e.getMessage());
         }
-    }
-
-    public boolean estadiaPaga(ArrayList<Consumo> consumos){
-        for (Consumo consumo : consumos) {
-            if(consumo.getFactura() != null && consumo.getFactura().isPagaEstadia()){
-                return true;
-            }
-        }
-        return false;
     }
 }

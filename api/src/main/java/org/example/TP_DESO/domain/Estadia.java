@@ -28,7 +28,7 @@ public class Estadia {
             joinColumns = @JoinColumn(name = "id_estadia", referencedColumnName = "idEstadia"),
             inverseJoinColumns = {
                     @JoinColumn(name = "tipo_doc", referencedColumnName = "tipoDoc"),
-                    @JoinColumn(name = "nro_doc",  referencedColumnName = "nroDoc")
+                    @JoinColumn(name = "nro_doc", referencedColumnName = "nroDoc")
             }
     )
     @org.hibernate.annotations.Immutable

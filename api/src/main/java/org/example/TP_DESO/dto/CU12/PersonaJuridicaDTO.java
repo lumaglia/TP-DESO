@@ -1,6 +1,8 @@
 package org.example.TP_DESO.dto.CU12;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.TP_DESO.domain.PersonaJuridica;
 import org.example.TP_DESO.dto.DireccionDTO;
@@ -8,6 +10,8 @@ import org.example.TP_DESO.patterns.mappers.DireccionMapper;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PersonaJuridicaDTO extends ResponsablePagoDTO{
     String razonSocial;
     String cuit;

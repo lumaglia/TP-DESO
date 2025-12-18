@@ -195,7 +195,7 @@ public class GestorFactura {
     public EstadiaFacturacionDTO estadiaFacturacion(RequestCheckoutDTO request) throws FracasoOperacion{
         try{
             LocalDateTime fin = LocalDateTime.ofInstant(Instant.parse(request.getDiaCheckOut()), ZoneId.systemDefault());
-            EstadiaDTO estadia = this.obtenerEstadia(request.getNumHabitacion(), fin);
+            EstadiaDTO estadia = obtenerEstadia(request.getNumHabitacion(), fin);
             float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), fin);
             ArrayList<Consumo> consumosEstadia = daoConsumo.consumosEstadia(estadia.getIdEstadia());
 

@@ -6,16 +6,16 @@ import org.example.TP_DESO.dao.*;
 import org.example.TP_DESO.dao.FacturaDAOMySQL;
 import org.example.TP_DESO.dao.NotaCreditoDAOMySQL;
 import org.example.TP_DESO.domain.*;
+import org.example.TP_DESO.dto.*;
+import org.example.TP_DESO.dto.CU07.EmitirFacturaDTO;
 import org.example.TP_DESO.dto.CU07.EstadiaFacturacionDTO;
 import org.example.TP_DESO.dto.CU07.RequestCheckoutDTO;
 import org.example.TP_DESO.dto.CU12.PersonaFisicaDTO;
 import org.example.TP_DESO.dto.CU12.PersonaJuridicaDTO;
 import org.example.TP_DESO.dto.CU12.ResponsablePagoDTO;
-import org.example.TP_DESO.dto.ConsumoDTO;
-import org.example.TP_DESO.dto.EstadiaDTO;
-import org.example.TP_DESO.dto.FacturaDTO;
 import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.example.TP_DESO.patterns.mappers.DireccionMapper;
+import org.example.TP_DESO.patterns.mappers.HuespedMapper;
 import org.example.TP_DESO.patterns.strategy.PrecioHabitacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +45,8 @@ public class GestorFactura {
     private DireccionDAOMySQL direccionDAO;
     @Autowired
     private ConsumoDAOMySQL daoConsumo;
+    @Autowired
+    private GestorHabitacion gestorHabitacion;
 
     private GestorFactura() {
 
@@ -130,16 +132,52 @@ public class GestorFactura {
 
     }
 
-    public void generarFactura(FacturaDTO facturaDTO) throws FracasoOperacion {
-        try{
-
+    public Factura generarFactura(EmitirFacturaDTO emitirFacturaDTO) throws FracasoOperacion {
+        try {
             Factura factura = new Factura();
-            factura.setNroFactura(factura.getNroFactura());
-            factura.setPago(factura.getPago());
-            factura.setEstadia(factura.getEstadia());
-            factura.setNotaCredito(factura.getNotaCredito());
 
-            daoFactura.crearFactura(factura);
+            factura.setPagaEstadia(emitirFacturaDTO.isPagaEstadia());
+            factura.setPago(null);
+            factura.setNotaCredito(null);
+
+            LocalDateTime fin = LocalDateTime.ofInstant(Instant.parse(emitirFacturaDTO.getDiaCheckOut()), ZoneId.systemDefault());
+            EstadiaDTO estadia = obtenerEstadia(emitirFacturaDTO.getNumHabitacion(), fin);
+
+            float montoEstadia = (float) calcularPrecioHabitacion.calcularPrecio(estadia.getHabitacion(), estadia.getFechaInicio(), fin);
+            if(!emitirFacturaDTO.isPagaEstadia()){
+                montoEstadia = 0F;
+            }
+
+            ArrayList<Consumo> consumos = new ArrayList<>();
+            float montoConsumo = 0F;
+            for(String idConsumo : emitirFacturaDTO.getConsumos()){
+                Consumo consumo = daoConsumo.obtenerConsumoPorId(Long.parseLong(idConsumo));
+                montoConsumo += consumo.getMonto();
+                consumos.add(consumo);
+            }
+
+            factura.setPrecio(montoEstadia + montoConsumo);
+
+            if (emitirFacturaDTO.isEsHuesped()) {
+                HuespedDTO huespedDTO = new HuespedDTO();
+                huespedDTO.setTipoDoc(emitirFacturaDTO.getTipoDoc());
+                huespedDTO.setNroDoc(emitirFacturaDTO.getNroDoc());
+
+                Huesped huesped = HuespedMapper.toDomain(gestorHuesped.buscarHuesped(huespedDTO).getFirst());
+
+                factura.setResponsablePago(
+                        daoResponsablePago.crearPersonaFisica(huesped)
+                        );
+            }
+            else{
+                factura.setResponsablePago(
+                        daoResponsablePago.crearPersonaJuridica(
+                                daoResponsablePago.obtenerPersonaJuridica(emitirFacturaDTO.getCuit())
+                        )
+                );
+            }
+
+            return daoFactura.crearFactura(factura);
         }
         catch (Exception e){
             throw new FracasoOperacion("Error al crear factura: " + e.getMessage());

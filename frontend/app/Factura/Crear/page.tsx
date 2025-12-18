@@ -47,7 +47,7 @@ type FacturaPreviewDTO = {
 }
 
 type ItemValues = {
-    id: number,
+    id: string,
     tipo: string,
     descripcion: string,
     monto: number
@@ -195,14 +195,14 @@ export default function CrearFactura() {
 
                         const itemsFactura = [
                             ...(data.montoEstadia > 0 ? [{
-                                id: data.id,
+                                id: `{estadia-${data.id}`,
                                 tipo: 'Estadia',
                                 descripcion: 'Costo de la estadia',
                                 monto: data.montoEstadia,
                             }] : []),
 
                             ...data.consumos?.map(c => ({
-                                id: c.id,
+                                id: `consumo-${c.id}`,
                                 tipo: c.tipo,
                                 descripcion: c.descripcion,
                                 monto: c.monto,
@@ -371,7 +371,7 @@ export default function CrearFactura() {
                                                 <tbody>
                                                 {huespedes.map((huesped: any) => (
                                                     <tr className={selectedHuesped === huesped ? 'selected' : ''}
-                                                        onClick={() => setSelectedHuesped(huesped)} key={huesped.nroDoc}>
+                                                        onClick={() => setSelectedHuesped(huesped)} key={`${huesped.tipoDoc}-${huesped.nroDoc}`}>
                                                         <td>{huesped.nombre}</td>
                                                         <td>{huesped.apellido}</td>
                                                         <td>{huesped.tipoDoc}</td>

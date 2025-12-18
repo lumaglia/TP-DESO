@@ -1,5 +1,6 @@
 package org.example.TP_DESO.dao;
 
+import org.example.TP_DESO.exceptions.FracasoOperacion;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.TP_DESO.domain.Consumo;
 import org.example.TP_DESO.repository.ConsumoRepository;
@@ -18,5 +19,30 @@ public class ConsumoDAOMySQL implements ConsumoDAO {
     @Override
     public ArrayList<Consumo> consumosEstadia(Long idEstadia) {
         return new ArrayList<>(consumoRepository.findByEstadia_IdEstadiaAndFacturaIsNull(idEstadia));
+    }
+    public ArrayList<Consumo> consumosEstadiaNoPagos(Long idEstadia)  throws FracasoOperacion {
+        try{
+            return consumoRepository.findByEstadia_IdEstadiaAndFacturaIsNull(idEstadia);
+            // return consumos.stream().filter(c -> c.getFactura()==null).collect(Collectors.toCollection(ArrayList::new));
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al obtener los consumos de la esstadia no pagados : "+ e.getMessage());
+        }
+    }
+    @Override
+    public Consumo obtenerConsumoPorId(Long idConsumo) throws FracasoOperacion{
+        try{
+            return consumoRepository.findById(idConsumo).get();
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al obtener el consumo por id:" + e.getMessage());
+        }
+    }
+    @Override
+    public void vincularConFactura(Long idConsumo, String nroFactura) throws FracasoOperacion{
+        try{
+
+        }
+        catch (Exception e) {
+            throw new FracasoOperacion("Error al vincular con la factura: " +e.getMessage());
+        }
     }
 }

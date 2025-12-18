@@ -14,9 +14,9 @@ public class FacturaDAOMySQL implements FacturaDAO {
     private FacturaRepository facturaRepository;
 
     @Override
-    public void crearFactura(Factura factura) throws FracasoOperacion {
+    public Factura crearFactura(Factura factura) throws FracasoOperacion {
         try{
-            facturaRepository.save(factura);
+            return facturaRepository.save(factura);
         }
         catch(Exception e){
             throw new FracasoOperacion("Error al crear factura: " + e.getMessage());

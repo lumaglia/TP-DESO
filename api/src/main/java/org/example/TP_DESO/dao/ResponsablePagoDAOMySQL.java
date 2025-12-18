@@ -1,6 +1,7 @@
 package org.example.TP_DESO.dao;
 
 import org.example.TP_DESO.domain.Direccion;
+import org.example.TP_DESO.domain.Huesped;
 import org.example.TP_DESO.domain.PersonaFisica;
 import org.example.TP_DESO.domain.PersonaJuridica;
 import org.example.TP_DESO.dto.CU12.PersonaJuridicaDTO;
@@ -22,10 +23,15 @@ public class ResponsablePagoDAOMySQL implements ResponsablePagoDAO{
     @Autowired
     private DireccionDAOMySQL direccionDAO;
 
-    // FUNCIONES PARA LA PERSONA FISICA (NO SOY UNA IA SOY JUAN)
     @Override
-    public void crearPersonaFisica() throws FracasoOperacion{
-
+    public PersonaFisica crearPersonaFisica(Huesped huesped) throws FracasoOperacion{
+        try{
+            PersonaFisica pf = new PersonaFisica();
+            pf.setHuesped(huesped);
+            return pfRepository.save(pf);
+        } catch (Exception e) {
+            throw new FracasoOperacion("Error al crear una persona fisica: " + e.getMessage());
+        }
     }
     @Override
     public PersonaFisica obtenerPersonaFisica(String cuit) throws FracasoOperacion{
@@ -52,7 +58,7 @@ public class ResponsablePagoDAOMySQL implements ResponsablePagoDAO{
 
     }
 
-    // FUNCIONES PARA LA PERSONA JURIDICA (TAMPOCO SOY UNA IA SOY JUAN), pero las hizo nacho
+
     @Override
     public PersonaJuridica crearPersonaJuridica(PersonaJuridica personaJuridica) throws FracasoOperacion {
         try {

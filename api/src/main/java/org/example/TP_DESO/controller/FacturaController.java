@@ -1,5 +1,6 @@
 package org.example.TP_DESO.controller;
 
+import org.example.TP_DESO.dto.CU07.EmitirFacturaDTO;
 import org.example.TP_DESO.dto.CU07.RequestCheckoutDTO;
 import org.example.TP_DESO.dto.CU12.PersonaJuridicaDTO;
 import org.example.TP_DESO.dto.CU07.EstadiaFacturacionDTO;
@@ -38,10 +39,10 @@ public class FacturaController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/Factura/Emitir")
-    public ResponseEntity<FacturaDTO> crearFactura(@RequestBody FacturaDTO facturaDTO) throws DocumentoYaExistente, FracasoOperacion{
+    public ResponseEntity<EmitirFacturaDTO> crearFactura(@RequestBody EmitirFacturaDTO emitirFacturaDTO) throws DocumentoYaExistente, FracasoOperacion{
         try{
-            gestorFactura.generarFactura(facturaDTO);
-            return ResponseEntity.ok(facturaDTO);
+            gestorFactura.generarFactura(emitirFacturaDTO);
+            return ResponseEntity.ok(emitirFacturaDTO);
         }
         catch (Exception e){
             throw new DocumentoYaExistente("Error al crear la factura: " + e.getMessage());

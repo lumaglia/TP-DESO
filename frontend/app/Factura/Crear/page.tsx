@@ -69,7 +69,7 @@ export default function CrearFactura() {
     const [estadia, setEstadia] = useState<Estadia | null>(null)
     const fetchApi = useFetch();
     const [items, setItems] = useState<{
-        id: number,
+        id: string,
         tipo: string,
         descripcion: string
         monto: number

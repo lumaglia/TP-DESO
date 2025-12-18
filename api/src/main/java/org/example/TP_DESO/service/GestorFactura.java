@@ -164,16 +164,14 @@ public class GestorFactura {
 
                 Huesped huesped = HuespedMapper.toDomain(gestorHuesped.buscarHuesped(huespedDTO).getFirst());
 
-                factura.setResponsablePago(
-                        daoResponsablePago.crearPersonaFisica(huesped)
-                        );
+                PersonaFisica pf = daoResponsablePago.obtenerPersonaFisica(huesped.getCuil());
+
+                factura.setResponsablePago(pf);
             }
             else{
-                factura.setResponsablePago(
-                        daoResponsablePago.crearPersonaJuridica(
-                                daoResponsablePago.obtenerPersonaJuridica(emitirFacturaDTO.getCuit())
-                        )
-                );
+                PersonaJuridica pj = daoResponsablePago.obtenerPersonaJuridica(emitirFacturaDTO.getNumHabitacion());
+
+                factura.setResponsablePago(pj);
             }
 
             return daoFactura.crearFactura(factura);

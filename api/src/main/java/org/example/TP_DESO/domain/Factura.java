@@ -4,12 +4,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.transaction.annotation.Transactional;
 
 @Entity
 @Table(name = "factura")
 @Getter
 @Setter
-
+@Transactional
 public class Factura {
 
     @Id
@@ -19,17 +20,15 @@ public class Factura {
     private float precio;
     private boolean pagaEstadia;
 
-    @ManyToOne(optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(
-            name = "estadia_id", referencedColumnName = "idEstadia",
-            nullable = false
+            name = "estadia_id", referencedColumnName = "idEstadia"
     )
     private Estadia estadia;
 
-    @ManyToOne(optional = true)
+    @ManyToOne
     @JoinColumn(
-            name = "nota_credito_id", referencedColumnName = "nroNotaCredito",
-            nullable = true
+            name = "nota_credito_id", referencedColumnName = "nroNotaCredito"
     )
     private NotaCredito notaCredito;
 
